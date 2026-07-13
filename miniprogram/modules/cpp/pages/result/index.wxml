@@ -44,6 +44,6 @@
       <button class="secondary-button" bindtap="practiceAgain">再练一组</button>
       <button class="secondary-button" bindtap="openWrong">查看错题</button>
     </view>
-    <button class="primary-button home-button" bindtap="goHome">返回 C/C++ 首页</button>
+    <button class="primary-button home-button" bindtap="goHome">返回 {{subjectName}} 首页</button>
   </block>
 </view>

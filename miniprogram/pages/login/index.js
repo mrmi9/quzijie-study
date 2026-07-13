@@ -10,7 +10,7 @@ Page({
   onLoad(options) {
     this.redirect = options.redirect
       ? decodeURIComponent(options.redirect)
-      : getApp().globalData.loginRedirect || '/modules/cpp/pages/home/index';
+      : getApp().globalData.loginRedirect || '/pages/index/index';
   },
 
   login() {

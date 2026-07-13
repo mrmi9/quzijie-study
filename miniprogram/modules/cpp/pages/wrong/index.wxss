@@ -1,5 +1,9 @@
 @import "../../common.wxss";
 
+.review-images { margin-top: 18rpx; }
+.review-image { width: 100%; border-radius: 14rpx; }
+.review-image-alt { display: block; margin-top: 8rpx; color: #64748b; font-size: 22rpx; }
+
 .filter-bar {
   display: flex;
   margin: 28rpx 0;

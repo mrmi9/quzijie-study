@@ -1,0 +1,2212 @@
+[
+  {
+    "id": "os001",
+    "subjectId": "os",
+    "chapterId": "os-process",
+    "chapterName": "进程、线程与调度",
+    "chapterOrder": 1,
+    "type": "single",
+    "stem": "在“进程、线程与调度”主题中，关于“进程”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "拥有独立地址空间和资源的程序执行实例"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "进程内可被调度的执行单元并共享进程资源"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "记录进程标识、状态、上下文和资源信息"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "保存当前执行状态并恢复另一任务状态"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "进程：拥有独立地址空间和资源的程序执行实例。",
+    "difficulty": 1,
+    "tags": [
+      "进程、线程与调度",
+      "进程"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os002",
+    "subjectId": "os",
+    "chapterId": "os-process",
+    "chapterName": "进程、线程与调度",
+    "chapterOrder": 1,
+    "type": "single",
+    "stem": "在“进程、线程与调度”主题中，下列哪个术语与“进程内可被调度的执行单元并共享进程资源”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "PCB"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "上下文切换"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "时间片轮转"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "线程"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "线程：进程内可被调度的执行单元并共享进程资源。",
+    "difficulty": 2,
+    "tags": [
+      "进程、线程与调度",
+      "线程"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os003",
+    "subjectId": "os",
+    "chapterId": "os-process",
+    "chapterName": "进程、线程与调度",
+    "chapterOrder": 1,
+    "type": "single",
+    "stem": "在“进程、线程与调度”主题中，关于“PCB”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "按固定时间片循环调度就绪进程"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "结果依赖多个执行流不可控的交错顺序"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "记录进程标识、状态、上下文和资源信息"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "保存当前执行状态并恢复另一任务状态"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "PCB：记录进程标识、状态、上下文和资源信息。",
+    "difficulty": 1,
+    "tags": [
+      "进程、线程与调度",
+      "PCB"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os004",
+    "subjectId": "os",
+    "chapterId": "os-process",
+    "chapterName": "进程、线程与调度",
+    "chapterOrder": 1,
+    "type": "multiple",
+    "stem": "围绕“上下文切换”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "临界区：结果依赖多个执行流不可控的交错顺序"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "上下文切换：保存当前执行状态并恢复另一任务状态"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "时间片轮转：按固定时间片循环调度就绪进程"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "竞态条件：访问共享资源且需要互斥执行的代码段"
+      }
+    ],
+    "correctOptionIds": [
+      "B",
+      "C"
+    ],
+    "explanation": "正确配对是“上下文切换—保存当前执行状态并恢复另一任务状态”和“时间片轮转—按固定时间片循环调度就绪进程”。",
+    "difficulty": 1,
+    "tags": [
+      "进程、线程与调度",
+      "上下文切换"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os005",
+    "subjectId": "os",
+    "chapterId": "os-process",
+    "chapterName": "进程、线程与调度",
+    "chapterOrder": 1,
+    "type": "judge",
+    "stem": "判断：时间片轮转是指“按固定时间片循环调度就绪进程”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "时间片轮转的准确含义是：按固定时间片循环调度就绪进程。",
+    "difficulty": 3,
+    "tags": [
+      "进程、线程与调度",
+      "时间片轮转"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os006",
+    "subjectId": "os",
+    "chapterId": "os-process",
+    "chapterName": "进程、线程与调度",
+    "chapterOrder": 1,
+    "type": "single",
+    "stem": "再次辨析“进程、线程与调度”时，下列哪个术语与“拥有独立地址空间和资源的程序执行实例”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "线程"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "PCB"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "上下文切换"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "进程"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "进程：拥有独立地址空间和资源的程序执行实例。",
+    "difficulty": 2,
+    "tags": [
+      "进程、线程与调度",
+      "进程"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os007",
+    "subjectId": "os",
+    "chapterId": "os-process",
+    "chapterName": "进程、线程与调度",
+    "chapterOrder": 1,
+    "type": "single",
+    "stem": "再次辨析“进程、线程与调度”时，关于“线程”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "保存当前执行状态并恢复另一任务状态"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "按固定时间片循环调度就绪进程"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "进程内可被调度的执行单元并共享进程资源"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "记录进程标识、状态、上下文和资源信息"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "线程：进程内可被调度的执行单元并共享进程资源。",
+    "difficulty": 1,
+    "tags": [
+      "进程、线程与调度",
+      "线程"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os008",
+    "subjectId": "os",
+    "chapterId": "os-process",
+    "chapterName": "进程、线程与调度",
+    "chapterOrder": 1,
+    "type": "single",
+    "stem": "再次辨析“进程、线程与调度”时，下列哪个术语与“记录进程标识、状态、上下文和资源信息”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "竞态条件"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "PCB"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "上下文切换"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "时间片轮转"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "PCB：记录进程标识、状态、上下文和资源信息。",
+    "difficulty": 1,
+    "tags": [
+      "进程、线程与调度",
+      "PCB"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os009",
+    "subjectId": "os",
+    "chapterId": "os-process",
+    "chapterName": "进程、线程与调度",
+    "chapterOrder": 1,
+    "type": "multiple",
+    "stem": "再次围绕“上下文切换”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "上下文切换：保存当前执行状态并恢复另一任务状态"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "时间片轮转：按固定时间片循环调度就绪进程"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "竞态条件：访问共享资源且需要互斥执行的代码段"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "临界区：结果依赖多个执行流不可控的交错顺序"
+      }
+    ],
+    "correctOptionIds": [
+      "A",
+      "B"
+    ],
+    "explanation": "正确配对是“上下文切换—保存当前执行状态并恢复另一任务状态”和“时间片轮转—按固定时间片循环调度就绪进程”。",
+    "difficulty": 3,
+    "tags": [
+      "进程、线程与调度",
+      "上下文切换"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os010",
+    "subjectId": "os",
+    "chapterId": "os-process",
+    "chapterName": "进程、线程与调度",
+    "chapterOrder": 1,
+    "type": "judge",
+    "stem": "再次判断：时间片轮转是指“结果依赖多个执行流不可控的交错顺序”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "时间片轮转的准确含义是：按固定时间片循环调度就绪进程。",
+    "difficulty": 2,
+    "tags": [
+      "进程、线程与调度",
+      "时间片轮转"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os011",
+    "subjectId": "os",
+    "chapterId": "os-sync",
+    "chapterName": "同步与死锁",
+    "chapterOrder": 2,
+    "type": "single",
+    "stem": "在“同步与死锁”主题中，下列哪个术语与“结果依赖多个执行流不可控的交错顺序”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "互斥锁"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "信号量"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "竞态条件"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "临界区"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "竞态条件：结果依赖多个执行流不可控的交错顺序。",
+    "difficulty": 1,
+    "tags": [
+      "同步与死锁",
+      "竞态条件"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os012",
+    "subjectId": "os",
+    "chapterId": "os-sync",
+    "chapterName": "同步与死锁",
+    "chapterOrder": 2,
+    "type": "single",
+    "stem": "在“同步与死锁”主题中，关于“临界区”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "多个任务循环等待对方持有的资源而无法推进"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "访问共享资源且需要互斥执行的代码段"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "保证同一时刻只有一个执行流进入受保护区域"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "用整数计数和原子操作实现同步或资源管理"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "临界区：访问共享资源且需要互斥执行的代码段。",
+    "difficulty": 1,
+    "tags": [
+      "同步与死锁",
+      "临界区"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os013",
+    "subjectId": "os",
+    "chapterId": "os-sync",
+    "chapterName": "同步与死锁",
+    "chapterOrder": 2,
+    "type": "single",
+    "stem": "在“同步与死锁”主题中，下列哪个术语与“保证同一时刻只有一个执行流进入受保护区域”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "互斥锁"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "信号量"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "死锁"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "分页"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "互斥锁：保证同一时刻只有一个执行流进入受保护区域。",
+    "difficulty": 3,
+    "tags": [
+      "同步与死锁",
+      "互斥锁"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os014",
+    "subjectId": "os",
+    "chapterId": "os-sync",
+    "chapterName": "同步与死锁",
+    "chapterOrder": 2,
+    "type": "multiple",
+    "stem": "围绕“信号量”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "死锁：多个任务循环等待对方持有的资源而无法推进"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "分页：访问页不在物理内存时触发的异常处理"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "缺页异常：把地址空间和物理内存划分为固定大小块进行映射"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "信号量：用整数计数和原子操作实现同步或资源管理"
+      }
+    ],
+    "correctOptionIds": [
+      "A",
+      "D"
+    ],
+    "explanation": "正确配对是“信号量—用整数计数和原子操作实现同步或资源管理”和“死锁—多个任务循环等待对方持有的资源而无法推进”。",
+    "difficulty": 2,
+    "tags": [
+      "同步与死锁",
+      "信号量"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os015",
+    "subjectId": "os",
+    "chapterId": "os-sync",
+    "chapterName": "同步与死锁",
+    "chapterOrder": 2,
+    "type": "judge",
+    "stem": "判断：死锁是指“多个任务循环等待对方持有的资源而无法推进”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "死锁的准确含义是：多个任务循环等待对方持有的资源而无法推进。",
+    "difficulty": 1,
+    "tags": [
+      "同步与死锁",
+      "死锁"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os016",
+    "subjectId": "os",
+    "chapterId": "os-sync",
+    "chapterName": "同步与死锁",
+    "chapterOrder": 2,
+    "type": "single",
+    "stem": "再次辨析“同步与死锁”时，关于“竞态条件”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "用整数计数和原子操作实现同步或资源管理"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "结果依赖多个执行流不可控的交错顺序"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "访问共享资源且需要互斥执行的代码段"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "保证同一时刻只有一个执行流进入受保护区域"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "竞态条件：结果依赖多个执行流不可控的交错顺序。",
+    "difficulty": 1,
+    "tags": [
+      "同步与死锁",
+      "竞态条件"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os017",
+    "subjectId": "os",
+    "chapterId": "os-sync",
+    "chapterName": "同步与死锁",
+    "chapterOrder": 2,
+    "type": "single",
+    "stem": "再次辨析“同步与死锁”时，下列哪个术语与“访问共享资源且需要互斥执行的代码段”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "临界区"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "互斥锁"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "信号量"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "死锁"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "临界区：访问共享资源且需要互斥执行的代码段。",
+    "difficulty": 3,
+    "tags": [
+      "同步与死锁",
+      "临界区"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os018",
+    "subjectId": "os",
+    "chapterId": "os-sync",
+    "chapterName": "同步与死锁",
+    "chapterOrder": 2,
+    "type": "single",
+    "stem": "再次辨析“同步与死锁”时，关于“互斥锁”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "用整数计数和原子操作实现同步或资源管理"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "多个任务循环等待对方持有的资源而无法推进"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "把地址空间和物理内存划分为固定大小块进行映射"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "保证同一时刻只有一个执行流进入受保护区域"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "互斥锁：保证同一时刻只有一个执行流进入受保护区域。",
+    "difficulty": 2,
+    "tags": [
+      "同步与死锁",
+      "互斥锁"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os019",
+    "subjectId": "os",
+    "chapterId": "os-sync",
+    "chapterName": "同步与死锁",
+    "chapterOrder": 2,
+    "type": "multiple",
+    "stem": "再次围绕“信号量”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "分页：访问页不在物理内存时触发的异常处理"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "缺页异常：把地址空间和物理内存划分为固定大小块进行映射"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "信号量：用整数计数和原子操作实现同步或资源管理"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "死锁：多个任务循环等待对方持有的资源而无法推进"
+      }
+    ],
+    "correctOptionIds": [
+      "C",
+      "D"
+    ],
+    "explanation": "正确配对是“信号量—用整数计数和原子操作实现同步或资源管理”和“死锁—多个任务循环等待对方持有的资源而无法推进”。",
+    "difficulty": 1,
+    "tags": [
+      "同步与死锁",
+      "信号量"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os020",
+    "subjectId": "os",
+    "chapterId": "os-sync",
+    "chapterName": "同步与死锁",
+    "chapterOrder": 2,
+    "type": "judge",
+    "stem": "再次判断：死锁是指“把地址空间和物理内存划分为固定大小块进行映射”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "死锁的准确含义是：多个任务循环等待对方持有的资源而无法推进。",
+    "difficulty": 1,
+    "tags": [
+      "同步与死锁",
+      "死锁"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os021",
+    "subjectId": "os",
+    "chapterId": "os-memory",
+    "chapterName": "内存与虚拟内存",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "在“内存与虚拟内存”主题中，关于“分页”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "把地址空间和物理内存划分为固定大小块进行映射"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "访问页不在物理内存时触发的异常处理"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "缓存近期虚拟页到物理页的地址转换"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "为进程提供独立连续地址空间并按需映射存储"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "分页：把地址空间和物理内存划分为固定大小块进行映射。",
+    "difficulty": 2,
+    "tags": [
+      "内存与虚拟内存",
+      "分页"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os022",
+    "subjectId": "os",
+    "chapterId": "os-memory",
+    "chapterName": "内存与虚拟内存",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "在“内存与虚拟内存”主题中，下列哪个术语与“访问页不在物理内存时触发的异常处理”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "TLB"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "虚拟内存"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "页面置换"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "缺页异常"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "缺页异常：访问页不在物理内存时触发的异常处理。",
+    "difficulty": 2,
+    "tags": [
+      "内存与虚拟内存",
+      "缺页异常"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os023",
+    "subjectId": "os",
+    "chapterId": "os-memory",
+    "chapterName": "内存与虚拟内存",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "在“内存与虚拟内存”主题中，关于“TLB”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "物理页不足时选择页面换出的机制"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "按逻辑意义把地址空间划分为可变长度区域"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "缓存近期虚拟页到物理页的地址转换"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "为进程提供独立连续地址空间并按需映射存储"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "TLB：缓存近期虚拟页到物理页的地址转换。",
+    "difficulty": 1,
+    "tags": [
+      "内存与虚拟内存",
+      "TLB"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os024",
+    "subjectId": "os",
+    "chapterId": "os-memory",
+    "chapterName": "内存与虚拟内存",
+    "chapterOrder": 3,
+    "type": "multiple",
+    "stem": "围绕“虚拟内存”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "文件描述符：按逻辑意义把地址空间划分为可变长度区域"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "虚拟内存：为进程提供独立连续地址空间并按需映射存储"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "页面置换：物理页不足时选择页面换出的机制"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "分段：进程访问已打开文件或设备的整数索引"
+      }
+    ],
+    "correctOptionIds": [
+      "B",
+      "C"
+    ],
+    "explanation": "正确配对是“虚拟内存—为进程提供独立连续地址空间并按需映射存储”和“页面置换—物理页不足时选择页面换出的机制”。",
+    "difficulty": 1,
+    "tags": [
+      "内存与虚拟内存",
+      "虚拟内存"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os025",
+    "subjectId": "os",
+    "chapterId": "os-memory",
+    "chapterName": "内存与虚拟内存",
+    "chapterOrder": 3,
+    "type": "judge",
+    "stem": "判断：页面置换是指“物理页不足时选择页面换出的机制”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "页面置换的准确含义是：物理页不足时选择页面换出的机制。",
+    "difficulty": 2,
+    "tags": [
+      "内存与虚拟内存",
+      "页面置换"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os026",
+    "subjectId": "os",
+    "chapterId": "os-memory",
+    "chapterName": "内存与虚拟内存",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "在“内存与虚拟内存”主题中，下列哪个术语与“按逻辑意义把地址空间划分为可变长度区域”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "文件描述符"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "目录"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "inode"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "分段"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "分段：按逻辑意义把地址空间划分为可变长度区域。",
+    "difficulty": 2,
+    "tags": [
+      "内存与虚拟内存",
+      "分段"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os027",
+    "subjectId": "os",
+    "chapterId": "os-memory",
+    "chapterName": "内存与虚拟内存",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "再次辨析“内存与虚拟内存”时，关于“分页”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "缓存近期虚拟页到物理页的地址转换"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "为进程提供独立连续地址空间并按需映射存储"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "把地址空间和物理内存划分为固定大小块进行映射"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "访问页不在物理内存时触发的异常处理"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "分页：把地址空间和物理内存划分为固定大小块进行映射。",
+    "difficulty": 1,
+    "tags": [
+      "内存与虚拟内存",
+      "分页"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os028",
+    "subjectId": "os",
+    "chapterId": "os-memory",
+    "chapterName": "内存与虚拟内存",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "再次辨析“内存与虚拟内存”时，下列哪个术语与“访问页不在物理内存时触发的异常处理”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "页面置换"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "缺页异常"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "TLB"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "虚拟内存"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "缺页异常：访问页不在物理内存时触发的异常处理。",
+    "difficulty": 3,
+    "tags": [
+      "内存与虚拟内存",
+      "缺页异常"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os029",
+    "subjectId": "os",
+    "chapterId": "os-memory",
+    "chapterName": "内存与虚拟内存",
+    "chapterOrder": 3,
+    "type": "multiple",
+    "stem": "再次围绕“TLB”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "TLB：缓存近期虚拟页到物理页的地址转换"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "虚拟内存：为进程提供独立连续地址空间并按需映射存储"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "页面置换：按逻辑意义把地址空间划分为可变长度区域"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "分段：物理页不足时选择页面换出的机制"
+      }
+    ],
+    "correctOptionIds": [
+      "A",
+      "B"
+    ],
+    "explanation": "正确配对是“TLB—缓存近期虚拟页到物理页的地址转换”和“虚拟内存—为进程提供独立连续地址空间并按需映射存储”。",
+    "difficulty": 2,
+    "tags": [
+      "内存与虚拟内存",
+      "TLB"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os030",
+    "subjectId": "os",
+    "chapterId": "os-memory",
+    "chapterName": "内存与虚拟内存",
+    "chapterOrder": 3,
+    "type": "judge",
+    "stem": "再次判断：虚拟内存是指“物理页不足时选择页面换出的机制”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "虚拟内存的准确含义是：为进程提供独立连续地址空间并按需映射存储。",
+    "difficulty": 1,
+    "tags": [
+      "内存与虚拟内存",
+      "虚拟内存"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os031",
+    "subjectId": "os",
+    "chapterId": "os-memory",
+    "chapterName": "内存与虚拟内存",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "再次辨析“内存与虚拟内存”时，关于“页面置换”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "进程访问已打开文件或设备的整数索引"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "把文件名映射到文件标识的特殊文件结构"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "物理页不足时选择页面换出的机制"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "按逻辑意义把地址空间划分为可变长度区域"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "页面置换：物理页不足时选择页面换出的机制。",
+    "difficulty": 1,
+    "tags": [
+      "内存与虚拟内存",
+      "页面置换"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os032",
+    "subjectId": "os",
+    "chapterId": "os-memory",
+    "chapterName": "内存与虚拟内存",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "再次辨析“内存与虚拟内存”时，下列哪个术语与“按逻辑意义把地址空间划分为可变长度区域”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "inode"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "分段"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "文件描述符"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "目录"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "分段：按逻辑意义把地址空间划分为可变长度区域。",
+    "difficulty": 3,
+    "tags": [
+      "内存与虚拟内存",
+      "分段"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os033",
+    "subjectId": "os",
+    "chapterId": "os-filesystem",
+    "chapterName": "文件系统与存储",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "在“文件系统与存储”主题中，下列哪个术语与“进程访问已打开文件或设备的整数索引”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "文件描述符"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "目录"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "inode"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "日志文件系统"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "文件描述符：进程访问已打开文件或设备的整数索引。",
+    "difficulty": 2,
+    "tags": [
+      "文件系统与存储",
+      "文件描述符"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os034",
+    "subjectId": "os",
+    "chapterId": "os-filesystem",
+    "chapterName": "文件系统与存储",
+    "chapterOrder": 4,
+    "type": "multiple",
+    "stem": "围绕“目录”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "inode：类 Unix 文件系统中保存文件元数据的数据结构"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "日志文件系统：调整磁盘请求顺序以降低寻道等访问成本"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "磁盘调度：先记录元数据更新以提升崩溃恢复能力"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "目录：把文件名映射到文件标识的特殊文件结构"
+      }
+    ],
+    "correctOptionIds": [
+      "A",
+      "D"
+    ],
+    "explanation": "正确配对是“目录—把文件名映射到文件标识的特殊文件结构”和“inode—类 Unix 文件系统中保存文件元数据的数据结构”。",
+    "difficulty": 1,
+    "tags": [
+      "文件系统与存储",
+      "目录"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os035",
+    "subjectId": "os",
+    "chapterId": "os-filesystem",
+    "chapterName": "文件系统与存储",
+    "chapterOrder": 4,
+    "type": "judge",
+    "stem": "判断：inode是指“类 Unix 文件系统中保存文件元数据的数据结构”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "inode的准确含义是：类 Unix 文件系统中保存文件元数据的数据结构。",
+    "difficulty": 1,
+    "tags": [
+      "文件系统与存储",
+      "inode"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os036",
+    "subjectId": "os",
+    "chapterId": "os-filesystem",
+    "chapterName": "文件系统与存储",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "在“文件系统与存储”主题中，关于“日志文件系统”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "设备在控制器协助下直接与内存交换数据"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "先记录元数据更新以提升崩溃恢复能力"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "调整磁盘请求顺序以降低寻道等访问成本"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "设备或事件通知 CPU 暂停当前流程并执行处理程序"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "日志文件系统：先记录元数据更新以提升崩溃恢复能力。",
+    "difficulty": 3,
+    "tags": [
+      "文件系统与存储",
+      "日志文件系统"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os037",
+    "subjectId": "os",
+    "chapterId": "os-filesystem",
+    "chapterName": "文件系统与存储",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "在“文件系统与存储”主题中，下列哪个术语与“调整磁盘请求顺序以降低寻道等访问成本”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "磁盘调度"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "中断"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "DMA"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "缓冲"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "磁盘调度：调整磁盘请求顺序以降低寻道等访问成本。",
+    "difficulty": 2,
+    "tags": [
+      "文件系统与存储",
+      "磁盘调度"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os038",
+    "subjectId": "os",
+    "chapterId": "os-filesystem",
+    "chapterName": "文件系统与存储",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "再次辨析“文件系统与存储”时，关于“文件描述符”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "把文件名映射到文件标识的特殊文件结构"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "类 Unix 文件系统中保存文件元数据的数据结构"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "先记录元数据更新以提升崩溃恢复能力"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "进程访问已打开文件或设备的整数索引"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "文件描述符：进程访问已打开文件或设备的整数索引。",
+    "difficulty": 1,
+    "tags": [
+      "文件系统与存储",
+      "文件描述符"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os039",
+    "subjectId": "os",
+    "chapterId": "os-filesystem",
+    "chapterName": "文件系统与存储",
+    "chapterOrder": 4,
+    "type": "multiple",
+    "stem": "再次围绕“目录”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "日志文件系统：调整磁盘请求顺序以降低寻道等访问成本"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "磁盘调度：先记录元数据更新以提升崩溃恢复能力"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "目录：把文件名映射到文件标识的特殊文件结构"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "inode：类 Unix 文件系统中保存文件元数据的数据结构"
+      }
+    ],
+    "correctOptionIds": [
+      "C",
+      "D"
+    ],
+    "explanation": "正确配对是“目录—把文件名映射到文件标识的特殊文件结构”和“inode—类 Unix 文件系统中保存文件元数据的数据结构”。",
+    "difficulty": 1,
+    "tags": [
+      "文件系统与存储",
+      "目录"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os040",
+    "subjectId": "os",
+    "chapterId": "os-filesystem",
+    "chapterName": "文件系统与存储",
+    "chapterOrder": 4,
+    "type": "judge",
+    "stem": "再次判断：inode是指“先记录元数据更新以提升崩溃恢复能力”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "inode的准确含义是：类 Unix 文件系统中保存文件元数据的数据结构。",
+    "difficulty": 3,
+    "tags": [
+      "文件系统与存储",
+      "inode"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os041",
+    "subjectId": "os",
+    "chapterId": "os-filesystem",
+    "chapterName": "文件系统与存储",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "再次辨析“文件系统与存储”时，下列哪个术语与“先记录元数据更新以提升崩溃恢复能力”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "日志文件系统"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "磁盘调度"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "中断"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "DMA"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "日志文件系统：先记录元数据更新以提升崩溃恢复能力。",
+    "difficulty": 2,
+    "tags": [
+      "文件系统与存储",
+      "日志文件系统"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os042",
+    "subjectId": "os",
+    "chapterId": "os-filesystem",
+    "chapterName": "文件系统与存储",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "再次辨析“文件系统与存储”时，关于“磁盘调度”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "设备或事件通知 CPU 暂停当前流程并执行处理程序"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "设备在控制器协助下直接与内存交换数据"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "用临时存储协调生产者与消费者速度差异"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "调整磁盘请求顺序以降低寻道等访问成本"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "磁盘调度：调整磁盘请求顺序以降低寻道等访问成本。",
+    "difficulty": 1,
+    "tags": [
+      "文件系统与存储",
+      "磁盘调度"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os043",
+    "subjectId": "os",
+    "chapterId": "os-io",
+    "chapterName": "I/O 与安全基础",
+    "chapterOrder": 5,
+    "type": "single",
+    "stem": "在“I/O 与安全基础”主题中，关于“中断”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "用临时存储协调生产者与消费者速度差异"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "用户程序请求内核受控服务的接口"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "设备或事件通知 CPU 暂停当前流程并执行处理程序"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "设备在控制器协助下直接与内存交换数据"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "中断：设备或事件通知 CPU 暂停当前流程并执行处理程序。",
+    "difficulty": 1,
+    "tags": [
+      "I/O 与安全基础",
+      "中断"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os044",
+    "subjectId": "os",
+    "chapterId": "os-io",
+    "chapterName": "I/O 与安全基础",
+    "chapterOrder": 5,
+    "type": "multiple",
+    "stem": "围绕“DMA”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "进程：用户程序请求内核受控服务的接口"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "DMA：设备在控制器协助下直接与内存交换数据"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "缓冲：用临时存储协调生产者与消费者速度差异"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "系统调用：拥有独立地址空间和资源的程序执行实例"
+      }
+    ],
+    "correctOptionIds": [
+      "B",
+      "C"
+    ],
+    "explanation": "正确配对是“DMA—设备在控制器协助下直接与内存交换数据”和“缓冲—用临时存储协调生产者与消费者速度差异”。",
+    "difficulty": 2,
+    "tags": [
+      "I/O 与安全基础",
+      "DMA"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os045",
+    "subjectId": "os",
+    "chapterId": "os-io",
+    "chapterName": "I/O 与安全基础",
+    "chapterOrder": 5,
+    "type": "judge",
+    "stem": "判断：缓冲是指“用临时存储协调生产者与消费者速度差异”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "缓冲的准确含义是：用临时存储协调生产者与消费者速度差异。",
+    "difficulty": 2,
+    "tags": [
+      "I/O 与安全基础",
+      "缓冲"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os046",
+    "subjectId": "os",
+    "chapterId": "os-io",
+    "chapterName": "I/O 与安全基础",
+    "chapterOrder": 5,
+    "type": "single",
+    "stem": "在“I/O 与安全基础”主题中，下列哪个术语与“用户程序请求内核受控服务的接口”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "进程"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "线程"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "PCB"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "系统调用"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "系统调用：用户程序请求内核受控服务的接口。",
+    "difficulty": 1,
+    "tags": [
+      "I/O 与安全基础",
+      "系统调用"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os047",
+    "subjectId": "os",
+    "chapterId": "os-io",
+    "chapterName": "I/O 与安全基础",
+    "chapterOrder": 5,
+    "type": "single",
+    "stem": "再次辨析“I/O 与安全基础”时，关于“中断”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "用临时存储协调生产者与消费者速度差异"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "用户程序请求内核受控服务的接口"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "设备或事件通知 CPU 暂停当前流程并执行处理程序"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "设备在控制器协助下直接与内存交换数据"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "中断：设备或事件通知 CPU 暂停当前流程并执行处理程序。",
+    "difficulty": 1,
+    "tags": [
+      "I/O 与安全基础",
+      "中断"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os048",
+    "subjectId": "os",
+    "chapterId": "os-io",
+    "chapterName": "I/O 与安全基础",
+    "chapterOrder": 5,
+    "type": "single",
+    "stem": "再次辨析“I/O 与安全基础”时，下列哪个术语与“设备在控制器协助下直接与内存交换数据”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "进程"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "DMA"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "缓冲"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "系统调用"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "DMA：设备在控制器协助下直接与内存交换数据。",
+    "difficulty": 2,
+    "tags": [
+      "I/O 与安全基础",
+      "DMA"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os049",
+    "subjectId": "os",
+    "chapterId": "os-io",
+    "chapterName": "I/O 与安全基础",
+    "chapterOrder": 5,
+    "type": "multiple",
+    "stem": "再次围绕“缓冲”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "缓冲：用临时存储协调生产者与消费者速度差异"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "系统调用：用户程序请求内核受控服务的接口"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "进程：进程内可被调度的执行单元并共享进程资源"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "线程：拥有独立地址空间和资源的程序执行实例"
+      }
+    ],
+    "correctOptionIds": [
+      "A",
+      "B"
+    ],
+    "explanation": "正确配对是“缓冲—用临时存储协调生产者与消费者速度差异”和“系统调用—用户程序请求内核受控服务的接口”。",
+    "difficulty": 2,
+    "tags": [
+      "I/O 与安全基础",
+      "缓冲"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "os050",
+    "subjectId": "os",
+    "chapterId": "os-io",
+    "chapterName": "I/O 与安全基础",
+    "chapterOrder": 5,
+    "type": "judge",
+    "stem": "再次判断：系统调用是指“拥有独立地址空间和资源的程序执行实例”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "系统调用的准确含义是：用户程序请求内核受控服务的接口。",
+    "difficulty": 1,
+    "tags": [
+      "I/O 与安全基础",
+      "系统调用"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  }
+]

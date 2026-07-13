@@ -1,0 +1,13 @@
+@import "../../common.wxss";
+.top-title,.top-subtitle,.exam-score,.exam-date,.status { display:block; }
+.top-title { font-size:42rpx; font-weight:800; }
+.top-subtitle { margin-top:12rpx; color:#64748b; line-height:1.6; }
+.exam-list { margin-top:28rpx; }
+.exam-card { display:flex; align-items:center; justify-content:space-between; margin-bottom:20rpx; padding:28rpx; }
+.exam-score { font-size:32rpx; font-weight:800; }
+.exam-date { margin-top:8rpx; color:#718096; font-size:23rpx; }
+.exam-side { display:flex; align-items:center; gap:18rpx; }
+.status { padding:8rpx 14rpx; border-radius:18rpx; color:#166534; background:#dcfce7; font-size:22rpx; }
+.status.active { color:#9d174d; background:#fce7f3; }
+.arrow { color:#94a3b8; font-size:46rpx; }
+.error-action { margin-top:24rpx; }

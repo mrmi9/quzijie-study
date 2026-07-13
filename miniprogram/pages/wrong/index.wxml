@@ -1,0 +1,28 @@
+<view class="page-shell records-page safe-bottom">
+  <text class="page-title">全局错题本</text>
+  <text class="page-subtitle">按学科和掌握状态筛选，考试错题也会汇总到这里。</text>
+  <scroll-view class="filter-scroll" scroll-x="true">
+    <view class="filter-row">
+      <view wx:for="{{subjectFilters}}" wx:key="id" class="filter-chip {{subjectId === item.id ? 'active' : ''}}" data-id="{{item.id}}" bindtap="changeSubject">{{item.name}}</view>
+    </view>
+  </scroll-view>
+  <view class="mastery-row">
+    <view class="mastery {{mastery === 'all' ? 'active' : ''}}" data-value="all" bindtap="changeMastery">全部</view>
+    <view class="mastery {{mastery === 'unmastered' ? 'active' : ''}}" data-value="unmastered" bindtap="changeMastery">未掌握</view>
+    <view class="mastery {{mastery === 'mastered' ? 'active' : ''}}" data-value="mastered" bindtap="changeMastery">已掌握</view>
+  </view>
+  <view wx:if="{{loading}}" class="loading-state">正在加载错题...</view>
+  <view wx:elif="{{error}}" class="error-state">{{error}}</view>
+  <view wx:elif="{{questions.length === 0}}" class="empty-state card">当前筛选下没有错题</view>
+  <view wx:else>
+    <view class="record-card card" wx:for="{{questions}}" wx:key="id">
+      <view class="record-head"><text class="pill">{{item.subjectName}} · {{item.chapterName}}</text><text class="status {{item.wrong.mastered ? 'mastered' : ''}}">{{item.wrong.mastered ? '已掌握' : '未掌握'}}</text></view>
+      <text class="stem">{{item.stem}}</text>
+      <scroll-view wx:if="{{item.code}}" class="record-code" scroll-x="true"><text>{{item.code}}</text></scroll-view>
+      <view class="record-images" wx:if="{{item.images.length}}"><view wx:for="{{item.images}}" wx:key="src" wx:for-item="imageItem"><image class="record-image" src="{{imageItem.src}}" mode="widthFix" data-src="{{imageItem.src}}" bindtap="previewImage"></image><text class="image-alt">{{imageItem.alt}}</text></view></view>
+      <text class="answer">正确答案：{{item.answerText}}</text>
+      <text class="explanation">{{item.explanation}}</text>
+    </view>
+  </view>
+  <view class="bottom-action"><button class="primary-button" disabled="{{!subjectId || questions.length === 0}}" bindtap="startReview">按当前学科重做</button></view>
+</view>

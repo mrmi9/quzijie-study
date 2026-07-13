@@ -1,5 +1,5 @@
 <view class="page-shell cpp-page wrong-page safe-bottom">
-  <text class="top-title">错题本</text>
+  <text class="top-title">{{subjectName}} 错题本</text>
   <text class="top-subtitle">错题答对后保留历史并标记为已掌握；以后再次答错会恢复为未掌握。</text>
 
   <view class="filter-bar">
@@ -26,6 +26,7 @@
       </view>
       <text class="review-stem">{{item.stem}}</text>
       <scroll-view wx:if="{{item.code}}" class="review-code" scroll-x="true"><text>{{item.code}}</text></scroll-view>
+      <view class="review-images" wx:if="{{item.images.length}}"><view wx:for="{{item.images}}" wx:key="src" wx:for-item="imageItem"><image class="review-image" src="{{imageItem.src}}" mode="widthFix" data-src="{{imageItem.src}}" bindtap="previewImage"></image><text class="review-image-alt">{{imageItem.alt}}</text></view></view>
       <text class="review-answer">正确答案：{{item.correctText}}</text>
       <text class="review-explanation">{{item.explanation}}</text>
       <text class="wrong-count">累计答错 {{item.wrong.wrongCount}} 次</text>

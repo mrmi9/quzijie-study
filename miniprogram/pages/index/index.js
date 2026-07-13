@@ -1,21 +1,45 @@
+const auth = require('../../utils/auth');
+const repository = require('../../services/practiceRepository');
+
 Page({
-  data: {
-    modules: [
-      { id: 'cpp', name: 'C/C++', subtitle: '语言基础与面向对象', enabled: true, color: '#2563eb' },
-      { id: 'os', name: 'Linux / 操作系统', subtitle: '由团队其他成员建设', enabled: false, color: '#7c3aed' },
-      { id: 'ds', name: '数据结构', subtitle: '由团队其他成员建设', enabled: false, color: '#059669' },
-      { id: 'network', name: '计网 / STL', subtitle: '由团队其他成员建设', enabled: false, color: '#ea580c' },
-      { id: 'postgraduate', name: '考研', subtitle: '由团队其他成员建设', enabled: false, color: '#db2777' }
-    ]
+  data: { loading: true, error: '', overview: null, modules: [] },
+
+  onShow() {
+    if (!auth.requireLogin('/pages/index/index')) return;
+    this.loadOverview();
+  },
+
+  onPullDownRefresh() {
+    this.loadOverview().finally(() => wx.stopPullDownRefresh());
+  },
+
+  loadOverview() {
+    this.setData({ loading: true, error: '' });
+    return repository.getLearningOverview()
+      .then((overview) => this.setData({ overview, modules: overview.modules, loading: false }))
+      .catch((error) => this.setData({ loading: false, error: error.message || '学习数据加载失败' }));
   },
 
   openModule(event) {
     const moduleId = event.currentTarget.dataset.id;
     const item = this.data.modules.find((module) => module.id === moduleId);
-    if (!item || !item.enabled) {
-      wx.showToast({ title: '模块建设中', icon: 'none' });
-      return;
+    if (!item) return;
+    if (item.type === 'exam') {
+      wx.navigateTo({ url: '/modules/cpp/pages/exam-home/index' });
+    } else if (item.type === 'group') {
+      wx.navigateTo({ url: `/modules/cpp/pages/tracks/index?groupId=${item.id}` });
+    } else {
+      wx.navigateTo({ url: `/modules/cpp/pages/home/index?subjectId=${item.subjectIds[0]}` });
     }
-    wx.navigateTo({ url: '/modules/cpp/pages/home/index' });
+  },
+
+  continueSession() {
+    const active = this.data.overview && this.data.overview.activeSession;
+    if (active) wx.navigateTo({ url: `/modules/cpp/pages/practice/index?sessionId=${active.id}` });
+  },
+
+  continueExam() {
+    const active = this.data.overview && this.data.overview.activeExam;
+    if (active) wx.navigateTo({ url: `/modules/cpp/pages/exam/index?examId=${active.id}` });
   }
 });

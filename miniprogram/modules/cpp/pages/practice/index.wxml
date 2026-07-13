@@ -17,12 +17,19 @@
     <view class="question-card card">
       <view class="question-meta">
         <text class="pill">{{question.typeName}}</text>
-        <text class="difficulty">难度 {{question.difficulty}} / 3</text>
+        <text class="difficulty">难度：{{question.difficultyName}}</text>
       </view>
       <text class="question-stem">{{question.stem}}</text>
       <scroll-view wx:if="{{question.code}}" class="code-block" scroll-x="true">
         <text selectable="true">{{question.code}}</text>
       </scroll-view>
+      <view wx:if="{{question.images.length}}" class="question-images">
+        <view class="question-image-wrap" wx:for="{{question.images}}" wx:key="src" wx:for-item="imageItem">
+          <image class="question-image" src="{{imageItem.src}}" mode="widthFix" data-src="{{imageItem.src}}" bindtap="previewImage"></image>
+          <text class="image-alt">{{imageItem.alt}}</text>
+          <text wx:if="{{imageItem.caption}}" class="image-caption">{{imageItem.caption}}</text>
+        </view>
+      </view>
       <view class="tag-row">
         <text wx:for="{{question.tags}}" wx:key="*this" class="tag"># {{item}}</text>
       </view>

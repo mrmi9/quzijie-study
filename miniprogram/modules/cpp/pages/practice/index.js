@@ -1,11 +1,9 @@
 const auth = require('../../../../utils/auth');
-const repository = require('../../../../services/cppRepository');
+const repository = require('../../../../services/practiceRepository');
+const registry = require('../../../../config/subjectRegistry');
 
-const TYPE_NAMES = {
-  single: '单选题',
-  multiple: '多选题',
-  judge: '判断题'
-};
+const TYPE_NAMES = { single: '单选题', multiple: '多选题', judge: '判断题' };
+const DIFFICULTY_NAMES = { 1: '基础', 2: '进阶', 3: '难题' };
 
 Page({
   data: {
@@ -35,7 +33,7 @@ Page({
 
   loadSession() {
     this.setData({ loading: true, error: '' });
-    repository.getSession(this.sessionId)
+    return repository.getSession(this.sessionId)
       .then((session) => {
         if (session.status === 'completed') {
           wx.redirectTo({ url: `/modules/cpp/pages/result/index?sessionId=${session.id}` });
@@ -45,7 +43,9 @@ Page({
           this.setData({ loading: false, error: '这组练习已被新的练习替代，请返回首页重新开始。' });
           return;
         }
-        const currentIndex = Math.min(session.answeredCount, session.totalCount - 1);
+        const subject = registry.getSubject(session.subjectId || session.subject);
+        if (subject) wx.setNavigationBarTitle({ title: `${subject.name} 答题` });
+        const currentIndex = Math.min(session.currentIndex === undefined ? session.answeredCount : session.currentIndex, session.totalCount - 1);
         this.setData({ session, currentIndex, loading: false });
         this.showCurrentQuestion();
       })
@@ -61,23 +61,22 @@ Page({
   },
 
   draftKey(questionId) {
-    return `cpp_draft_${this.sessionId}_${questionId}`;
+    return `practice_draft_${this.sessionId}_${questionId}`;
   },
 
   showCurrentQuestion() {
     const session = this.data.session;
     const question = session.questions[this.data.currentIndex];
     const savedResult = session.answers[question.id] || null;
-    const selected = savedResult
-      ? savedResult.selectedOptionIds
-      : (wx.getStorageSync(this.draftKey(question.id)) || []);
+    const selected = savedResult ? savedResult.selectedOptionIds : (wx.getStorageSync(this.draftKey(question.id)) || []);
     this.clientAnswerId = '';
     this.renderQuestion(question, selected, savedResult);
   },
 
   renderQuestion(question, selectedIds, result) {
     const reviewed = Boolean(result);
-    const options = question.options.map((option) => {
+    const rawOptions = question.options.map((option) => ({ id: option.id, label: option.label, text: option.text }));
+    const options = rawOptions.map((option) => {
       const selected = selectedIds.includes(option.id);
       const correct = reviewed && result.correctOptionIds.includes(option.id);
       let stateClass = selected ? 'option-selected' : '';
@@ -87,14 +86,11 @@ Page({
     });
     const decoratedQuestion = Object.assign({}, question, {
       typeName: TYPE_NAMES[question.type],
+      difficultyName: DIFFICULTY_NAMES[question.difficulty] || question.difficulty,
       options
     });
     const correctAnswerText = reviewed
-      ? result.correctOptionIds
-          .map((id) => question.options.find((option) => option.id === id))
-          .filter(Boolean)
-          .map((option) => option.label)
-          .join('、')
+      ? result.correctOptionIds.map((id) => rawOptions.find((option) => option.id === id)).filter(Boolean).map((option) => option.label).join('、')
       : '';
     const completedOffset = this.data.currentIndex + (reviewed ? 1 : 0);
     this.setData({
@@ -115,9 +111,7 @@ Page({
     const question = this.data.question;
     let selected = this.data.selectedOptionIds.slice();
     if (question.type === 'multiple') {
-      selected = selected.includes(optionId)
-        ? selected.filter((id) => id !== optionId)
-        : selected.concat(optionId);
+      selected = selected.includes(optionId) ? selected.filter((id) => id !== optionId) : selected.concat(optionId);
     } else {
       selected = [optionId];
     }
@@ -125,12 +119,16 @@ Page({
     this.renderQuestion(question, selected, null);
   },
 
+  previewImage(event) {
+    const current = event.currentTarget.dataset.src;
+    const urls = (this.data.question.images || []).map((item) => item.src);
+    if (current && urls.length) wx.previewImage({ current, urls });
+  },
+
   submitAnswer() {
     if (!this.data.selectedOptionIds.length || this.data.submitting || this.data.reviewed) return;
     const question = this.data.question;
-    if (!this.clientAnswerId) {
-      this.clientAnswerId = `${this.sessionId}_${question.id}_${Date.now()}`;
-    }
+    if (!this.clientAnswerId) this.clientAnswerId = `${this.sessionId}_${question.id}_${Date.now()}`;
     this.setData({ submitting: true });
     repository.submitAnswer(this.sessionId, {
       questionId: question.id,
@@ -145,19 +143,16 @@ Page({
       this.renderQuestion(question, this.data.selectedOptionIds, result);
     }).catch((error) => {
       this.setData({ submitting: false });
-      wx.showModal({
-        title: '提交失败',
-        content: `${error.message || '请检查网络后重试'}\n你的选择已保留。`,
-        showCancel: false
-      });
+      wx.showModal({ title: '提交失败', content: `${error.message || '请检查网络后重试'}\n你的选择已保留。`, showCancel: false });
     });
   },
 
   toggleFavorite() {
     if (!this.data.reviewed || this.data.favoriteLoading) return;
     const favorite = !this.data.question.isFavorite;
+    const subjectId = this.data.question.subjectId;
     this.setData({ favoriteLoading: true });
-    repository.setFavorite(this.data.question.id, favorite)
+    repository.setFavorite(subjectId, this.data.question.id, favorite)
       .then(() => {
         const session = this.data.session;
         session.questions[this.data.currentIndex].isFavorite = favorite;
@@ -185,9 +180,7 @@ Page({
   finishPractice() {
     this.setData({ submitting: true });
     repository.finishSession(this.sessionId)
-      .then(() => {
-        wx.redirectTo({ url: `/modules/cpp/pages/result/index?sessionId=${this.sessionId}` });
-      })
+      .then(() => wx.redirectTo({ url: `/modules/cpp/pages/result/index?sessionId=${this.sessionId}` }))
       .catch((error) => {
         this.setData({ submitting: false });
         wx.showToast({ title: error.message || '交卷失败', icon: 'none' });

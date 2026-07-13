@@ -14,7 +14,7 @@ function createError(message, code, statusCode, details) {
 function currentPageUrl() {
   const pages = getCurrentPages();
   const page = pages[pages.length - 1];
-  if (!page || !page.route) return '/modules/cpp/pages/home/index';
+  if (!page || !page.route) return '/pages/index/index';
   const query = Object.keys(page.options || {})
     .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(page.options[key])}`)
     .join('&');

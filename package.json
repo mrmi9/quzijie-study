@@ -1,9 +1,10 @@
 {
   "name": "quzijie-practice",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "趣字节刷题微信小程序 C/C++ 模块",
+  "description": "趣字节刷题全学科微信小程序与 408 客观题模拟",
   "scripts": {
+    "generate:data": "node tools/generate-question-banks.js",
     "build:data": "node tools/build-question-module.js",
     "validate:data": "node tools/validate-questions.js",
     "check:js": "node tools/check-js.js",

@@ -1,3 +1,4 @@
 {
-  "navigationBarTitleText": "趣字节刷题"
+  "navigationBarTitleText": "趣字节刷题",
+  "enablePullDownRefresh": true
 }

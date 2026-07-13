@@ -1,6 +1,6 @@
 <view class="page-shell login-page">
   <view class="login-card card">
-    <view class="logo">C/C++</view>
+    <view class="logo">趣字节</view>
     <text class="title">登录后开始刷题</text>
     <text class="description">登录用于同步练习进度、错题和收藏。首版不保存游客答题记录。</text>
     <view wx:if="{{isMock}}" class="mock-tip">当前为 Mock 演示模式，点击后使用本地演示账号。</view>

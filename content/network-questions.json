@@ -1,0 +1,2212 @@
+[
+  {
+    "id": "net001",
+    "subjectId": "network",
+    "chapterId": "net-architecture",
+    "chapterName": "体系结构",
+    "chapterOrder": 1,
+    "type": "single",
+    "stem": "在“体系结构”主题中，关于“协议”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "通信双方约定的语法、语义和同步规则"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "下层通过接口向上层提供的通信能力"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "逐层为上层数据添加本层控制信息"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "信道可用频率范围或数字链路的最大传输能力"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "协议：通信双方约定的语法、语义和同步规则。",
+    "difficulty": 1,
+    "tags": [
+      "体系结构",
+      "协议"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net002",
+    "subjectId": "network",
+    "chapterId": "net-architecture",
+    "chapterName": "体系结构",
+    "chapterOrder": 1,
+    "type": "single",
+    "stem": "在“体系结构”主题中，下列哪个术语与“下层通过接口向上层提供的通信能力”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "封装"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "带宽"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "码元"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "服务"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "服务：下层通过接口向上层提供的通信能力。",
+    "difficulty": 2,
+    "tags": [
+      "体系结构",
+      "服务"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net003",
+    "subjectId": "network",
+    "chapterId": "net-architecture",
+    "chapterName": "体系结构",
+    "chapterOrder": 1,
+    "type": "single",
+    "stem": "在“体系结构”主题中，关于“封装”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "承载离散信息的基本信号波形"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "限制理想低通信道无串扰最高码元速率"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "逐层为上层数据添加本层控制信息"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "信道可用频率范围或数字链路的最大传输能力"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "封装：逐层为上层数据添加本层控制信息。",
+    "difficulty": 1,
+    "tags": [
+      "体系结构",
+      "封装"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net004",
+    "subjectId": "network",
+    "chapterId": "net-architecture",
+    "chapterName": "体系结构",
+    "chapterOrder": 1,
+    "type": "multiple",
+    "stem": "再次围绕“协议”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "带宽：逐层为上层数据添加本层控制信息"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "协议：通信双方约定的语法、语义和同步规则"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "服务：下层通过接口向上层提供的通信能力"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "封装：信道可用频率范围或数字链路的最大传输能力"
+      }
+    ],
+    "correctOptionIds": [
+      "B",
+      "C"
+    ],
+    "explanation": "正确配对是“协议—通信双方约定的语法、语义和同步规则”和“服务—下层通过接口向上层提供的通信能力”。",
+    "difficulty": 1,
+    "tags": [
+      "体系结构",
+      "协议"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net005",
+    "subjectId": "network",
+    "chapterId": "net-architecture",
+    "chapterName": "体系结构",
+    "chapterOrder": 1,
+    "type": "judge",
+    "stem": "再次判断：服务是指“下层通过接口向上层提供的通信能力”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "服务的准确含义是：下层通过接口向上层提供的通信能力。",
+    "difficulty": 3,
+    "tags": [
+      "体系结构",
+      "服务"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net006",
+    "subjectId": "network",
+    "chapterId": "net-architecture",
+    "chapterName": "体系结构",
+    "chapterOrder": 1,
+    "type": "single",
+    "stem": "再次辨析“体系结构”时，下列哪个术语与“逐层为上层数据添加本层控制信息”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "带宽"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "码元"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "奈奎斯特准则"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "封装"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "封装：逐层为上层数据添加本层控制信息。",
+    "difficulty": 2,
+    "tags": [
+      "体系结构",
+      "封装"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net007",
+    "subjectId": "network",
+    "chapterId": "net-physical",
+    "chapterName": "物理层",
+    "chapterOrder": 2,
+    "type": "single",
+    "stem": "在“物理层”主题中，下列哪个术语与“信道可用频率范围或数字链路的最大传输能力”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "奈奎斯特准则"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "帧"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "带宽"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "码元"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "带宽：信道可用频率范围或数字链路的最大传输能力。",
+    "difficulty": 1,
+    "tags": [
+      "物理层",
+      "带宽"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net008",
+    "subjectId": "network",
+    "chapterId": "net-physical",
+    "chapterName": "物理层",
+    "chapterOrder": 2,
+    "type": "single",
+    "stem": "在“物理层”主题中，关于“码元”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "局域网接口在链路层使用的地址标识"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "承载离散信息的基本信号波形"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "限制理想低通信道无串扰最高码元速率"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "数据链路层传输的数据单元"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "码元：承载离散信息的基本信号波形。",
+    "difficulty": 1,
+    "tags": [
+      "物理层",
+      "码元"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net009",
+    "subjectId": "network",
+    "chapterId": "net-physical",
+    "chapterName": "物理层",
+    "chapterOrder": 2,
+    "type": "multiple",
+    "stem": "围绕“奈奎斯特准则”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "奈奎斯特准则：限制理想低通信道无串扰最高码元速率"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "帧：数据链路层传输的数据单元"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "MAC 地址：利用多项式除法检测传输差错的方法"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "CRC：局域网接口在链路层使用的地址标识"
+      }
+    ],
+    "correctOptionIds": [
+      "A",
+      "B"
+    ],
+    "explanation": "正确配对是“奈奎斯特准则—限制理想低通信道无串扰最高码元速率”和“帧—数据链路层传输的数据单元”。",
+    "difficulty": 3,
+    "tags": [
+      "物理层",
+      "奈奎斯特准则"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net010",
+    "subjectId": "network",
+    "chapterId": "net-physical",
+    "chapterName": "物理层",
+    "chapterOrder": 2,
+    "type": "judge",
+    "stem": "再次判断：带宽是指“承载离散信息的基本信号波形”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "带宽的准确含义是：信道可用频率范围或数字链路的最大传输能力。",
+    "difficulty": 2,
+    "tags": [
+      "物理层",
+      "带宽"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net011",
+    "subjectId": "network",
+    "chapterId": "net-physical",
+    "chapterName": "物理层",
+    "chapterOrder": 2,
+    "type": "single",
+    "stem": "再次辨析“物理层”时，下列哪个术语与“承载离散信息的基本信号波形”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "帧"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "MAC 地址"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "码元"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "奈奎斯特准则"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "码元：承载离散信息的基本信号波形。",
+    "difficulty": 1,
+    "tags": [
+      "物理层",
+      "码元"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net012",
+    "subjectId": "network",
+    "chapterId": "net-physical",
+    "chapterName": "物理层",
+    "chapterOrder": 2,
+    "type": "single",
+    "stem": "再次辨析“物理层”时，关于“奈奎斯特准则”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "利用多项式除法检测传输差错的方法"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "限制理想低通信道无串扰最高码元速率"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "数据链路层传输的数据单元"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "局域网接口在链路层使用的地址标识"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "奈奎斯特准则：限制理想低通信道无串扰最高码元速率。",
+    "difficulty": 1,
+    "tags": [
+      "物理层",
+      "奈奎斯特准则"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net013",
+    "subjectId": "network",
+    "chapterId": "net-datalink",
+    "chapterName": "数据链路层",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "在“数据链路层”主题中，关于“帧”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "数据链路层传输的数据单元"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "局域网接口在链路层使用的地址标识"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "利用多项式除法检测传输差错的方法"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "传统共享以太网监听载波并检测冲突的机制"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "帧：数据链路层传输的数据单元。",
+    "difficulty": 3,
+    "tags": [
+      "数据链路层",
+      "帧"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net014",
+    "subjectId": "network",
+    "chapterId": "net-datalink",
+    "chapterName": "数据链路层",
+    "chapterOrder": 3,
+    "type": "multiple",
+    "stem": "围绕“MAC 地址”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "CRC：利用多项式除法检测传输差错的方法"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "CSMA/CD：依据 MAC 地址表转发以太网帧的设备"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "交换机：传统共享以太网监听载波并检测冲突的机制"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "MAC 地址：局域网接口在链路层使用的地址标识"
+      }
+    ],
+    "correctOptionIds": [
+      "A",
+      "D"
+    ],
+    "explanation": "正确配对是“MAC 地址—局域网接口在链路层使用的地址标识”和“CRC—利用多项式除法检测传输差错的方法”。",
+    "difficulty": 2,
+    "tags": [
+      "数据链路层",
+      "MAC 地址"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net015",
+    "subjectId": "network",
+    "chapterId": "net-datalink",
+    "chapterName": "数据链路层",
+    "chapterOrder": 3,
+    "type": "judge",
+    "stem": "判断：CRC是指“利用多项式除法检测传输差错的方法”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "CRC的准确含义是：利用多项式除法检测传输差错的方法。",
+    "difficulty": 1,
+    "tags": [
+      "数据链路层",
+      "CRC"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net016",
+    "subjectId": "network",
+    "chapterId": "net-datalink",
+    "chapterName": "数据链路层",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "在“数据链路层”主题中，下列哪个术语与“传统共享以太网监听载波并检测冲突的机制”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "子网掩码"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "CSMA/CD"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "交换机"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "IP 地址"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "CSMA/CD：传统共享以太网监听载波并检测冲突的机制。",
+    "difficulty": 1,
+    "tags": [
+      "数据链路层",
+      "CSMA/CD"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net017",
+    "subjectId": "network",
+    "chapterId": "net-datalink",
+    "chapterName": "数据链路层",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "在“数据链路层”主题中，关于“交换机”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "依据 MAC 地址表转发以太网帧的设备"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "标识网络接口并支持分层路由的网络层地址"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "区分 IP 地址中网络前缀和主机部分"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "保存目标前缀到下一跳或接口的转发规则"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "交换机：依据 MAC 地址表转发以太网帧的设备。",
+    "difficulty": 2,
+    "tags": [
+      "数据链路层",
+      "交换机"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net018",
+    "subjectId": "network",
+    "chapterId": "net-datalink",
+    "chapterName": "数据链路层",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "再次辨析“数据链路层”时，下列哪个术语与“数据链路层传输的数据单元”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "MAC 地址"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "CRC"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "CSMA/CD"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "帧"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "帧：数据链路层传输的数据单元。",
+    "difficulty": 2,
+    "tags": [
+      "数据链路层",
+      "帧"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net019",
+    "subjectId": "network",
+    "chapterId": "net-datalink",
+    "chapterName": "数据链路层",
+    "chapterOrder": 3,
+    "type": "multiple",
+    "stem": "再次围绕“MAC 地址”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "CSMA/CD：依据 MAC 地址表转发以太网帧的设备"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "交换机：传统共享以太网监听载波并检测冲突的机制"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "MAC 地址：局域网接口在链路层使用的地址标识"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "CRC：利用多项式除法检测传输差错的方法"
+      }
+    ],
+    "correctOptionIds": [
+      "C",
+      "D"
+    ],
+    "explanation": "正确配对是“MAC 地址—局域网接口在链路层使用的地址标识”和“CRC—利用多项式除法检测传输差错的方法”。",
+    "difficulty": 1,
+    "tags": [
+      "数据链路层",
+      "MAC 地址"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net020",
+    "subjectId": "network",
+    "chapterId": "net-datalink",
+    "chapterName": "数据链路层",
+    "chapterOrder": 3,
+    "type": "judge",
+    "stem": "再次判断：CRC是指“传统共享以太网监听载波并检测冲突的机制”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "CRC的准确含义是：利用多项式除法检测传输差错的方法。",
+    "difficulty": 1,
+    "tags": [
+      "数据链路层",
+      "CRC"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net021",
+    "subjectId": "network",
+    "chapterId": "net-datalink",
+    "chapterName": "数据链路层",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "再次辨析“数据链路层”时，关于“CSMA/CD”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "传统共享以太网监听载波并检测冲突的机制"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "依据 MAC 地址表转发以太网帧的设备"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "标识网络接口并支持分层路由的网络层地址"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "区分 IP 地址中网络前缀和主机部分"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "CSMA/CD：传统共享以太网监听载波并检测冲突的机制。",
+    "difficulty": 2,
+    "tags": [
+      "数据链路层",
+      "CSMA/CD"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net022",
+    "subjectId": "network",
+    "chapterId": "net-datalink",
+    "chapterName": "数据链路层",
+    "chapterOrder": 3,
+    "type": "single",
+    "stem": "再次辨析“数据链路层”时，下列哪个术语与“依据 MAC 地址表转发以太网帧的设备”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "IP 地址"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "子网掩码"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "路由表"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "交换机"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "交换机：依据 MAC 地址表转发以太网帧的设备。",
+    "difficulty": 2,
+    "tags": [
+      "数据链路层",
+      "交换机"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net023",
+    "subjectId": "network",
+    "chapterId": "net-network",
+    "chapterName": "网络层",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "在“网络层”主题中，下列哪个术语与“标识网络接口并支持分层路由的网络层地址”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "路由表"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "ARP"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "IP 地址"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "子网掩码"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "IP 地址：标识网络接口并支持分层路由的网络层地址。",
+    "difficulty": 1,
+    "tags": [
+      "网络层",
+      "IP 地址"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net024",
+    "subjectId": "network",
+    "chapterId": "net-network",
+    "chapterName": "网络层",
+    "chapterOrder": 4,
+    "type": "multiple",
+    "stem": "围绕“子网掩码”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "ICMP：在 IPv4 局域网中解析 IP 地址对应的 MAC 地址"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "子网掩码：区分 IP 地址中网络前缀和主机部分"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "路由表：保存目标前缀到下一跳或接口的转发规则"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "ARP：传递网络差错报告和诊断信息的网络层协议"
+      }
+    ],
+    "correctOptionIds": [
+      "B",
+      "C"
+    ],
+    "explanation": "正确配对是“子网掩码—区分 IP 地址中网络前缀和主机部分”和“路由表—保存目标前缀到下一跳或接口的转发规则”。",
+    "difficulty": 1,
+    "tags": [
+      "网络层",
+      "子网掩码"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net025",
+    "subjectId": "network",
+    "chapterId": "net-network",
+    "chapterName": "网络层",
+    "chapterOrder": 4,
+    "type": "judge",
+    "stem": "判断：路由表是指“保存目标前缀到下一跳或接口的转发规则”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "路由表的准确含义是：保存目标前缀到下一跳或接口的转发规则。",
+    "difficulty": 2,
+    "tags": [
+      "网络层",
+      "路由表"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net026",
+    "subjectId": "network",
+    "chapterId": "net-network",
+    "chapterName": "网络层",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "在“网络层”主题中，关于“ARP”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "传递网络差错报告和诊断信息的网络层协议"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "选择与目标地址匹配位数最多的路由项"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "提供面向连接、可靠、有序的字节流服务"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "在 IPv4 局域网中解析 IP 地址对应的 MAC 地址"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "ARP：在 IPv4 局域网中解析 IP 地址对应的 MAC 地址。",
+    "difficulty": 2,
+    "tags": [
+      "网络层",
+      "ARP"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net027",
+    "subjectId": "network",
+    "chapterId": "net-network",
+    "chapterName": "网络层",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "在“网络层”主题中，下列哪个术语与“传递网络差错报告和诊断信息的网络层协议”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "TCP"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "UDP"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "ICMP"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "最长前缀匹配"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "ICMP：传递网络差错报告和诊断信息的网络层协议。",
+    "difficulty": 1,
+    "tags": [
+      "网络层",
+      "ICMP"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net028",
+    "subjectId": "network",
+    "chapterId": "net-network",
+    "chapterName": "网络层",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "在“网络层”主题中，关于“最长前缀匹配”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "在主机内标识传输层通信端点的编号"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "选择与目标地址匹配位数最多的路由项"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "提供面向连接、可靠、有序的字节流服务"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "提供无连接且尽力而为的数据报服务"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "最长前缀匹配：选择与目标地址匹配位数最多的路由项。",
+    "difficulty": 3,
+    "tags": [
+      "网络层",
+      "最长前缀匹配"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net029",
+    "subjectId": "network",
+    "chapterId": "net-network",
+    "chapterName": "网络层",
+    "chapterOrder": 4,
+    "type": "multiple",
+    "stem": "再次围绕“IP 地址”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "IP 地址：标识网络接口并支持分层路由的网络层地址"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "子网掩码：区分 IP 地址中网络前缀和主机部分"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "路由表：在 IPv4 局域网中解析 IP 地址对应的 MAC 地址"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "ARP：保存目标前缀到下一跳或接口的转发规则"
+      }
+    ],
+    "correctOptionIds": [
+      "A",
+      "B"
+    ],
+    "explanation": "正确配对是“IP 地址—标识网络接口并支持分层路由的网络层地址”和“子网掩码—区分 IP 地址中网络前缀和主机部分”。",
+    "difficulty": 2,
+    "tags": [
+      "网络层",
+      "IP 地址"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net030",
+    "subjectId": "network",
+    "chapterId": "net-network",
+    "chapterName": "网络层",
+    "chapterOrder": 4,
+    "type": "judge",
+    "stem": "再次判断：子网掩码是指“保存目标前缀到下一跳或接口的转发规则”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "子网掩码的准确含义是：区分 IP 地址中网络前缀和主机部分。",
+    "difficulty": 1,
+    "tags": [
+      "网络层",
+      "子网掩码"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net031",
+    "subjectId": "network",
+    "chapterId": "net-network",
+    "chapterName": "网络层",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "再次辨析“网络层”时，下列哪个术语与“保存目标前缀到下一跳或接口的转发规则”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "ICMP"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "最长前缀匹配"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "路由表"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "ARP"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "路由表：保存目标前缀到下一跳或接口的转发规则。",
+    "difficulty": 1,
+    "tags": [
+      "网络层",
+      "路由表"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net032",
+    "subjectId": "network",
+    "chapterId": "net-network",
+    "chapterName": "网络层",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "再次辨析“网络层”时，关于“ARP”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "提供面向连接、可靠、有序的字节流服务"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "在 IPv4 局域网中解析 IP 地址对应的 MAC 地址"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "传递网络差错报告和诊断信息的网络层协议"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "选择与目标地址匹配位数最多的路由项"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "ARP：在 IPv4 局域网中解析 IP 地址对应的 MAC 地址。",
+    "difficulty": 3,
+    "tags": [
+      "网络层",
+      "ARP"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net033",
+    "subjectId": "network",
+    "chapterId": "net-network",
+    "chapterName": "网络层",
+    "chapterOrder": 4,
+    "type": "single",
+    "stem": "再次辨析“网络层”时，下列哪个术语与“传递网络差错报告和诊断信息的网络层协议”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "ICMP"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "最长前缀匹配"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "TCP"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "UDP"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "ICMP：传递网络差错报告和诊断信息的网络层协议。",
+    "difficulty": 2,
+    "tags": [
+      "网络层",
+      "ICMP"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net034",
+    "subjectId": "network",
+    "chapterId": "net-network",
+    "chapterName": "网络层",
+    "chapterOrder": 4,
+    "type": "multiple",
+    "stem": "再次围绕“最长前缀匹配”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "TCP：提供面向连接、可靠、有序的字节流服务"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "UDP：在主机内标识传输层通信端点的编号"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "端口号：提供无连接且尽力而为的数据报服务"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "最长前缀匹配：选择与目标地址匹配位数最多的路由项"
+      }
+    ],
+    "correctOptionIds": [
+      "A",
+      "D"
+    ],
+    "explanation": "正确配对是“最长前缀匹配—选择与目标地址匹配位数最多的路由项”和“TCP—提供面向连接、可靠、有序的字节流服务”。",
+    "difficulty": 1,
+    "tags": [
+      "网络层",
+      "最长前缀匹配"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net035",
+    "subjectId": "network",
+    "chapterId": "net-transport",
+    "chapterName": "传输层",
+    "chapterOrder": 5,
+    "type": "judge",
+    "stem": "判断：TCP是指“提供面向连接、可靠、有序的字节流服务”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "TCP的准确含义是：提供面向连接、可靠、有序的字节流服务。",
+    "difficulty": 1,
+    "tags": [
+      "传输层",
+      "TCP"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net036",
+    "subjectId": "network",
+    "chapterId": "net-transport",
+    "chapterName": "传输层",
+    "chapterOrder": 5,
+    "type": "single",
+    "stem": "在“传输层”主题中，下列哪个术语与“提供无连接且尽力而为的数据报服务”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "滑动窗口"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "UDP"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "端口号"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "三次握手"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "UDP：提供无连接且尽力而为的数据报服务。",
+    "difficulty": 3,
+    "tags": [
+      "传输层",
+      "UDP"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net037",
+    "subjectId": "network",
+    "chapterId": "net-transport",
+    "chapterName": "传输层",
+    "chapterOrder": 5,
+    "type": "single",
+    "stem": "在“传输层”主题中，关于“端口号”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "在主机内标识传输层通信端点的编号"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "TCP 建立连接并同步初始序号的过程"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "在确认到达前允许连续发送多个数据单元的机制"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "把域名解析为 IP 地址等资源记录的系统"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "端口号：在主机内标识传输层通信端点的编号。",
+    "difficulty": 2,
+    "tags": [
+      "传输层",
+      "端口号"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net038",
+    "subjectId": "network",
+    "chapterId": "net-transport",
+    "chapterName": "传输层",
+    "chapterOrder": 5,
+    "type": "single",
+    "stem": "在“传输层”主题中，下列哪个术语与“TCP 建立连接并同步初始序号的过程”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "滑动窗口"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "DNS"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "HTTP"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "三次握手"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "三次握手：TCP 建立连接并同步初始序号的过程。",
+    "difficulty": 1,
+    "tags": [
+      "传输层",
+      "三次握手"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net039",
+    "subjectId": "network",
+    "chapterId": "net-transport",
+    "chapterName": "传输层",
+    "chapterOrder": 5,
+    "type": "multiple",
+    "stem": "围绕“滑动窗口”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "HTTP：在 TLS 保护下传输 HTTP 报文"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "HTTPS：Web 客户端与服务器交换资源的应用层协议"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "滑动窗口：在确认到达前允许连续发送多个数据单元的机制"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "DNS：把域名解析为 IP 地址等资源记录的系统"
+      }
+    ],
+    "correctOptionIds": [
+      "C",
+      "D"
+    ],
+    "explanation": "正确配对是“滑动窗口—在确认到达前允许连续发送多个数据单元的机制”和“DNS—把域名解析为 IP 地址等资源记录的系统”。",
+    "difficulty": 1,
+    "tags": [
+      "传输层",
+      "滑动窗口"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net040",
+    "subjectId": "network",
+    "chapterId": "net-transport",
+    "chapterName": "传输层",
+    "chapterOrder": 5,
+    "type": "judge",
+    "stem": "再次判断：TCP是指“提供无连接且尽力而为的数据报服务”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "TCP的准确含义是：提供面向连接、可靠、有序的字节流服务。",
+    "difficulty": 3,
+    "tags": [
+      "传输层",
+      "TCP"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net041",
+    "subjectId": "network",
+    "chapterId": "net-transport",
+    "chapterName": "传输层",
+    "chapterOrder": 5,
+    "type": "single",
+    "stem": "再次辨析“传输层”时，关于“UDP”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "提供无连接且尽力而为的数据报服务"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "在主机内标识传输层通信端点的编号"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "TCP 建立连接并同步初始序号的过程"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "在确认到达前允许连续发送多个数据单元的机制"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "UDP：提供无连接且尽力而为的数据报服务。",
+    "difficulty": 2,
+    "tags": [
+      "传输层",
+      "UDP"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net042",
+    "subjectId": "network",
+    "chapterId": "net-transport",
+    "chapterName": "传输层",
+    "chapterOrder": 5,
+    "type": "single",
+    "stem": "再次辨析“传输层”时，下列哪个术语与“在主机内标识传输层通信端点的编号”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "三次握手"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "滑动窗口"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "DNS"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "端口号"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "端口号：在主机内标识传输层通信端点的编号。",
+    "difficulty": 1,
+    "tags": [
+      "传输层",
+      "端口号"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net043",
+    "subjectId": "network",
+    "chapterId": "net-transport",
+    "chapterName": "传输层",
+    "chapterOrder": 5,
+    "type": "single",
+    "stem": "再次辨析“传输层”时，关于“三次握手”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "把域名解析为 IP 地址等资源记录的系统"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "Web 客户端与服务器交换资源的应用层协议"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "TCP 建立连接并同步初始序号的过程"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "在确认到达前允许连续发送多个数据单元的机制"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "三次握手：TCP 建立连接并同步初始序号的过程。",
+    "difficulty": 1,
+    "tags": [
+      "传输层",
+      "三次握手"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net044",
+    "subjectId": "network",
+    "chapterId": "net-application",
+    "chapterName": "应用层与安全基础",
+    "chapterOrder": 6,
+    "type": "multiple",
+    "stem": "围绕“DNS”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "DHCP：在 TLS 保护下传输 HTTP 报文"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "DNS：把域名解析为 IP 地址等资源记录的系统"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "HTTP：Web 客户端与服务器交换资源的应用层协议"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "HTTPS：为主机动态分配 IP 配置的应用层协议"
+      }
+    ],
+    "correctOptionIds": [
+      "B",
+      "C"
+    ],
+    "explanation": "正确配对是“DNS—把域名解析为 IP 地址等资源记录的系统”和“HTTP—Web 客户端与服务器交换资源的应用层协议”。",
+    "difficulty": 2,
+    "tags": [
+      "应用层与安全基础",
+      "DNS"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net045",
+    "subjectId": "network",
+    "chapterId": "net-application",
+    "chapterName": "应用层与安全基础",
+    "chapterOrder": 6,
+    "type": "judge",
+    "stem": "判断：HTTP是指“Web 客户端与服务器交换资源的应用层协议”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "A"
+    ],
+    "explanation": "HTTP的准确含义是：Web 客户端与服务器交换资源的应用层协议。",
+    "difficulty": 2,
+    "tags": [
+      "应用层与安全基础",
+      "HTTP"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net046",
+    "subjectId": "network",
+    "chapterId": "net-application",
+    "chapterName": "应用层与安全基础",
+    "chapterOrder": 6,
+    "type": "single",
+    "stem": "在“应用层与安全基础”主题中，下列哪个术语与“在 TLS 保护下传输 HTTP 报文”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "DHCP"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "协议"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "服务"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "HTTPS"
+      }
+    ],
+    "correctOptionIds": [
+      "D"
+    ],
+    "explanation": "HTTPS：在 TLS 保护下传输 HTTP 报文。",
+    "difficulty": 1,
+    "tags": [
+      "应用层与安全基础",
+      "HTTPS"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net047",
+    "subjectId": "network",
+    "chapterId": "net-application",
+    "chapterName": "应用层与安全基础",
+    "chapterOrder": 6,
+    "type": "single",
+    "stem": "在“应用层与安全基础”主题中，关于“DHCP”，下列描述哪项正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "下层通过接口向上层提供的通信能力"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "逐层为上层数据添加本层控制信息"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "为主机动态分配 IP 配置的应用层协议"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "通信双方约定的语法、语义和同步规则"
+      }
+    ],
+    "correctOptionIds": [
+      "C"
+    ],
+    "explanation": "DHCP：为主机动态分配 IP 配置的应用层协议。",
+    "difficulty": 1,
+    "tags": [
+      "应用层与安全基础",
+      "DHCP"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net048",
+    "subjectId": "network",
+    "chapterId": "net-application",
+    "chapterName": "应用层与安全基础",
+    "chapterOrder": 6,
+    "type": "single",
+    "stem": "再次辨析“应用层与安全基础”时，下列哪个术语与“把域名解析为 IP 地址等资源记录的系统”相符？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "DHCP"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "DNS"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "HTTP"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "HTTPS"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "DNS：把域名解析为 IP 地址等资源记录的系统。",
+    "difficulty": 2,
+    "tags": [
+      "应用层与安全基础",
+      "DNS"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net049",
+    "subjectId": "network",
+    "chapterId": "net-application",
+    "chapterName": "应用层与安全基础",
+    "chapterOrder": 6,
+    "type": "multiple",
+    "stem": "再次围绕“HTTP”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "HTTP：Web 客户端与服务器交换资源的应用层协议"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "HTTPS：在 TLS 保护下传输 HTTP 报文"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "DHCP：通信双方约定的语法、语义和同步规则"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "协议：为主机动态分配 IP 配置的应用层协议"
+      }
+    ],
+    "correctOptionIds": [
+      "A",
+      "B"
+    ],
+    "explanation": "正确配对是“HTTP—Web 客户端与服务器交换资源的应用层协议”和“HTTPS—在 TLS 保护下传输 HTTP 报文”。",
+    "difficulty": 2,
+    "tags": [
+      "应用层与安全基础",
+      "HTTP"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  },
+  {
+    "id": "net050",
+    "subjectId": "network",
+    "chapterId": "net-application",
+    "chapterName": "应用层与安全基础",
+    "chapterOrder": 6,
+    "type": "judge",
+    "stem": "再次判断：HTTPS是指“为主机动态分配 IP 配置的应用层协议”。",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "HTTPS的准确含义是：在 TLS 保护下传输 HTTP 报文。",
+    "difficulty": 1,
+    "tags": [
+      "应用层与安全基础",
+      "HTTPS"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 1
+  }
+]

@@ -1,6 +1,8 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/wrong/index",
+    "pages/favorites/index",
     "pages/login/index"
   ],
   "subPackages": [
@@ -14,10 +16,26 @@
         "pages/practice/index",
         "pages/result/index",
         "pages/wrong/index",
-        "pages/favorites/index"
+        "pages/favorites/index",
+        "pages/tracks/index",
+        "pages/exam-home/index",
+        "pages/exam/index",
+        "pages/exam-result/index",
+        "pages/exam-history/index"
       ]
     }
   ],
+  "tabBar": {
+    "color": "#718096",
+    "selectedColor": "#2563eb",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "首页" },
+      { "pagePath": "pages/wrong/index", "text": "错题" },
+      { "pagePath": "pages/favorites/index", "text": "收藏" }
+    ]
+  },
   "window": {
     "navigationBarBackgroundColor": "#2563eb",
     "navigationBarTextStyle": "white",

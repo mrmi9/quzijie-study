@@ -1,5 +1,9 @@
 @import "../../common.wxss";
 
+.favorite-images { margin-top: 18rpx; }
+.favorite-image { width: 100%; border-radius: 14rpx; }
+.favorite-image-alt { display: block; margin-top: 8rpx; color: #64748b; font-size: 22rpx; }
+
 .favorite-list {
   margin-top: 28rpx;
 }

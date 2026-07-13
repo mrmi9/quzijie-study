@@ -1,0 +1,28 @@
+@import "../../common.wxss";
+
+.exam-hero { padding: 38rpx; color: #fff; background: linear-gradient(145deg, #9d174d, #db2777 65%, #f472b6); }
+.exam-kicker,.exam-title,.exam-note,.rule-number,.rule-label,.section-label,.resume-title,.resume-meta,.history-score,.history-date,.notice-line,.co-title,.co-subtitle { display: block; }
+.exam-kicker { font-size: 24rpx; opacity: .86; }
+.exam-title { margin-top: 14rpx; font-size: 42rpx; font-weight: 800; }
+.exam-note { margin-top: 18rpx; font-size: 23rpx; line-height: 1.6; opacity: .86; }
+.rule-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18rpx; margin-top: 24rpx; }
+.rule-card { padding: 24rpx 10rpx; text-align: center; }
+.rule-number { color: #be185d; font-size: 38rpx; font-weight: 800; }
+.rule-label { margin-top: 4rpx; color: #64748b; font-size: 22rpx; }
+.distribution,.notice { margin-top: 24rpx; padding: 30rpx; }
+.co-entry { display:flex; align-items:center; justify-content:space-between; margin-top:24rpx; padding:28rpx; border:2rpx solid #fbcfe8; }
+.co-title { font-weight:800; }
+.co-subtitle { margin-top:8rpx; color:#718096; font-size:23rpx; }
+.section-label { margin-bottom: 18rpx; font-size: 30rpx; font-weight: 800; }
+.distribution-row { display: flex; justify-content: space-between; padding: 13rpx 0; color: #475569; border-bottom: 1rpx solid #edf2f7; }
+.resume-card,.history-card { display: flex; align-items: center; justify-content: space-between; margin-top: 24rpx; padding: 28rpx; }
+.resume-card { border: 2rpx solid #f9a8d4; }
+.resume-title { font-weight: 800; }
+.resume-meta,.history-date { margin-top: 8rpx; color: #718096; font-size: 23rpx; }
+.resume-action,.history-arrow,.history-link { color: #be185d; font-weight: 700; }
+.start-button { margin-top: 28rpx; background: #be185d; }
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-top: 34rpx; }
+.section-head .section-title { margin: 0; }
+.history-score { font-size: 32rpx; font-weight: 800; }
+.notice-line { padding: 8rpx 0; color: #475569; line-height: 1.5; }
+.error-action { margin-top: 24rpx; }

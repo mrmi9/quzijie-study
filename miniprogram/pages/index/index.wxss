@@ -45,10 +45,6 @@
   padding: 30rpx;
 }
 
-.module-disabled {
-  opacity: 0.58;
-}
-
 .module-dot {
   width: 18rpx;
   height: 18rpx;
@@ -81,3 +77,39 @@
   font-size: 24rpx;
   font-weight: 600;
 }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18rpx;
+  margin-top: 28rpx;
+}
+
+.stat-card { padding: 24rpx; }
+.stat-number, .stat-label, .resume-title, .resume-meta { display: block; }
+.stat-number { color: #1d4ed8; font-size: 36rpx; font-weight: 800; }
+.stat-label { margin-top: 6rpx; color: #718096; font-size: 23rpx; }
+
+.resume-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20rpx;
+  padding: 26rpx;
+  border: 2rpx solid #bfdbfe;
+}
+
+.exam-resume { border-color: #f5b8d5; }
+.resume-title { font-weight: 700; }
+.resume-meta { margin-top: 7rpx; color: #718096; font-size: 23rpx; }
+.resume-link { color: #2563eb; font-weight: 700; }
+
+.module-progress {
+  height: 8rpx;
+  margin-top: 16rpx;
+  overflow: hidden;
+  border-radius: 4rpx;
+  background: #e8edf5;
+}
+.module-progress-value { height: 100%; border-radius: 4rpx; }
+.retry-button { width: 220rpx; margin-top: 24rpx; }

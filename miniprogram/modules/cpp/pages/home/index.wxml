@@ -8,7 +8,7 @@
   <block wx:elif="{{overview}}">
     <view class="welcome card">
       <view>
-        <text class="welcome-label">C/C++ 核心知识</text>
+        <text class="welcome-label">{{subject.name}} · {{overview.totalQuestions}} 题</text>
         <text class="welcome-title">今天也要弄懂每一道题</text>
       </view>
       <view class="progress-ring">

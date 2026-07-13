@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quzijie.example/schemas/question.schema.json",
+  "title": "趣字节刷题通用题库",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "id", "subjectId", "chapterId", "chapterName", "chapterOrder", "type", "stem",
+      "options", "correctOptionIds", "explanation", "difficulty", "tags", "images",
+      "examScopes", "status", "version"
+    ],
+    "properties": {
+      "id": { "type": "string", "pattern": "^(cpp|lnx|os|ds|net|stl|co)[0-9]{3}$" },
+      "subjectId": { "enum": ["cpp", "linux", "os", "ds", "network", "stl", "co"] },
+      "chapterId": { "type": "string", "minLength": 1 },
+      "chapterName": { "type": "string", "minLength": 1 },
+      "chapterOrder": { "type": "integer", "minimum": 1 },
+      "type": { "enum": ["single", "multiple", "judge"] },
+      "stem": { "type": "string", "minLength": 4 },
+      "code": { "type": "string" },
+      "options": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 6,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "label", "text"],
+          "properties": {
+            "id": { "type": "string", "minLength": 1 },
+            "label": { "type": "string", "minLength": 1 },
+            "text": { "type": "string", "minLength": 1 }
+          }
+        }
+      },
+      "correctOptionIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+      "explanation": { "type": "string", "minLength": 8 },
+      "difficulty": { "type": "integer", "minimum": 1, "maximum": 3 },
+      "tags": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+      "images": {
+        "type": "array",
+        "maxItems": 2,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["src", "alt"],
+          "properties": {
+            "src": { "type": "string", "minLength": 1 },
+            "alt": { "type": "string", "minLength": 1 },
+            "caption": { "type": "string" }
+          }
+        }
+      },
+      "examScopes": { "type": "array", "uniqueItems": true, "items": { "enum": ["408"] } },
+      "status": { "const": "active" },
+      "version": { "type": "integer", "minimum": 1 }
+    }
+  }
+}

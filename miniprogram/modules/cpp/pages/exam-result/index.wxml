@@ -1,0 +1,32 @@
+<view class="page-shell safe-bottom result-page">
+  <view wx:if="{{loading}}" class="loading-state">正在生成考试报告...</view>
+  <view wx:elif="{{error}}" class="error-state"><text>{{error}}</text><button class="secondary-button error-action" bindtap="loadResult">重试</button></view>
+  <block wx:elif="{{result}}">
+    <view class="score-card card">
+      <text class="score-label">408 客观题专项得分</text>
+      <view><text class="score-number">{{result.score}}</text><text class="score-max"> / {{result.maxScore}}</text></view>
+      <text class="score-message">正确 {{result.correctCount}} 题 · 错误 {{result.wrongCount}} 题 · 正确率 {{result.accuracy}}%</text>
+      <text class="answer-meta">实际作答 {{result.answeredCount}} / {{result.totalCount}} 题</text>
+    </view>
+
+    <text class="section-title">四科表现</text>
+    <view class="subject-card card" wx:for="{{result.subjects}}" wx:key="subjectId">
+      <view class="row-between"><text class="subject-name">{{item.subjectName}}</text><text class="subject-score">{{item.correctCount}} / {{item.totalCount}} · {{item.accuracy}}%</text></view>
+      <view class="progress-track"><view class="progress-value" style="width:{{item.accuracy}}%;"></view></view>
+    </view>
+
+    <text class="section-title">错题与解析（{{wrongReviews.length}}）</text>
+    <view wx:if="{{wrongReviews.length === 0}}" class="empty-state card">全部答对，表现非常出色！</view>
+    <view class="review-card card" wx:for="{{wrongReviews}}" wx:key="reviewIndex">
+      <view class="review-head"><text class="pill">{{item.subjectName}}</text><text class="question-id">{{item.question.id}}</text></view>
+      <text class="review-stem">{{item.question.stem}}</text>
+      <scroll-view wx:if="{{item.question.code}}" class="review-code" scroll-x="true"><text>{{item.question.code}}</text></scroll-view>
+      <view class="review-images" wx:if="{{item.question.images.length}}"><view wx:for="{{item.question.images}}" wx:key="src" wx:for-item="imageItem"><image class="review-image" src="{{imageItem.src}}" mode="widthFix" data-src="{{imageItem.src}}" bindtap="previewImage"></image><text class="image-alt">{{imageItem.alt}}</text></view></view>
+      <text class="selected-answer">你的答案：{{item.selectedText}}</text>
+      <text class="correct-answer">正确答案：{{item.correctText}}</text>
+      <text class="explanation-title">解析</text><text class="explanation">{{item.question.explanation}}</text>
+    </view>
+
+    <view class="action-grid"><button class="secondary-button" bindtap="openWrong">全局错题本</button><button class="primary-button" bindtap="goExamHome">返回模拟首页</button></view>
+  </block>
+</view>

@@ -1,7 +1,7 @@
 <view class="page-shell cpp-page safe-bottom setup-page">
   <view class="setup-hero card">
     <text class="mode-label">{{modeName}}</text>
-    <text class="mode-title">{{chapterName || 'C/C++ 核心知识'}}</text>
+    <text class="mode-title">{{chapterName || subjectName + ' 核心知识'}}</text>
     <text class="mode-tip">系统将在同一组练习中自动排除重复题目；题库不足时使用全部可用题。</text>
   </view>
 

@@ -1,0 +1,13 @@
+<view class="page-shell safe-bottom">
+  <text class="top-title">历史成绩</text>
+  <text class="top-subtitle">每次交卷结果保存题目版本快照，后续题库调整不会改变历史成绩。</text>
+  <view wx:if="{{loading}}" class="loading-state">正在加载...</view>
+  <view wx:elif="{{error}}" class="error-state"><text>{{error}}</text><button class="secondary-button error-action" bindtap="loadExams">重试</button></view>
+  <view wx:elif="{{exams.length === 0}}" class="empty-state card">暂无模拟考试记录</view>
+  <view wx:else class="exam-list">
+    <view class="exam-card card" wx:for="{{exams}}" wx:key="id" data-id="{{item.id}}" bindtap="openExam">
+      <view><text class="exam-score">{{item.status === 'completed' ? item.score + ' / 80' : '已答 ' + item.answeredCount + ' / 40'}}</text><text class="exam-date">{{item.dateText}}</text></view>
+      <view class="exam-side"><text class="status {{item.status}}">{{item.statusText}}</text><text class="arrow">›</text></view>
+    </view>
+  </view>
+</view>

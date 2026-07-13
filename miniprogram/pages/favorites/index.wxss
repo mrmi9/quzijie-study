@@ -1,0 +1,3 @@
+@import "../wrong/index.wxss";
+.filter-scroll { margin-bottom: 24rpx; }
+.remove { margin: 0; padding: 0 16rpx; color: #b42318; background: #feeceb; font-size: 22rpx; line-height: 52rpx; }

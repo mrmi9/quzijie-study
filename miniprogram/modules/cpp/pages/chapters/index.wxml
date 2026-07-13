@@ -1,6 +1,6 @@
 <view class="page-shell cpp-page safe-bottom">
   <text class="top-title">按章节练习</text>
-  <text class="top-subtitle">共 9 个语言核心章节，不包含 STL、数据结构、操作系统和计网专题。</text>
+  <text class="top-subtitle">按 {{subjectName}} 知识体系逐章学习；每章进度与正确率独立统计。</text>
 
   <view wx:if="{{loading}}" class="loading-state">正在加载章节...</view>
   <view wx:elif="{{error}}" class="error-state">

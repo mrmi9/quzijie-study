@@ -1,0 +1,53 @@
+<view class="page-shell safe-bottom exam-home-page">
+  <view class="exam-hero card">
+    <text class="exam-kicker">考研 408 · 客观题专项</text>
+    <text class="exam-title">40 题，检验四科基础</text>
+    <text class="exam-note">本模块是 80 分客观题专项模拟，不等同于完整 150 分试卷。</text>
+  </view>
+
+  <view class="rule-grid">
+    <view class="rule-card card"><text class="rule-number">40</text><text class="rule-label">单选题</text></view>
+    <view class="rule-card card"><text class="rule-number">60</text><text class="rule-label">分钟</text></view>
+    <view class="rule-card card"><text class="rule-number">80</text><text class="rule-label">满分</text></view>
+  </view>
+
+  <view class="distribution card">
+    <text class="section-label">固定科目配比</text>
+    <view class="distribution-row"><text>数据结构</text><text>12 题</text></view>
+    <view class="distribution-row"><text>计算机组成原理</text><text>12 题</text></view>
+    <view class="distribution-row"><text>操作系统</text><text>9 题</text></view>
+    <view class="distribution-row"><text>计算机网络</text><text>7 题</text></view>
+  </view>
+
+  <view class="co-entry card" bindtap="openCoPractice">
+    <view><text class="co-title">计算机组成原理专项练习</text><text class="co-subtitle">100 题 · 章节、随机、错题与收藏</text></view>
+    <text class="resume-action">进入 ›</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-state">正在加载考试状态...</view>
+  <view wx:elif="{{error}}" class="error-state"><text>{{error}}</text><button class="secondary-button error-action" bindtap="loadData">重试</button></view>
+  <block wx:else>
+    <view wx:if="{{activeExam}}" class="resume-card card" bindtap="continueExam">
+      <view><text class="resume-title">继续未完成考试</text><text class="resume-meta">已答 {{activeExam.answeredCount}} / 40 题</text></view>
+      <text class="resume-action">继续 →</text>
+    </view>
+    <button wx:else class="primary-button start-button" loading="{{creating}}" bindtap="startExam">开始模拟</button>
+
+    <view class="section-head"><text class="section-title">最近成绩</text><text class="history-link" bindtap="openHistory">全部记录 ›</text></view>
+    <view wx:if="{{recentExams.length === 0}}" class="empty-state card">还没有完成的模拟考试</view>
+    <block wx:else>
+      <view class="history-card card" wx:for="{{recentExams}}" wx:key="id" data-id="{{item.id}}" bindtap="openResult">
+        <view><text class="history-score">{{item.score}} / 80</text><text class="history-date">{{item.dateText}}</text></view>
+        <text class="history-arrow">查看报告 ›</text>
+      </view>
+    </block>
+  </block>
+
+  <view class="notice card">
+    <text class="section-label">考试须知</text>
+    <text class="notice-line">• 交卷前可通过答题卡跳题并修改答案</text>
+    <text class="notice-line">• 答题过程中不显示正误与解析</text>
+    <text class="notice-line">• 时间归零会自动交卷，未答题计错</text>
+    <text class="notice-line">• 草稿持续保存，重启小程序后可继续</text>
+  </view>
+</view>

@@ -1,4 +1,5 @@
-const repository = require('../../../../services/cppRepository');
+const createSubjectRepository = require('../../../../services/subjectRepository');
+const registry = require('../../../../config/subjectRegistry');
 
 const MODE_NAMES = {
   chapter: '章节练习',
@@ -9,6 +10,8 @@ const MODE_NAMES = {
 
 Page({
   data: {
+    subjectId: 'cpp',
+    subjectName: 'C/C++',
     mode: 'random',
     modeName: '随机练习',
     chapterId: '',
@@ -20,12 +23,17 @@ Page({
 
   onLoad(options) {
     const mode = MODE_NAMES[options.mode] ? options.mode : 'random';
+    const subject = registry.getSubject(options.subjectId) || registry.getSubject('cpp');
+    this.repository = createSubjectRepository(subject.id);
     this.setData({
+      subjectId: subject.id,
+      subjectName: subject.name,
       mode,
       modeName: MODE_NAMES[mode],
       chapterId: options.chapterId || '',
       chapterName: options.chapterName ? decodeURIComponent(options.chapterName) : ''
     });
+    wx.setNavigationBarTitle({ title: MODE_NAMES[mode] });
   },
 
   chooseCount(event) {
@@ -36,8 +44,7 @@ Page({
   startPractice() {
     if (this.data.creating) return;
     this.setData({ creating: true });
-    repository.createSession({
-      subject: 'cpp',
+    this.repository.createSession({
       mode: this.data.mode,
       chapterId: this.data.chapterId || undefined,
       count: this.data.selectedCount
@@ -45,11 +52,7 @@ Page({
       wx.redirectTo({ url: `/modules/cpp/pages/practice/index?sessionId=${session.id}` });
     }).catch((error) => {
       this.setData({ creating: false });
-      wx.showModal({
-        title: '无法开始练习',
-        content: error.message || '请稍后重试',
-        showCancel: false
-      });
+      wx.showModal({ title: '无法开始练习', content: error.message || '请稍后重试', showCancel: false });
     });
   }
 });

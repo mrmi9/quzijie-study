@@ -5,19 +5,45 @@
     <text class="hero-subtitle">按知识模块练习，用解析真正弄懂每一道题</text>
   </view>
 
+  <view wx:if="{{loading}}" class="loading-state">正在加载学习中心...</view>
+  <view wx:elif="{{error}}" class="error-state">
+    <text>{{error}}</text>
+    <button class="secondary-button retry-button" bindtap="loadOverview">重试</button>
+  </view>
+
+  <block wx:elif="{{overview}}">
+  <view class="stats-grid">
+    <view class="stat-card card"><text class="stat-number">{{overview.todayAttempts}}</text><text class="stat-label">今日答题</text></view>
+    <view class="stat-card card"><text class="stat-number">{{overview.accuracy}}%</text><text class="stat-label">累计正确率</text></view>
+    <view class="stat-card card"><text class="stat-number">{{overview.progressPercent}}%</text><text class="stat-label">全题库进度</text></view>
+    <view class="stat-card card"><text class="stat-number">{{overview.unmasteredWrongCount}}</text><text class="stat-label">待掌握错题</text></view>
+    <view class="stat-card card"><text class="stat-number">{{overview.favoriteCount}}</text><text class="stat-label">收藏题目</text></view>
+  </view>
+
+  <view wx:if="{{overview.activeSession}}" class="resume-card card" bindtap="continueSession">
+    <view><text class="resume-title">继续上次练习</text><text class="resume-meta">{{overview.activeSession.answeredCount}} / {{overview.activeSession.totalCount}} 题</text></view>
+    <text class="resume-link">继续 →</text>
+  </view>
+  <view wx:if="{{overview.activeExam}}" class="resume-card exam-resume card" bindtap="continueExam">
+    <view><text class="resume-title">继续 408 模拟</text><text class="resume-meta">已答 {{overview.activeExam.answeredCount}} / 40 题</text></view>
+    <text class="resume-link">继续 →</text>
+  </view>
+
   <view class="section-title">选择模块</view>
   <view class="module-grid">
     <view
       wx:for="{{modules}}"
       wx:key="id"
-      class="module-card card {{item.enabled ? '' : 'module-disabled'}}"
+      class="module-card card"
       data-id="{{item.id}}"
       bindtap="openModule"
     >
       <view class="module-dot" style="background: {{item.color}};"></view>
       <text class="module-name">{{item.name}}</text>
       <text class="module-subtitle">{{item.subtitle}}</text>
-      <text class="module-status">{{item.enabled ? '开始刷题 →' : '敬请期待'}}</text>
+      <view class="module-progress"><view class="module-progress-value" style="width: {{item.progressPercent}}%; background: {{item.color}};"></view></view>
+      <text class="module-status">{{item.attemptedCount}} / {{item.totalQuestions}} 题 · {{item.progressPercent}}%</text>
     </view>
   </view>
+  </block>
 </view>
