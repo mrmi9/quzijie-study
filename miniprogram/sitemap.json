@@ -1,0 +1,9 @@
+{
+  "desc": "趣字节刷题页面索引",
+  "rules": [
+    {
+      "action": "disallow",
+      "page": "*"
+    }
+  ]
+}

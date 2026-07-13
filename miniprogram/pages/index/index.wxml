@@ -1,0 +1,23 @@
+<view class="page-shell home-page safe-bottom">
+  <view class="hero">
+    <text class="hero-badge">趣学编程 · 每日进步</text>
+    <text class="hero-title">趣字节刷题</text>
+    <text class="hero-subtitle">按知识模块练习，用解析真正弄懂每一道题</text>
+  </view>
+
+  <view class="section-title">选择模块</view>
+  <view class="module-grid">
+    <view
+      wx:for="{{modules}}"
+      wx:key="id"
+      class="module-card card {{item.enabled ? '' : 'module-disabled'}}"
+      data-id="{{item.id}}"
+      bindtap="openModule"
+    >
+      <view class="module-dot" style="background: {{item.color}};"></view>
+      <text class="module-name">{{item.name}}</text>
+      <text class="module-subtitle">{{item.subtitle}}</text>
+      <text class="module-status">{{item.enabled ? '开始刷题 →' : '敬请期待'}}</text>
+    </view>
+  </view>
+</view>

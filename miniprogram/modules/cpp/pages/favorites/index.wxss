@@ -1,0 +1,63 @@
+@import "../../common.wxss";
+
+.favorite-list {
+  margin-top: 28rpx;
+}
+
+.favorite-card {
+  margin-bottom: 22rpx;
+  padding: 28rpx;
+}
+
+.favorite-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.remove-button {
+  margin: 0;
+  padding: 0 18rpx;
+  color: #b42318;
+  background: #feeceb;
+  font-size: 22rpx;
+  line-height: 54rpx;
+}
+
+.favorite-stem,
+.favorite-answer,
+.favorite-explanation {
+  display: block;
+}
+
+.favorite-stem {
+  margin-top: 20rpx;
+  font-size: 30rpx;
+  font-weight: 650;
+  line-height: 1.6;
+}
+
+.favorite-code {
+  width: 100%;
+  margin-top: 18rpx;
+  padding: 20rpx;
+  border-radius: 14rpx;
+  color: #dbeafe;
+  background: #152238;
+  font-family: Consolas, monospace;
+  font-size: 23rpx;
+  white-space: pre;
+}
+
+.favorite-answer {
+  margin-top: 20rpx;
+  color: #1d4ed8;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.favorite-explanation {
+  margin-top: 12rpx;
+  color: #475569;
+  line-height: 1.65;
+}

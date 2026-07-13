@@ -1,0 +1,49 @@
+<view class="page-shell cpp-page safe-bottom result-page">
+  <view wx:if="{{loading}}" class="loading-state">正在生成练习报告...</view>
+  <view wx:elif="{{error}}" class="error-state">
+    <text>{{error}}</text>
+    <button class="secondary-button error-action" bindtap="loadResult">重新加载</button>
+  </view>
+
+  <block wx:elif="{{result}}">
+    <view class="score-card card">
+      <text class="mode-name">{{modeName}}完成</text>
+      <view class="score-circle">
+        <text class="score-number">{{result.accuracy}}</text>
+        <text class="score-unit">%</text>
+      </view>
+      <text class="score-message">{{result.accuracy >= 80 ? '掌握得很好，继续保持！' : result.accuracy >= 60 ? '基础不错，再复盘一下错题。' : '先看解析，再到错题本重做。'}}</text>
+      <view class="result-stats">
+        <view class="result-stat">
+          <text class="result-number">{{result.totalCount}}</text>
+          <text class="result-label">总题数</text>
+        </view>
+        <view class="result-stat">
+          <text class="result-number correct-text">{{result.correctCount}}</text>
+          <text class="result-label">正确</text>
+        </view>
+        <view class="result-stat">
+          <text class="result-number wrong-text">{{result.wrongCount}}</text>
+          <text class="result-label">错误</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-title">章节表现</view>
+    <view class="chapter-result card" wx:for="{{result.chapters}}" wx:key="chapterId">
+      <view class="row-between">
+        <text class="chapter-name">{{item.chapterName}}</text>
+        <text class="chapter-score">{{item.correctCount}} / {{item.totalCount}} · {{item.accuracy}}%</text>
+      </view>
+      <view class="chapter-track">
+        <view class="chapter-value" style="width: {{item.accuracy}}%;"></view>
+      </view>
+    </view>
+
+    <view class="action-grid">
+      <button class="secondary-button" bindtap="practiceAgain">再练一组</button>
+      <button class="secondary-button" bindtap="openWrong">查看错题</button>
+    </view>
+    <button class="primary-button home-button" bindtap="goHome">返回 C/C++ 首页</button>
+  </block>
+</view>

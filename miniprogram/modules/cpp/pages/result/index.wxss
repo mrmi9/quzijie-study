@@ -1,0 +1,111 @@
+@import "../../common.wxss";
+
+.score-card {
+  padding: 42rpx 32rpx 34rpx;
+  text-align: center;
+}
+
+.mode-name,
+.score-message {
+  display: block;
+}
+
+.mode-name {
+  color: #718096;
+  font-size: 24rpx;
+}
+
+.score-circle {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  width: 210rpx;
+  height: 210rpx;
+  margin: 24rpx auto;
+  padding-top: 54rpx;
+  border: 14rpx solid #bfdbfe;
+  border-radius: 50%;
+  color: #1d4ed8;
+  background: #eff6ff;
+}
+
+.score-number {
+  font-size: 66rpx;
+  font-weight: 800;
+}
+
+.score-unit {
+  margin-left: 4rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.score-message {
+  font-size: 30rpx;
+  font-weight: 650;
+}
+
+.result-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 34rpx;
+  padding-top: 28rpx;
+  border-top: 2rpx solid #edf0f5;
+}
+
+.result-number,
+.result-label {
+  display: block;
+}
+
+.result-number {
+  font-size: 36rpx;
+  font-weight: 800;
+}
+
+.result-label {
+  margin-top: 6rpx;
+  color: #718096;
+  font-size: 23rpx;
+}
+
+.correct-text { color: #178f5b; }
+.wrong-text { color: #d92d20; }
+
+.chapter-result {
+  margin-bottom: 18rpx;
+  padding: 26rpx;
+}
+
+.chapter-name {
+  font-weight: 700;
+}
+
+.chapter-score {
+  color: #475569;
+  font-size: 24rpx;
+}
+
+.chapter-track {
+  height: 10rpx;
+  margin-top: 18rpx;
+  overflow: hidden;
+  border-radius: 5rpx;
+  background: #e8edf5;
+}
+
+.chapter-value {
+  height: 100%;
+  background: #3b82f6;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18rpx;
+  margin-top: 32rpx;
+}
+
+.home-button {
+  margin-top: 18rpx;
+}

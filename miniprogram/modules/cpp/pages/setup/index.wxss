@@ -1,0 +1,95 @@
+@import "../../common.wxss";
+
+.setup-hero {
+  padding: 38rpx;
+  color: #ffffff;
+  background: linear-gradient(145deg, #1d4ed8, #3b82f6);
+}
+
+.mode-label,
+.mode-title,
+.mode-tip {
+  display: block;
+}
+
+.mode-label {
+  font-size: 24rpx;
+  opacity: 0.82;
+}
+
+.mode-title {
+  margin-top: 12rpx;
+  font-size: 40rpx;
+  font-weight: 800;
+}
+
+.mode-tip {
+  margin-top: 18rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.count-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18rpx;
+}
+
+.count-card {
+  position: relative;
+  padding: 34rpx 16rpx;
+  border: 3rpx solid transparent;
+  border-radius: 22rpx;
+  background: #ffffff;
+  text-align: center;
+}
+
+.count-selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.count-number {
+  color: #1d4ed8;
+  font-size: 46rpx;
+  font-weight: 800;
+}
+
+.count-unit {
+  margin-left: 4rpx;
+  color: #718096;
+}
+
+.recommend {
+  position: absolute;
+  top: -14rpx;
+  right: 10rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 16rpx;
+  color: #ffffff;
+  background: #2563eb;
+  font-size: 20rpx;
+}
+
+.notice {
+  margin-top: 34rpx;
+  padding: 30rpx;
+}
+
+.notice-title,
+.notice-item {
+  display: block;
+}
+
+.notice-title {
+  margin-bottom: 14rpx;
+  font-weight: 700;
+}
+
+.notice-item {
+  margin-top: 10rpx;
+  color: #718096;
+  font-size: 24rpx;
+  line-height: 1.5;
+}

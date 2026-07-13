@@ -1,0 +1,31 @@
+<view class="page-shell cpp-page safe-bottom">
+  <text class="top-title">按章节练习</text>
+  <text class="top-subtitle">共 9 个语言核心章节，不包含 STL、数据结构、操作系统和计网专题。</text>
+
+  <view wx:if="{{loading}}" class="loading-state">正在加载章节...</view>
+  <view wx:elif="{{error}}" class="error-state">
+    <text>{{error}}</text>
+    <button class="secondary-button error-action" bindtap="loadChapters">重新加载</button>
+  </view>
+  <view wx:else class="chapter-list">
+    <view
+      wx:for="{{chapters}}"
+      wx:key="id"
+      class="chapter-card card"
+      data-id="{{item.id}}"
+      bindtap="selectChapter"
+    >
+      <view class="chapter-head">
+        <view class="chapter-index">{{index + 1}}</view>
+        <view class="chapter-main">
+          <text class="chapter-name">{{item.name}}</text>
+          <text class="chapter-meta">{{item.attemptedCount}} / {{item.totalCount}} 题 · 正确率 {{item.accuracy}}%</text>
+        </view>
+        <text class="chapter-arrow">›</text>
+      </view>
+      <view class="progress-track">
+        <view class="progress-value" style="width: {{item.progressPercent}}%;"></view>
+      </view>
+    </view>
+  </view>
+</view>

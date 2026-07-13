@@ -1,0 +1,27 @@
+<view class="page-shell cpp-page favorite-page safe-bottom">
+  <text class="top-title">我的收藏</text>
+  <text class="top-subtitle">收藏与答题正误相互独立，可以集中回顾后重新练习。</text>
+
+  <view wx:if="{{loading}}" class="loading-state">正在加载收藏...</view>
+  <view wx:elif="{{error}}" class="error-state">
+    <text>{{error}}</text>
+    <button class="secondary-button error-action" bindtap="loadQuestions">重新加载</button>
+  </view>
+  <view wx:elif="{{questions.length === 0}}" class="empty-state card">还没有收藏题目，请在答题解析页点击收藏。</view>
+  <view wx:else class="favorite-list">
+    <view class="favorite-card card" wx:for="{{questions}}" wx:key="id">
+      <view class="favorite-head">
+        <text class="pill">{{item.chapterName}}</text>
+        <button class="remove-button" data-id="{{item.id}}" catchtap="removeFavorite">取消收藏</button>
+      </view>
+      <text class="favorite-stem">{{item.stem}}</text>
+      <scroll-view wx:if="{{item.code}}" class="favorite-code" scroll-x="true"><text>{{item.code}}</text></scroll-view>
+      <text class="favorite-answer">正确答案：{{item.correctText}}</text>
+      <text class="favorite-explanation">{{item.explanation}}</text>
+    </view>
+  </view>
+
+  <view class="bottom-action">
+    <button class="primary-button" disabled="{{questions.length === 0}}" bindtap="startReview">收藏重练（{{questions.length}}）</button>
+  </view>
+</view>

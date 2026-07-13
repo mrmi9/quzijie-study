@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quzijie.example/schemas/cpp-question.schema.json",
+  "title": "趣字节刷题 C/C++ 题目",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "id", "chapterId", "chapterName", "chapterOrder", "type", "stem",
+      "options", "correctOptionIds", "explanation", "difficulty", "tags", "status", "version"
+    ],
+    "properties": {
+      "id": { "type": "string", "pattern": "^cpp[0-9]{3}$" },
+      "chapterId": { "type": "string", "minLength": 1 },
+      "chapterName": { "type": "string", "minLength": 1 },
+      "chapterOrder": { "type": "integer", "minimum": 1, "maximum": 9 },
+      "type": { "enum": ["single", "multiple", "judge"] },
+      "stem": { "type": "string", "minLength": 4 },
+      "code": { "type": "string" },
+      "options": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 6,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "label", "text"],
+          "properties": {
+            "id": { "type": "string", "minLength": 1 },
+            "label": { "type": "string", "minLength": 1 },
+            "text": { "type": "string", "minLength": 1 }
+          }
+        }
+      },
+      "correctOptionIds": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": { "type": "string" }
+      },
+      "explanation": { "type": "string", "minLength": 8 },
+      "difficulty": { "type": "integer", "minimum": 1, "maximum": 3 },
+      "tags": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": { "type": "string", "minLength": 1 }
+      },
+      "status": { "const": "active" },
+      "version": { "type": "integer", "minimum": 1 }
+    }
+  }
+}

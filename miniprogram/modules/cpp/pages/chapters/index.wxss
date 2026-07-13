@@ -1,0 +1,67 @@
+@import "../../common.wxss";
+
+.chapter-list {
+  margin-top: 30rpx;
+}
+
+.chapter-card {
+  margin-bottom: 20rpx;
+  padding: 28rpx;
+}
+
+.chapter-head {
+  display: flex;
+  align-items: center;
+}
+
+.chapter-index {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 18rpx;
+  color: #1d4ed8;
+  background: #dbeafe;
+  font-weight: 800;
+}
+
+.chapter-main {
+  flex: 1;
+  margin-left: 22rpx;
+}
+
+.chapter-name,
+.chapter-meta {
+  display: block;
+}
+
+.chapter-name {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.chapter-meta {
+  margin-top: 8rpx;
+  color: #718096;
+  font-size: 23rpx;
+}
+
+.chapter-arrow {
+  color: #9aa7b8;
+  font-size: 46rpx;
+}
+
+.progress-track {
+  height: 10rpx;
+  margin-top: 24rpx;
+  overflow: hidden;
+  border-radius: 5rpx;
+  background: #e8edf5;
+}
+
+.progress-value {
+  height: 100%;
+  border-radius: 5rpx;
+  background: #3b82f6;
+}

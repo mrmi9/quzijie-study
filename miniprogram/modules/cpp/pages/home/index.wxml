@@ -1,0 +1,83 @@
+<view class="page-shell cpp-page safe-bottom">
+  <view wx:if="{{loading}}" class="loading-state">正在加载学习进度...</view>
+  <view wx:elif="{{error}}" class="error-state">
+    <text>{{error}}</text>
+    <button class="secondary-button error-action" bindtap="loadOverview">重新加载</button>
+  </view>
+
+  <block wx:elif="{{overview}}">
+    <view class="welcome card">
+      <view>
+        <text class="welcome-label">C/C++ 核心知识</text>
+        <text class="welcome-title">今天也要弄懂每一道题</text>
+      </view>
+      <view class="progress-ring">
+        <text class="progress-number">{{overview.progressPercent}}%</text>
+        <text class="progress-label">题库进度</text>
+      </view>
+    </view>
+
+    <view wx:if="{{overview.activeSession}}" class="resume-card card" bindtap="continueSession">
+      <view>
+        <text class="resume-title">继续上次练习</text>
+        <text class="resume-subtitle">已完成 {{overview.activeSession.answeredCount}} / {{overview.activeSession.totalCount}} 题</text>
+      </view>
+      <text class="resume-arrow">继续 →</text>
+    </view>
+
+    <view class="stats-grid">
+      <view class="stat-card card">
+        <text class="stat-number">{{overview.totalAttempts}}</text>
+        <text class="stat-label">累计答题</text>
+      </view>
+      <view class="stat-card card">
+        <text class="stat-number">{{overview.accuracy}}%</text>
+        <text class="stat-label">累计正确率</text>
+      </view>
+      <view class="stat-card card">
+        <text class="stat-number">{{overview.unmasteredWrongCount}}</text>
+        <text class="stat-label">待掌握错题</text>
+      </view>
+      <view class="stat-card card">
+        <text class="stat-number">{{overview.favoriteCount}}</text>
+        <text class="stat-label">收藏题目</text>
+      </view>
+    </view>
+
+    <view class="section-title">开始练习</view>
+    <view class="action-list">
+      <view class="action-card card" bindtap="openChapters">
+        <view class="action-icon blue">章</view>
+        <view class="action-content">
+          <text class="action-title">章节练习</text>
+          <text class="action-subtitle">按知识点逐章巩固</text>
+        </view>
+        <text class="action-arrow">›</text>
+      </view>
+      <view class="action-card card" bindtap="openRandom">
+        <view class="action-icon purple">随</view>
+        <view class="action-content">
+          <text class="action-title">随机练习</text>
+          <text class="action-subtitle">跨章节随机抽题</text>
+        </view>
+        <text class="action-arrow">›</text>
+      </view>
+      <view class="action-card card" bindtap="openWrong">
+        <view class="action-icon red">错</view>
+        <view class="action-content">
+          <text class="action-title">错题本</text>
+          <text class="action-subtitle">重做错题并标记掌握</text>
+        </view>
+        <text class="action-arrow">›</text>
+      </view>
+      <view class="action-card card" bindtap="openFavorites">
+        <view class="action-icon orange">藏</view>
+        <view class="action-content">
+          <text class="action-title">我的收藏</text>
+          <text class="action-subtitle">集中回顾重点题目</text>
+        </view>
+        <text class="action-arrow">›</text>
+      </view>
+    </view>
+  </block>
+</view>

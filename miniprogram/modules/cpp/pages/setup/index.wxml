@@ -1,0 +1,33 @@
+<view class="page-shell cpp-page safe-bottom setup-page">
+  <view class="setup-hero card">
+    <text class="mode-label">{{modeName}}</text>
+    <text class="mode-title">{{chapterName || 'C/C++ 核心知识'}}</text>
+    <text class="mode-tip">系统将在同一组练习中自动排除重复题目；题库不足时使用全部可用题。</text>
+  </view>
+
+  <view class="section-title">选择题量</view>
+  <view class="count-grid">
+    <view
+      wx:for="{{counts}}"
+      wx:key="*this"
+      class="count-card {{selectedCount === item ? 'count-selected' : ''}}"
+      data-count="{{item}}"
+      bindtap="chooseCount"
+    >
+      <text class="count-number">{{item}}</text>
+      <text class="count-unit">题</text>
+      <text wx:if="{{item === 10}}" class="recommend">推荐</text>
+    </view>
+  </view>
+
+  <view class="notice card">
+    <text class="notice-title">答题规则</text>
+    <text class="notice-item">• 每题确认后立即判题并显示解析</text>
+    <text class="notice-item">• 提交成功后不能修改答案</text>
+    <text class="notice-item">• 退出后可从模块首页继续未完成练习</text>
+  </view>
+
+  <view class="bottom-action">
+    <button class="primary-button" loading="{{creating}}" bindtap="startPractice">开始 {{selectedCount}} 题练习</button>
+  </view>
+</view>

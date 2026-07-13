@@ -1,0 +1,38 @@
+<view class="page-shell cpp-page wrong-page safe-bottom">
+  <text class="top-title">错题本</text>
+  <text class="top-subtitle">错题答对后保留历史并标记为已掌握；以后再次答错会恢复为未掌握。</text>
+
+  <view class="filter-bar">
+    <view
+      wx:for="{{filters}}"
+      wx:key="key"
+      class="filter-item {{activeFilter === item.key ? 'filter-active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="changeFilter"
+    >{{item.label}}</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-state">正在加载错题...</view>
+  <view wx:elif="{{error}}" class="error-state">
+    <text>{{error}}</text>
+    <button class="secondary-button error-action" bindtap="loadQuestions">重新加载</button>
+  </view>
+  <view wx:elif="{{questions.length === 0}}" class="empty-state card">当前筛选下没有错题</view>
+  <view wx:else>
+    <view class="review-card card" wx:for="{{questions}}" wx:key="id">
+      <view class="review-head">
+        <text class="pill">{{item.chapterName}}</text>
+        <text class="master-state {{item.wrong.mastered ? 'mastered' : 'unmastered'}}">{{item.masteredText}}</text>
+      </view>
+      <text class="review-stem">{{item.stem}}</text>
+      <scroll-view wx:if="{{item.code}}" class="review-code" scroll-x="true"><text>{{item.code}}</text></scroll-view>
+      <text class="review-answer">正确答案：{{item.correctText}}</text>
+      <text class="review-explanation">{{item.explanation}}</text>
+      <text class="wrong-count">累计答错 {{item.wrong.wrongCount}} 次</text>
+    </view>
+  </view>
+
+  <view class="bottom-action">
+    <button class="primary-button" disabled="{{unmasteredCount === 0}}" bindtap="startReview">重做未掌握错题（{{unmasteredCount}}）</button>
+  </view>
+</view>

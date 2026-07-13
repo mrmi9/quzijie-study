@@ -1,0 +1,157 @@
+@import "../../common.wxss";
+
+.welcome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 36rpx;
+  color: #ffffff;
+  background: linear-gradient(145deg, #1d4ed8, #3b82f6 65%, #60a5fa);
+}
+
+.welcome-label,
+.welcome-title {
+  display: block;
+}
+
+.welcome-label {
+  font-size: 24rpx;
+  opacity: 0.82;
+}
+
+.welcome-title {
+  width: 360rpx;
+  margin-top: 14rpx;
+  font-size: 38rpx;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.progress-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 142rpx;
+  height: 142rpx;
+  border: 8rpx solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.progress-number {
+  font-size: 32rpx;
+  font-weight: 800;
+}
+
+.progress-label {
+  margin-top: 4rpx;
+  font-size: 20rpx;
+  opacity: 0.82;
+}
+
+.resume-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24rpx;
+  padding: 28rpx;
+  border: 2rpx solid #bfdbfe;
+}
+
+.resume-title,
+.resume-subtitle {
+  display: block;
+}
+
+.resume-title {
+  font-weight: 700;
+}
+
+.resume-subtitle {
+  margin-top: 8rpx;
+  color: #718096;
+  font-size: 24rpx;
+}
+
+.resume-arrow {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  margin-top: 24rpx;
+}
+
+.stat-card {
+  padding: 26rpx;
+}
+
+.stat-number,
+.stat-label {
+  display: block;
+}
+
+.stat-number {
+  color: #1d4ed8;
+  font-size: 38rpx;
+  font-weight: 800;
+}
+
+.stat-label {
+  margin-top: 8rpx;
+  color: #718096;
+  font-size: 24rpx;
+}
+
+.action-card {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding: 28rpx;
+}
+
+.action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 22rpx;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.blue { color: #1d4ed8; background: #dbeafe; }
+.purple { color: #7c3aed; background: #ede9fe; }
+.red { color: #b42318; background: #feeceb; }
+.orange { color: #c2410c; background: #ffedd5; }
+
+.action-content {
+  flex: 1;
+  margin-left: 24rpx;
+}
+
+.action-title,
+.action-subtitle {
+  display: block;
+}
+
+.action-title {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.action-subtitle {
+  margin-top: 8rpx;
+  color: #718096;
+  font-size: 24rpx;
+}
+
+.action-arrow {
+  color: #9aa7b8;
+  font-size: 48rpx;
+}

@@ -1,0 +1,14 @@
+{
+  "name": "quzijie-practice",
+  "version": "1.0.0",
+  "private": true,
+  "description": "趣字节刷题微信小程序 C/C++ 模块",
+  "scripts": {
+    "build:data": "node tools/build-question-module.js",
+    "validate:data": "node tools/validate-questions.js",
+    "check:js": "node tools/check-js.js",
+    "check:project": "node tools/check-project.js",
+    "test": "node tests/mock-core.test.js",
+    "verify": "npm run validate:data && npm run check:js && npm run check:project && npm test"
+  }
+}

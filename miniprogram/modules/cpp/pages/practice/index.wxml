@@ -1,0 +1,71 @@
+<view class="page-shell cpp-page practice-page safe-bottom">
+  <view wx:if="{{loading}}" class="loading-state">正在恢复练习...</view>
+  <view wx:elif="{{error}}" class="error-state">
+    <text>{{error}}</text>
+    <button class="secondary-button error-action" bindtap="loadSession">重新加载</button>
+  </view>
+
+  <block wx:elif="{{question}}">
+    <view class="progress-head">
+      <text>第 {{currentIndex + 1}} / {{session.totalCount}} 题</text>
+      <text class="progress-percent">{{progressPercent}}%</text>
+    </view>
+    <view class="progress-track">
+      <view class="progress-value" style="width: {{progressPercent}}%;"></view>
+    </view>
+
+    <view class="question-card card">
+      <view class="question-meta">
+        <text class="pill">{{question.typeName}}</text>
+        <text class="difficulty">难度 {{question.difficulty}} / 3</text>
+      </view>
+      <text class="question-stem">{{question.stem}}</text>
+      <scroll-view wx:if="{{question.code}}" class="code-block" scroll-x="true">
+        <text selectable="true">{{question.code}}</text>
+      </scroll-view>
+      <view class="tag-row">
+        <text wx:for="{{question.tags}}" wx:key="*this" class="tag"># {{item}}</text>
+      </view>
+    </view>
+
+    <view class="option-list">
+      <view
+        wx:for="{{question.options}}"
+        wx:key="id"
+        class="option-card card {{item.stateClass}}"
+        data-id="{{item.id}}"
+        bindtap="selectOption"
+      >
+        <view class="option-label">{{item.label}}</view>
+        <text class="option-text">{{item.text}}</text>
+        <text wx:if="{{reviewed && item.correct}}" class="option-mark correct-mark">✓</text>
+        <text wx:elif="{{reviewed && item.selected && !item.correct}}" class="option-mark wrong-mark">×</text>
+      </view>
+    </view>
+
+    <view wx:if="{{reviewed}}" class="feedback-card card {{result.isCorrect ? 'feedback-correct' : 'feedback-wrong'}}">
+      <view class="feedback-head">
+        <text class="feedback-title">{{result.isCorrect ? '回答正确' : '回答错误'}}</text>
+        <button class="favorite-button" loading="{{favoriteLoading}}" bindtap="toggleFavorite">
+          {{question.isFavorite ? '★ 已收藏' : '☆ 收藏'}}
+        </button>
+      </view>
+      <text class="answer-line">正确答案：{{correctAnswerText}}</text>
+      <text class="explanation-title">答案解析</text>
+      <text class="explanation-text">{{result.explanation}}</text>
+    </view>
+
+    <view class="bottom-action">
+      <button
+        wx:if="{{!reviewed}}"
+        class="primary-button"
+        disabled="{{selectedOptionIds.length === 0}}"
+        loading="{{submitting}}"
+        bindtap="submitAnswer"
+      >确认答案</button>
+      <button wx:else class="primary-button" loading="{{submitting}}" bindtap="nextQuestion">
+        {{isLast ? '完成练习并查看结果' : '下一题'}}
+      </button>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,42 @@
+.cpp-page {
+  padding-top: 28rpx;
+}
+
+.top-title {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.top-subtitle {
+  display: block;
+  margin-top: 12rpx;
+  color: #718096;
+  line-height: 1.6;
+}
+
+.list-card {
+  margin-bottom: 22rpx;
+  padding: 28rpx;
+}
+
+.row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.error-action {
+  width: 240rpx;
+  margin-top: 28rpx;
+}
+
+.bottom-action {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin: 28rpx -32rpx -32rpx;
+  padding: 20rpx 32rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: rgba(244, 247, 251, 0.96);
+}

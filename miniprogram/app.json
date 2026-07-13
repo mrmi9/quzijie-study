@@ -1,0 +1,30 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/login/index"
+  ],
+  "subPackages": [
+    {
+      "root": "modules/cpp",
+      "name": "cpp",
+      "pages": [
+        "pages/home/index",
+        "pages/chapters/index",
+        "pages/setup/index",
+        "pages/practice/index",
+        "pages/result/index",
+        "pages/wrong/index",
+        "pages/favorites/index"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#2563eb",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "趣字节刷题",
+    "backgroundColor": "#f4f7fb",
+    "backgroundTextStyle": "dark"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
