@@ -488,7 +488,7 @@ GitHub Actions 至少执行：
 - Mock 与真实 API 的考试草稿均改为整份原子替换；页面继续只访问仓储层，交卷后清理本地兜底草稿。
 - 已在微信开发者工具真实 API 模式完成一份 408 试卷的创建、选项保存、手动下一题、39 道未答提示、提前交卷、四科结果和逐题解析验收；随后已恢复默认 Mock 模式。
 - 已增加 Node 24 多阶段 API Dockerfile、非 root 运行用户、仅 API 的 Compose、独立迁移目标、`.dockerignore`、`/health`、`/ready` 和优雅关闭。
-- 已增加 GitHub Actions：PostgreSQL 17 服务、迁移、题库导入、`npm run verify:all` 和 API 镜像构建。本阶段只构建镜像，不自动部署生产环境。
+- 已增加 GitHub Actions：PostgreSQL 17 服务、迁移、题库导入、`npm run verify:all`、运行/迁移镜像构建和容器冒烟。本阶段只验证镜像，不自动部署生产环境。
 - 生产模式现在拒绝 Stub 微信登录、弱 JWT 密钥和缺失的关键环境变量。
 
 ### 17.2 验证结果
@@ -498,7 +498,7 @@ GitHub Actions 至少执行：
 - PostgreSQL 集成测试：6 组通过，覆盖 `/ready`、刷新令牌轮换、用户隔离、408 配比、题池不足回滚、非法选项、草稿覆盖/清除、交卷幂等、到期保存/自动交卷、错题统计和题目快照。
 - 小程序自动门禁继续覆盖 500 题、七学科、16 个页面、题型/难度/408 配比、路由、包体积和 Mock 状态机。
 - 微信开发者工具真实登录和 408 API 页面闭环通过，最终默认 Mock 编译无业务错误。
-- Docker Desktop 引擎和 `docker compose -f compose.api.yaml config --quiet` 已验证。首次本地镜像构建停在 Docker Hub 基础镜像下载并超时，未拉取 PostgreSQL 镜像；Dockerfile 的最终可构建性继续由本次新增的 GitHub Actions 镜像构建门禁确认。
+- Docker Desktop 引擎和 `docker compose -f compose.api.yaml config --quiet` 已验证，Compose 不包含 PostgreSQL 服务，也未拉取 PostgreSQL 镜像。首次本地镜像构建曾受 Docker Hub 基础镜像下载超时影响；GitHub Actions 运行 `29322765212` 已在 Linux 环境完成 API 与迁移镜像构建、数据库迁移、500 题导入、非 root 启动、`/health`、`/ready` 和优雅关闭冒烟，完整门禁通过。
 
 ### 17.3 里程碑状态校准
 
@@ -510,9 +510,9 @@ GitHub Actions 至少执行：
 
 ### 17.4 下一阶段执行路线
 
-1. 让 GitHub Actions 和可访问 Docker Hub 的环境完成 API 镜像构建，修复任何 CI 差异并固定可回滚镜像版本。
-2. 建设预发布 HTTPS API，配置正式 `request` 合法域名、独立预发布数据库、最小权限账号、结构化日志、指标和告警。
-3. 在预发布环境执行迁移、500 题导入、`/health`、`/ready`、备份与恢复、数据库中断和多实例自动交卷演练。
-4. 使用体验版在 iOS 与 Android 真机逐一验收七学科普通练习和 408：弱网、切后台、重启恢复、到期交卷、重复提交和跨用户隔离。
-5. 由非出题人员完成 500 题交叉复核并更新 `content/REVIEW_STATUS.md`，重点复核代码标准、难题质量和 408 适用性。
+1. 建设预发布 HTTPS API，配置正式 `request` 合法域名、独立预发布数据库、最小权限账号、结构化日志、指标和告警，并为通过门禁的镜像固定可回滚版本。
+2. 在预发布环境执行迁移、500 题导入、`/health`、`/ready`、备份与恢复、数据库中断和多实例自动交卷演练。
+3. 使用体验版在 iOS 与 Android 真机逐一验收七学科普通练习和 408：弱网、切后台、重启恢复、到期交卷、重复提交和跨用户隔离。
+4. 由非出题人员完成 500 题交叉复核并更新 `content/REVIEW_STATUS.md`，重点复核代码标准、难题质量和 408 适用性。
+5. 完成隐私说明、日志脱敏复核、发布回滚预案和微信审核材料后，再进入小范围灰度发布。
 6. 补齐隐私政策、用户协议、账号注销/数据删除、主体认证、服务类目、域名与备案材料，再进入微信体验版和审核流程。

@@ -67,7 +67,7 @@
 - [ ] 非出题人员按 `content/REVIEW_STATUS.md` 完成 500 题交叉复核并记录姓名、日期和修改。
 - [ ] 核对含代码题的语言标准、题目难度标注和可能依赖实现的前提。
 - [ ] 配置合法 AppID、HTTPS 后端、request 合法域名、隐私与登录流程后再提交审核。
-- [ ] API 镜像使用非 root 用户构建，`/health` 与 `/ready` 分别通过，Compose 配置中不包含 PostgreSQL 服务。
+- [x] API 镜像使用非 root 用户构建，`/health` 与 `/ready` 分别通过，Compose 配置中不包含 PostgreSQL 服务。
 - [ ] 在独立数据库上执行迁移镜像、幂等题库导入、API 启动和上一镜像回滚演练。
 
 ## 2026-07-14 本地联调记录
@@ -78,5 +78,5 @@
 - [x] 微信开发者工具真实 API：提前交卷准确提示 39 题未答，结果页显示 80 分制、四科表现、正确答案和快照解析。
 - [x] 联调结束后恢复默认 Mock 模式并重新编译，未观察到项目业务编译错误。
 - [x] Docker Desktop 引擎可用，`docker compose -f compose.api.yaml config --quiet` 通过，Compose 未定义 PostgreSQL 服务。
-- [ ] 本地 API 镜像构建受 Docker Hub 基础镜像下载超时阻塞；等待 GitHub Actions 或网络可用环境完成镜像门禁后补录结果。
+- [x] GitHub Actions 运行 `29322765212` 已完成 API/迁移镜像构建、数据库迁移、500 题导入、非 root 启动、`/health`、`/ready` 和优雅关闭；本地 Docker Hub 下载超时不再阻塞镜像门禁。
 - [ ] iOS、Android 真机、预发布 HTTPS、合法域名、备份恢复和多实例演练尚未执行。
