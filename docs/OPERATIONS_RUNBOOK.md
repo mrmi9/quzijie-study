@@ -4,7 +4,7 @@
 
 ## 1. 镜像发布
 
-在 GitHub Actions 手动运行 `publish release images`。不填写 tag 时使用 `sha-<commit>`；也可以填写审核版本对应的不可变标签。工作流会先执行全量验证，再向 GHCR 推送：
+在 GitHub Actions 手动运行 `publish release images`。不填写 tag 时使用 `sha-<commit>`；也可以填写审核版本对应的不可变标签。工作流会先执行全量验证和发布配置门禁，再向 GHCR 推送：
 
 ```text
 ghcr.io/<owner>/<repository>-api:<tag>

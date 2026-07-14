@@ -50,7 +50,7 @@ jobs:
           PGPASSWORD: Ci-Db-74_Battery
         run: psql -h localhost -U quzijie -d quzijie_dev -c 'CREATE DATABASE quzijie_test'
       - name: Verify source before publishing
-        run: npm run verify:all
+        run: npm run verify:release
       - name: Resolve immutable image references
         id: images
         shell: bash
