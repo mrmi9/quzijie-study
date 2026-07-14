@@ -1,0 +1,24 @@
+[Unit]
+Description=Quzijie PostgreSQL verified backup
+After=postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/quzijie-study
+Environment=QUIZIJIE_API_ENV_FILE=/opt/quzijie-study/server/.env.production
+Environment=QUIZIJIE_BACKUP_DIR=/opt/quzijie-study/backups
+Environment=QUIZIJIE_BACKUP_RETENTION_DAYS=14
+ExecStart=/usr/bin/bash /opt/quzijie-study/ops/backup-postgres.sh
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/quzijie-study/backups
+CapabilityBoundingSet=
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6

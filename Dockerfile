@@ -20,7 +20,11 @@ FROM node:24-alpine AS production-deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY server/package.json ./server/package.json
-RUN npm ci --omit=dev --omit=peer --ignore-scripts
+RUN npm ci --omit=dev --omit=peer --ignore-scripts \
+  && rm -rf /app/node_modules/prisma /app/node_modules/@prisma/dev /app/node_modules/@hono/node-server \
+  && test -d /app/server/node_modules/@prisma/client \
+  && test -d /app/node_modules/@prisma/adapter-pg \
+  && test ! -e /app/node_modules/@hono/node-server
 
 FROM node:24-alpine AS runtime
 

@@ -85,6 +85,17 @@ export QUIZIJIE_BACKUP_DIR=/opt/quzijie-study/backups
 bash ops/backup-postgres.sh
 ```
 
+腾讯云标准目录可安装每日备份定时器。它每天北京时间 03:20 后随机延迟最多 15 分钟执行，保留 14 天，并在安装时立即完成一次备份验证：
+
+```bash
+cd /opt/quzijie-study
+bash ops/install-backup-timer.sh
+systemctl list-timers quzijie-backup.timer
+journalctl -u quzijie-backup.service --since today
+```
+
+定时任务以 `ubuntu` 用户运行，启用只读系统保护、空 capabilities、`NoNewPrivileges`，仅允许写入 `/opt/quzijie-study/backups`。
+
 然后设置新的两个镜像引用并执行 `bash ops/deploy.sh`。只有题库内容变化时才设置 `QUIZIJIE_IMPORT_QUESTIONS=true`。
 
 ## 5. 应用回滚
