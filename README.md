@@ -57,6 +57,7 @@ npm run verify:release # 在全量门禁后检查 HTTPS API、隐私信息和题
 - [通用题库 Schema](schemas/question.schema.json)
 - [生产开发与部署路线图](docs/PRODUCTION_DEPLOYMENT_ROADMAP.md)
 - [发布候选版清单](docs/RELEASE_CHECKLIST.md)
+- [预发布与生产运行手册](docs/OPERATIONS_RUNBOOK.md)
 - [后端本地开发说明](server/README.md)
 
 ## 发布边界

@@ -1,0 +1,100 @@
+name: publish release images
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Immutable image tag; leave empty to use sha-<commit>"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DATABASE_URL: postgresql://quzijie:ci-password@localhost:5432/quzijie_dev?schema=public
+      TEST_DATABASE_URL: postgresql://quzijie:ci-password@localhost:5432/quzijie_test?schema=public
+      JWT_ACCESS_SECRET: ci-access-secret-with-at-least-thirty-two-characters
+      WECHAT_AUTH_MODE: stub
+      WECHAT_DEV_OPENID: ci-openid
+      NODE_ENV: test
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: quzijie
+          POSTGRES_PASSWORD: ci-password
+          POSTGRES_DB: quzijie_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U quzijie -d quzijie_dev"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Create integration database
+        env:
+          PGPASSWORD: ci-password
+        run: psql -h localhost -U quzijie -d quzijie_dev -c 'CREATE DATABASE quzijie_test'
+      - name: Verify source before publishing
+        run: npm run verify:all
+      - name: Resolve immutable image references
+        id: images
+        shell: bash
+        run: |
+          tag="${{ inputs.tag }}"
+          if [[ -z "$tag" ]]; then tag="sha-${GITHUB_SHA:0:12}"; fi
+          if [[ ! "$tag" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$ ]]; then
+            echo "Invalid OCI image tag" >&2
+            exit 1
+          fi
+          repository="${GITHUB_REPOSITORY,,}"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "api=ghcr.io/${repository}-api:$tag" >> "$GITHUB_OUTPUT"
+          echo "migrate=ghcr.io/${repository}-api-migrate:$tag" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish API runtime image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          target: runtime
+          push: true
+          tags: ${{ steps.images.outputs.api }}
+          cache-from: type=gha,scope=runtime
+          cache-to: type=gha,mode=max,scope=runtime
+          provenance: mode=max
+          sbom: true
+      - name: Publish migration image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          target: migration
+          push: true
+          tags: ${{ steps.images.outputs.migrate }}
+          cache-from: type=gha,scope=migration
+          cache-to: type=gha,mode=max,scope=migration
+          provenance: mode=max
+          sbom: true
+      - name: Record published references
+        run: |
+          echo "### Published release images" >> "$GITHUB_STEP_SUMMARY"
+          echo '- `${{ steps.images.outputs.api }}`' >> "$GITHUB_STEP_SUMMARY"
+          echo '- `${{ steps.images.outputs.migrate }}`' >> "$GITHUB_STEP_SUMMARY"

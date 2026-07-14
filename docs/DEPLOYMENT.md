@@ -59,3 +59,15 @@ Invoke-RestMethod http://127.0.0.1:3000/ready
 5. 应用回滚使用上一版本镜像；数据库 Schema 采用向前兼容迁移，不自动执行破坏性回滚。
 
 任何日志、CI变量、镜像层和故障截图都不得包含数据库密码、JWT、微信 code、OpenID 或 AppSecret。
+
+## 6. 生产自动化入口
+
+- `compose.release.yaml`：只运行已发布的不可变 API/迁移镜像，API 仅绑定 `127.0.0.1`。
+- `ops/deploy.sh`：环境预检、拉取、迁移、可选题库导入、启动和就绪检查。
+- `ops/rollback.sh`：恢复上一应用镜像，不执行破坏性数据库回滚。
+- `ops/backup-postgres.sh`：生成 PostgreSQL 自定义格式备份并用 `pg_restore --list` 验证。
+- `ops/restore-postgres.sh`：带双重确认的恢复演练入口。
+- `tools/verify-deployment.js`：从公网验证 HTTPS、存活和数据库就绪。
+- `ops/upload-miniprogram.ps1`：发布门禁通过后调用微信开发者工具上传代码。
+
+完整操作步骤见 [预发布与生产运行手册](OPERATIONS_RUNBOOK.md)。

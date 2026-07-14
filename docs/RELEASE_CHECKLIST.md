@@ -30,6 +30,9 @@
 
 ## 2. 由 Codex 在配置后继续完成
 
+- [x] 准备不可变 API/迁移镜像发布工作流和生产专用 Compose。
+- [x] 准备环境预检、自动迁移部署、健康检查、应用回滚、数据库备份/恢复脚本。
+- [x] 准备通过发布门禁后调用微信开发者工具上传版本的脚本。
 - [ ] 写入正式 API 域名、运营主体和隐私联系渠道，执行 `npm run verify:release`。
 - [ ] 构建带 Git SHA 的 API/迁移镜像，部署预发布环境并执行迁移、500 题幂等导入。
 - [ ] 验证 HTTPS、证书链、`/health`、`/ready`、日志脱敏、数据库备份与恢复。
@@ -44,6 +47,7 @@
 npm run verify:all
 npm run verify:release
 docker compose -f compose.api.yaml config --quiet
+docker compose -f compose.release.yaml config --quiet
 ```
 
 `verify:release` 必须满足：正式 AppID、共享配置开启合法域名校验、HTTPS API 域名有效、运营者和隐私联系方式已填写、账户/隐私页面存在、500 题交叉复核记录已完成。

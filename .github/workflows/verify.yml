@@ -35,12 +35,20 @@ jobs:
           --health-retries 20
 
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Validate deployment definitions
+        env:
+          QUIZIJIE_API_ENV_FILE: server/.env.example
+          QUIZIJIE_API_IMAGE: ghcr.io/example/quzijie-api:ci
+          QUIZIJIE_MIGRATE_IMAGE: ghcr.io/example/quzijie-api-migrate:ci
+        run: |
+          bash -n ops/*.sh
+          docker compose -f compose.release.yaml config --quiet
       - name: Create test database
         env:
           PGPASSWORD: ci-password
@@ -90,7 +98,45 @@ jobs:
           done
           test "$ready" = "1"
           curl --fail http://127.0.0.1:3000/ready
+          QUIZIJIE_ALLOW_HTTP_CHECK=true node tools/verify-deployment.js http://127.0.0.1:3000
           docker stop --time 10 "$container"
           test "$(docker inspect --format '{{.State.ExitCode}}' "$container")" = "0"
           docker rm "$container"
+          trap - EXIT
+      - name: Smoke production compose
+        run: |
+          set -euo pipefail
+          release_env="$RUNNER_TEMP/quzijie-release.env"
+          printf '%s\n' \
+            'NODE_ENV=production' \
+            'HOST=0.0.0.0' \
+            'PORT=3000' \
+            'DATABASE_URL=postgresql://quzijie:ci-password@host.docker.internal:5432/quzijie_dev?schema=public' \
+            'JWT_ACCESS_SECRET=ci-production-secret-with-more-than-thirty-two-unique-characters' \
+            'WECHAT_AUTH_MODE=real' \
+            'WECHAT_APP_ID=wx69380e593ebd5ac7' \
+            'WECHAT_APP_SECRET=ci-app-secret' > "$release_env"
+          chmod 600 "$release_env"
+          export QUIZIJIE_API_ENV_FILE="$release_env"
+          export QUIZIJIE_API_IMAGE=quzijie-api:ci
+          export QUIZIJIE_MIGRATE_IMAGE=quzijie-api-migrate:ci
+          export QUIZIJIE_API_PORT=3010
+          cleanup() { docker compose -f compose.release.yaml down --remove-orphans >/dev/null 2>&1 || true; }
+          trap cleanup EXIT
+          node tools/check-deployment-env.js "$release_env"
+          docker compose -f compose.release.yaml up -d --no-build api
+          ready=0
+          for attempt in $(seq 1 30); do
+            if QUIZIJIE_ALLOW_HTTP_CHECK=true node tools/verify-deployment.js http://127.0.0.1:3010; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          test "$ready" = "1"
+          test "$(docker compose -f compose.release.yaml exec -T api node -e 'process.stdout.write(String(process.getuid()))')" != "0"
+          container_id="$(docker compose -f compose.release.yaml ps -q api)"
+          test "$(docker inspect --format '{{.HostConfig.ReadonlyRootfs}}' "$container_id")" = "true"
+          docker inspect --format '{{json .HostConfig.SecurityOpt}}' "$container_id" | grep -q 'no-new-privileges'
+          cleanup
           trap - EXIT
