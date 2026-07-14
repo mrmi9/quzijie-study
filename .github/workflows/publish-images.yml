@@ -17,8 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      DATABASE_URL: postgresql://quzijie:ci-password@localhost:5432/quzijie_dev?schema=public
-      TEST_DATABASE_URL: postgresql://quzijie:ci-password@localhost:5432/quzijie_test?schema=public
+      DATABASE_URL: postgresql://quzijie:Ci-Db-74_Battery@localhost:5432/quzijie_dev?schema=public
+      TEST_DATABASE_URL: postgresql://quzijie:Ci-Db-74_Battery@localhost:5432/quzijie_test?schema=public
       JWT_ACCESS_SECRET: ci-access-secret-with-at-least-thirty-two-characters
       WECHAT_AUTH_MODE: stub
       WECHAT_DEV_OPENID: ci-openid
@@ -28,7 +28,7 @@ jobs:
         image: postgres:17-alpine
         env:
           POSTGRES_USER: quzijie
-          POSTGRES_PASSWORD: ci-password
+          POSTGRES_PASSWORD: Ci-Db-74_Battery
           POSTGRES_DB: quzijie_dev
         ports:
           - 5432:5432
@@ -47,7 +47,7 @@ jobs:
       - run: npm ci
       - name: Create integration database
         env:
-          PGPASSWORD: ci-password
+          PGPASSWORD: Ci-Db-74_Battery
         run: psql -h localhost -U quzijie -d quzijie_dev -c 'CREATE DATABASE quzijie_test'
       - name: Verify source before publishing
         run: npm run verify:all
