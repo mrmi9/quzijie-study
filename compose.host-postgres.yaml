@@ -1,0 +1,8 @@
+name: quzijie-study-api
+
+# Host PostgreSQL deployment override. Create this network before the first
+# deployment and allow only its subnet in pg_hba.conf.
+networks:
+  default:
+    external: true
+    name: ${QUIZIJIE_DOCKER_NETWORK_NAME:-quzijie-release}

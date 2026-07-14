@@ -15,6 +15,7 @@ set -a
 source "$QUIZIJIE_API_ENV_FILE"
 set +a
 : "${DATABASE_URL:?environment file is missing DATABASE_URL}"
+database_admin_url="${DATABASE_ADMIN_URL:-${DATABASE_URL%%\?*}}"
 
 mkdir -p "$backup_dir"
 chmod 700 "$backup_dir"
@@ -22,7 +23,7 @@ timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
 final_path="$backup_dir/quzijie-$timestamp.dump"
 temporary_path="$final_path.partial"
 
-PGDATABASE="$DATABASE_URL" pg_dump --format=custom --compress=9 --no-owner --no-privileges --file "$temporary_path"
+pg_dump --dbname="$database_admin_url" --format=custom --compress=9 --no-owner --no-privileges --file "$temporary_path"
 pg_restore --list "$temporary_path" >/dev/null
 chmod 600 "$temporary_path"
 mv "$temporary_path" "$final_path"

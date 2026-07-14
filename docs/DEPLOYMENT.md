@@ -13,6 +13,7 @@ NODE_ENV=production
 HOST=0.0.0.0
 PORT=3000
 DATABASE_URL=postgresql://USER:PASSWORD@DB_HOST:5432/DB_NAME?schema=public
+DATABASE_ADMIN_URL=postgresql://USER:PASSWORD@127.0.0.1:5432/DB_NAME
 JWT_ACCESS_SECRET=不少于32字符且不可使用示例值
 WECHAT_AUTH_MODE=real
 WECHAT_APP_ID=正式小程序AppID
@@ -20,6 +21,8 @@ WECHAT_APP_SECRET=正式AppSecret
 ```
 
 Windows Docker 连接本机 PostgreSQL 时，`DB_HOST` 使用 `host.docker.internal`，并确保 PostgreSQL 已允许来自 Docker 网络的连接。正式部署使用内网数据库地址，不使用该 Windows 专用主机名。
+
+当 PostgreSQL 运行在同一台 Linux 宿主机上时，API 的 `DATABASE_URL` 使用专用 Docker 网桥网关；宿主机备份和恢复使用仅回环访问的 `DATABASE_ADMIN_URL`。首次部署先创建隔离网桥，再叠加 `compose.host-postgres.yaml`，避免把 PostgreSQL 暴露到公网。
 
 体验版和正式版的 API 地址填写在 `miniprogram/config/release.js`。该地址必须是已备案的 HTTPS 业务域名，不使用 IP、`localhost` 或路径；开发版仍可通过本地 Storage 指向 `http://127.0.0.1:3000`。部署和微信后台域名配置完成后执行：
 

@@ -1,4 +1,6 @@
 const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
 const { parseEnv, validateValues } = require('../tools/check-deployment-env');
 const { validateBaseUrl } = require('../tools/verify-deployment');
 
@@ -31,5 +33,20 @@ assert.deepEqual(validateBaseUrl('https://api.quzijie.test').errors, []);
 assert.match(validateBaseUrl('http://api.quzijie.test').errors.join('\n'), /HTTPS/);
 assert.deepEqual(validateBaseUrl('http://127.0.0.1:3000', true).errors, []);
 assert.match(validateBaseUrl('https://api.quzijie.test/api').errors.join('\n'), /路径/);
+
+const root = path.resolve(__dirname, '..');
+const deployScript = fs.readFileSync(path.join(root, 'ops/deploy.sh'), 'utf8');
+const rollbackScript = fs.readFileSync(path.join(root, 'ops/rollback.sh'), 'utf8');
+const backupScript = fs.readFileSync(path.join(root, 'ops/backup-postgres.sh'), 'utf8');
+const restoreScript = fs.readFileSync(path.join(root, 'ops/restore-postgres.sh'), 'utf8');
+assert.match(deployScript, /QUIZIJIE_COMPOSE_OVERRIDE_FILE/);
+assert.match(rollbackScript, /QUIZIJIE_COMPOSE_OVERRIDE_FILE/);
+assert.match(deployScript, /QUIZIJIE_PREFLIGHT_IMAGE:-node:24-alpine/);
+assert.match(deployScript, /QUIZIJIE_PULL_IMAGES:-true/);
+assert.match(rollbackScript, /QUIZIJIE_PULL_IMAGES:-true/);
+assert.match(backupScript, /DATABASE_ADMIN_URL:-\$\{DATABASE_URL%%\\\?\*\}/);
+assert.match(restoreScript, /DATABASE_ADMIN_URL:-\$\{DATABASE_URL%%\\\?\*\}/);
+assert.match(backupScript, /pg_dump --dbname="\$database_admin_url"/);
+assert.match(restoreScript, /pg_restore --dbname="\$database_admin_url"/);
 
 console.log('Deployment operation tests passed: environment and public endpoint gates are enforced.');

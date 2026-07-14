@@ -22,9 +22,23 @@ set +a
 : "${QUIZIJIE_MIGRATE_IMAGE:?previous release is missing QUIZIJIE_MIGRATE_IMAGE}"
 
 api_port="${QUIZIJIE_API_PORT:-3000}"
+pull_images="${QUIZIJIE_PULL_IMAGES:-true}"
 compose=(docker compose -f compose.release.yaml)
+if [[ -n "${QUIZIJIE_COMPOSE_OVERRIDE_FILE:-}" ]]; then
+  if [[ ! -f "$QUIZIJIE_COMPOSE_OVERRIDE_FILE" ]]; then
+    echo "Compose override does not exist: $QUIZIJIE_COMPOSE_OVERRIDE_FILE" >&2
+    exit 1
+  fi
+  compose+=(-f "$QUIZIJIE_COMPOSE_OVERRIDE_FILE")
+fi
 
-"${compose[@]}" pull api
+if [[ "$pull_images" != "true" && "$pull_images" != "false" ]]; then
+  echo "QUIZIJIE_PULL_IMAGES must equal true or false" >&2
+  exit 1
+fi
+if [[ "$pull_images" == "true" ]]; then
+  "${compose[@]}" pull api
+fi
 "${compose[@]}" up -d --no-build api
 
 ready=0

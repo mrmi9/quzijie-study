@@ -81,5 +81,15 @@
 - [x] 联调结束后恢复默认 Mock 模式并重新编译，未观察到项目业务编译错误。
 - [x] Docker Desktop 引擎可用，`docker compose -f compose.api.yaml config --quiet` 通过，Compose 未定义 PostgreSQL 服务。
 - [x] GitHub Actions 运行 `29322765212` 已完成 API/迁移镜像构建、数据库迁移、500 题导入、非 root 启动、`/health`、`/ready` 和优雅关闭；本地 Docker Hub 下载超时不再阻塞镜像门禁。
-- [ ] iOS、Android 真机、预发布 HTTPS、合法域名、备份恢复和多实例演练尚未执行。
+- [ ] iOS、Android 真机、预发布 HTTPS、合法域名和多实例演练尚未执行。
 - [x] `npm run check:release` 能准确阻止空 HTTPS API、缺失运营主体/隐私联系方式和未完成的 500 题交叉复核。
+
+## 2026-07-14 腾讯云预发布部署记录
+
+- [x] Ubuntu 24.04 服务器安装 Docker Engine 29.6.1、Compose 5.3.1 与 PostgreSQL 17.10；原 3x-ui/Xray 的 443、9000、10000、2096 监听保持不变。
+- [x] PostgreSQL 仅监听回环地址和 `172.28.250.0/24` 专用 Docker 网桥，API 仅绑定 `127.0.0.1:3000`，未开放新的公网端口。
+- [x] 两次 Prisma 迁移成功，题库导入后数据库包含 7 学科、500 道题。
+- [x] API 容器使用 `node` 非 root 用户、只读根文件系统、`cap_drop: ALL` 和 `no-new-privileges`；容器重启后 `/health`、`/ready` 均通过。
+- [x] API 日志对微信 Secret、JWT 和数据库连接信息的值扫描通过，未发现敏感值回显。
+- [x] 生成 PostgreSQL 自定义格式备份并通过 `pg_restore --list`；恢复到一次性测试数据库后核对 500 题，再删除测试数据库，主库和在线 API 未受影响。
+- [ ] 域名审核通过后配置 DNS、TLS 和微信 `request` 合法域名，再通过体验版完成真实公网 API 验收。

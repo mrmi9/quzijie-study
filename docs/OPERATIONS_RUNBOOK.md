@@ -37,6 +37,22 @@ node tools/check-deployment-env.js server/.env.production
 
 预检只输出变量名称相关的错误，不输出数据库密码、JWT 或微信 Secret。
 
+如果 PostgreSQL 17 与 API 位于同一台 Linux 主机，增加仅供宿主机运维使用的连接：
+
+```text
+DATABASE_URL=postgresql://USER:PASSWORD@172.28.250.1:5432/DB_NAME?schema=public
+DATABASE_ADMIN_URL=postgresql://USER:PASSWORD@127.0.0.1:5432/DB_NAME
+```
+
+首次部署创建固定隔离网桥 `quzijie-release`，并让 PostgreSQL 只额外监听 `172.28.250.1`、只允许 `172.28.250.0/24` 的目标数据库账号通过 SCRAM 认证。部署和回滚时设置：
+
+```bash
+docker network create --driver bridge --subnet 172.28.250.0/24 --gateway 172.28.250.1 quzijie-release
+export QUIZIJIE_COMPOSE_OVERRIDE_FILE=/opt/quzijie-study/compose.host-postgres.yaml
+```
+
+`ops/deploy.sh` 在宿主机没有 Node.js 时会使用 `node:24-alpine` 执行环境预检，因此服务器只需 Docker Engine、Compose 插件、PostgreSQL 客户端和 `curl`。
+
 ## 3. 首次部署
 
 ```bash
@@ -45,8 +61,11 @@ export QUIZIJIE_API_IMAGE=ghcr.io/<owner>/<repository>-api:<tag>
 export QUIZIJIE_MIGRATE_IMAGE=ghcr.io/<owner>/<repository>-api-migrate:<tag>
 export QUIZIJIE_API_PORT=3000
 export QUIZIJIE_IMPORT_QUESTIONS=true
+export QUIZIJIE_COMPOSE_OVERRIDE_FILE=/opt/quzijie-study/compose.host-postgres.yaml
 bash ops/deploy.sh
 ```
+
+正式镜像仓库发布后保持 `QUIZIJIE_PULL_IMAGES=true`（默认值）。域名审核期间若在目标服务器本机构建带 Git SHA 的预发布镜像，先确认两个镜像均存在，再临时设置 `QUIZIJIE_PULL_IMAGES=false`；回滚同样使用该开关，脚本不会误向公共仓库拉取本地标签。
 
 脚本依次执行环境预检、镜像拉取、独立迁移、可选的 500 题幂等导入、API 启动和 `/ready` 检查。只有健康检查通过后才记录当前镜像。
 

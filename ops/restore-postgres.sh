@@ -25,9 +25,10 @@ set -a
 source "$QUIZIJIE_API_ENV_FILE"
 set +a
 : "${DATABASE_URL:?environment file is missing DATABASE_URL}"
+database_admin_url="${DATABASE_ADMIN_URL:-${DATABASE_URL%%\?*}}"
 
 pg_restore --list "$QUIZIJIE_RESTORE_FILE" >/dev/null
-PGDATABASE="$DATABASE_URL" pg_restore \
+pg_restore --dbname="$database_admin_url" \
   --clean \
   --if-exists \
   --no-owner \

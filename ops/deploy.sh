@@ -10,17 +10,41 @@ cd "$root_dir"
 
 api_port="${QUIZIJIE_API_PORT:-3000}"
 import_questions="${QUIZIJIE_IMPORT_QUESTIONS:-false}"
+pull_images="${QUIZIJIE_PULL_IMAGES:-true}"
 state_dir="${QUIZIJIE_RELEASE_STATE_DIR:-$root_dir/.release}"
 compose=(docker compose -f compose.release.yaml)
+if [[ -n "${QUIZIJIE_COMPOSE_OVERRIDE_FILE:-}" ]]; then
+  if [[ ! -f "$QUIZIJIE_COMPOSE_OVERRIDE_FILE" ]]; then
+    echo "Compose override does not exist: $QUIZIJIE_COMPOSE_OVERRIDE_FILE" >&2
+    exit 1
+  fi
+  compose+=(-f "$QUIZIJIE_COMPOSE_OVERRIDE_FILE")
+fi
 
-node tools/check-deployment-env.js "$QUIZIJIE_API_ENV_FILE"
+if command -v node >/dev/null 2>&1; then
+  node tools/check-deployment-env.js "$QUIZIJIE_API_ENV_FILE"
+else
+  docker run --rm \
+    -v "$root_dir:/workspace:ro" \
+    -v "$QUIZIJIE_API_ENV_FILE:/run/quzijie.env:ro" \
+    -w /workspace \
+    "${QUIZIJIE_PREFLIGHT_IMAGE:-node:24-alpine}" \
+    node tools/check-deployment-env.js /run/quzijie.env
+fi
 mkdir -p "$state_dir"
+
+if [[ "$pull_images" != "true" && "$pull_images" != "false" ]]; then
+  echo "QUIZIJIE_PULL_IMAGES must equal true or false" >&2
+  exit 1
+fi
 
 if [[ -f "$state_dir/current.env" ]]; then
   cp "$state_dir/current.env" "$state_dir/previous.env"
 fi
 
-"${compose[@]}" pull api migrate
+if [[ "$pull_images" == "true" ]]; then
+  "${compose[@]}" pull api migrate
+fi
 "${compose[@]}" --profile tools run --rm migrate
 
 if [[ "$import_questions" == "true" ]]; then

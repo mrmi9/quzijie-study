@@ -2,6 +2,6 @@
 // 部署预发布 HTTPS API 后填写；npm run verify:release 会阻止空值或示例值进入发布流程。
 module.exports = {
   apiBaseUrl: '',
-  operatorName: '',
-  privacyContact: ''
+  operatorName: '米文立',
+  privacyContact: '1130967204@qq.com'
 };
