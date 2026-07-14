@@ -7,7 +7,9 @@ import { AppError } from "./errors.js";
 import { createWechatAuthProvider, type WechatAuthProvider } from "./auth/wechat.js";
 import { registerAuthRoutes } from "./routes/auth.js";
 import { registerPracticeRoutes } from "./routes/practice.js";
+import { registerExamRoutes } from "./routes/exams.js";
 import { PracticeService } from "./services/practice.js";
+import { ExamService } from "./services/exam.js";
 
 export interface AppDependencies {
   config: AppConfig;
@@ -32,7 +34,11 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
   await app.register(rateLimit, { global: false });
   await app.register(fastifyJwt, { secret: deps.config.jwtAccessSecret });
 
-  app.get("/health", async (_request, reply) => {
+  app.get("/health", async () => ({
+    data: { status: "ok", timestamp: new Date().toISOString() }
+  }));
+
+  app.get("/ready", async (_request, reply) => {
     try {
       await deps.prisma.$queryRaw`SELECT 1`;
       return { data: { status: "ok", database: "ok", timestamp: new Date().toISOString() } };
@@ -47,7 +53,11 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
     config: deps.config,
     wechatProvider: deps.wechatProvider || createWechatAuthProvider(deps.config)
   });
-  registerPracticeRoutes(app, new PracticeService(deps.prisma));
+  const examService = new ExamService(deps.prisma);
+  registerPracticeRoutes(app, new PracticeService(deps.prisma, examService));
+  registerExamRoutes(app, examService);
+  examService.start((error) => app.log.error({ err: error }, "expired exam finalization failed"));
+  app.addHook("onClose", async () => examService.stop());
 
   app.setNotFoundHandler((request, reply) => {
     reply.code(404).send({

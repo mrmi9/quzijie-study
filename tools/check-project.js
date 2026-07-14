@@ -96,8 +96,23 @@ function packageSize(directory, exclude) {
   });
   return total;
 }
-const mainBytes = packageSize(miniprogramRoot, (file) => file === subpackageRoot || file.startsWith(`${subpackageRoot}${path.sep}`));
-const subpackageBytes = packageSize(subpackageRoot);
+const projectConfig = readJson(path.join(root, 'project.config.json'));
+const packIgnores = (projectConfig?.packOptions?.ignore || []).map((entry) => ({
+  value: String(entry.value || '').replaceAll('\\', '/').replace(/^\.\//, '').replace(/\/$/, ''),
+  type: entry.type
+}));
+function isPackIgnored(file) {
+  const relative = path.relative(root, file).replaceAll('\\', '/');
+  return packIgnores.some((entry) => entry.value && (
+    entry.type === 'file'
+      ? relative === entry.value
+      : relative === entry.value || relative.startsWith(`${entry.value}/`)
+  ));
+}
+const mainBytes = packageSize(miniprogramRoot, (file) => (
+  isPackIgnored(file) || file === subpackageRoot || file.startsWith(`${subpackageRoot}${path.sep}`)
+));
+const subpackageBytes = packageSize(subpackageRoot, isPackIgnored);
 if (mainBytes > budgetBytes) errors.push(`主包超过 1.5MB 内部预算：${mainBytes} bytes`);
 if (subpackageBytes > budgetBytes) errors.push(`业务分包超过 1.5MB 内部预算：${subpackageBytes} bytes`);
 

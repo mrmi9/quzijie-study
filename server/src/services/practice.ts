@@ -9,6 +9,7 @@ import {
   validateSelection,
   type QuestionSnapshot
 } from "../domain/questions.js";
+import type { ExamService } from "./exam.js";
 
 const MODE_TO_DATABASE = {
   chapter: "CHAPTER",
@@ -119,7 +120,7 @@ function snapshotFromCandidate(candidate: {
 }
 
 export class PracticeService {
-  constructor(private readonly prisma: DatabaseClient) {}
+  constructor(private readonly prisma: DatabaseClient, private readonly examService?: ExamService) {}
 
   private async requireSubject(subjectId: string) {
     if (!isSubjectId(subjectId)) throw new AppError("学科不存在", "SUBJECT_NOT_FOUND", 404);
@@ -129,10 +130,14 @@ export class PracticeService {
   }
 
   async getLearningOverview(userId: string) {
-    const [totalQuestions, answers, attemptedRows, wrongCount, favoriteCount, activeSession, questionSubjects] = await Promise.all([
+    const [totalQuestions, answers, attemptedRows, examAnswers, wrongCount, favoriteCount, activeSession, activeExam, questionSubjects] = await Promise.all([
       this.prisma.question.count({ where: { status: "ACTIVE" } }),
       this.prisma.practiceAnswer.findMany({ where: { userId }, select: { isCorrect: true, submittedAt: true } }),
       this.prisma.practiceAnswer.findMany({ where: { userId }, distinct: ["questionId"], select: { questionId: true, question: { select: { subjectId: true } } } }),
+      this.prisma.examQuestion.findMany({
+        where: { exam: { userId, status: "COMPLETED" }, isCorrect: { not: null } },
+        select: { questionId: true, subjectId: true, isCorrect: true, exam: { select: { submittedAt: true } } }
+      }),
       this.prisma.wrongQuestionRecord.count({ where: { userId, mastered: false } }),
       this.prisma.favorite.count({ where: { userId } }),
       this.prisma.practiceSession.findFirst({
@@ -140,10 +145,14 @@ export class PracticeService {
         orderBy: { updatedAt: "desc" },
         include: { _count: { select: { questions: true, answers: true } } }
       }),
+      this.examService ? this.examService.getActiveExamSummary(userId) : Promise.resolve(null),
       this.prisma.question.groupBy({ by: ["subjectId"], where: { status: "ACTIVE" }, _count: { _all: true } })
     ]);
     const attemptedBySubject = new Map<string, number>();
-    attemptedRows.forEach((row) => attemptedBySubject.set(row.question.subjectId, (attemptedBySubject.get(row.question.subjectId) || 0) + 1));
+    const attemptedQuestionSubjects = new Map<string, string>();
+    attemptedRows.forEach((row) => attemptedQuestionSubjects.set(row.questionId, row.question.subjectId));
+    examAnswers.forEach((row) => attemptedQuestionSubjects.set(row.questionId, row.subjectId));
+    attemptedQuestionSubjects.forEach((subjectId) => attemptedBySubject.set(subjectId, (attemptedBySubject.get(subjectId) || 0) + 1));
     const totalsBySubject = new Map(questionSubjects.map((row) => [row.subjectId, row._count._all]));
     const modules = MODULES.map((module) => {
       const moduleTotal = module.subjectIds.reduce((sum, id) => sum + (totalsBySubject.get(id) || 0), 0);
@@ -155,28 +164,35 @@ export class PracticeService {
         progressPercent: accuracy(moduleAttempted, moduleTotal)
       });
     });
-    const correct = answers.filter((answer) => answer.isCorrect).length;
+    const correct = answers.filter((answer) => answer.isCorrect).length + examAnswers.filter((answer) => answer.isCorrect).length;
+    const totalAttempts = answers.length + examAnswers.length;
+    const dayStart = startOfShanghaiDay();
     return {
       totalQuestions,
-      attemptedCount: attemptedRows.length,
-      progressPercent: accuracy(attemptedRows.length, totalQuestions),
-      todayAttempts: answers.filter((answer) => answer.submittedAt >= startOfShanghaiDay()).length,
-      totalAttempts: answers.length,
-      accuracy: accuracy(correct, answers.length),
+      attemptedCount: attemptedQuestionSubjects.size,
+      progressPercent: accuracy(attemptedQuestionSubjects.size, totalQuestions),
+      todayAttempts: answers.filter((answer) => answer.submittedAt >= dayStart).length
+        + examAnswers.filter((answer) => answer.exam.submittedAt && answer.exam.submittedAt >= dayStart).length,
+      totalAttempts,
+      accuracy: accuracy(correct, totalAttempts),
       unmasteredWrongCount: wrongCount,
       favoriteCount,
       modules,
       activeSession: activeSession ? sessionSummary(activeSession) : null,
-      activeExam: null
+      activeExam
     };
   }
 
   async getSubjectOverview(userId: string, subjectId: string) {
     await this.requireSubject(subjectId);
-    const [totalQuestions, answers, attempted, wrongCount, favoriteCount, activeSession] = await Promise.all([
+    const [totalQuestions, answers, attempted, examAnswers, wrongCount, favoriteCount, activeSession] = await Promise.all([
       this.prisma.question.count({ where: { subjectId, status: "ACTIVE" } }),
       this.prisma.practiceAnswer.findMany({ where: { userId, question: { subjectId } }, select: { isCorrect: true } }),
       this.prisma.practiceAnswer.findMany({ where: { userId, question: { subjectId } }, distinct: ["questionId"], select: { questionId: true } }),
+      this.prisma.examQuestion.findMany({
+        where: { subjectId, exam: { userId, status: "COMPLETED" }, isCorrect: { not: null } },
+        select: { questionId: true, isCorrect: true }
+      }),
       this.prisma.wrongQuestionRecord.count({ where: { userId, mastered: false, question: { subjectId } } }),
       this.prisma.favorite.count({ where: { userId, question: { subjectId } } }),
       this.prisma.practiceSession.findFirst({
@@ -184,14 +200,16 @@ export class PracticeService {
         include: { _count: { select: { questions: true, answers: true } } }
       })
     ]);
-    const correct = answers.filter((answer) => answer.isCorrect).length;
+    const attemptedIds = new Set([...attempted.map((answer) => answer.questionId), ...examAnswers.map((answer) => answer.questionId)]);
+    const correct = answers.filter((answer) => answer.isCorrect).length + examAnswers.filter((answer) => answer.isCorrect).length;
+    const totalAttempts = answers.length + examAnswers.length;
     return {
       subjectId,
       totalQuestions,
-      attemptedCount: attempted.length,
-      progressPercent: accuracy(attempted.length, totalQuestions),
-      totalAttempts: answers.length,
-      accuracy: accuracy(correct, answers.length),
+      attemptedCount: attemptedIds.size,
+      progressPercent: accuracy(attemptedIds.size, totalQuestions),
+      totalAttempts,
+      accuracy: accuracy(correct, totalAttempts),
       unmasteredWrongCount: wrongCount,
       favoriteCount,
       activeSession: activeSession ? sessionSummary(activeSession) : null
@@ -200,7 +218,7 @@ export class PracticeService {
 
   async getChapters(userId: string, subjectId: string) {
     await this.requireSubject(subjectId);
-    const [chapters, answers] = await Promise.all([
+    const [chapters, answers, examAnswers] = await Promise.all([
       this.prisma.chapter.findMany({
         where: { subjectId, active: true },
         orderBy: { order: "asc" },
@@ -209,10 +227,15 @@ export class PracticeService {
       this.prisma.practiceAnswer.findMany({
         where: { userId, question: { subjectId } },
         select: { questionId: true, isCorrect: true, question: { select: { chapterId: true } } }
+      }),
+      this.prisma.examQuestion.findMany({
+        where: { subjectId, exam: { userId, status: "COMPLETED" }, isCorrect: { not: null } },
+        select: { questionId: true, isCorrect: true, question: { select: { chapterId: true } } }
       })
     ]);
+    const combinedAnswers = [...answers, ...examAnswers];
     return chapters.map((chapter) => {
-      const chapterAnswers = answers.filter((answer) => answer.question.chapterId === chapter.id);
+      const chapterAnswers = combinedAnswers.filter((answer) => answer.question.chapterId === chapter.id);
       const attempted = new Set(chapterAnswers.map((answer) => answer.questionId)).size;
       const correct = chapterAnswers.filter((answer) => answer.isCorrect).length;
       return {

@@ -1,0 +1,14 @@
+.git
+.github
+.codex
+node_modules
+server/node_modules
+server/dist
+server/coverage
+server/.env
+server/.env.*
+miniprogram
+tests
+docs
+*.log
+project.private.config.json

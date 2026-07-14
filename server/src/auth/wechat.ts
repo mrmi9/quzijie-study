@@ -35,8 +35,8 @@ class RealWechatAuthProvider implements WechatAuthProvider {
       response = await fetch(`https://api.weixin.qq.com/sns/jscode2session?${query}`, {
         signal: AbortSignal.timeout(5000)
       });
-    } catch (error) {
-      throw new AppError("微信登录服务暂时不可用", "WECHAT_SERVICE_UNAVAILABLE", 503, String(error));
+    } catch {
+      throw new AppError("微信登录服务暂时不可用", "WECHAT_SERVICE_UNAVAILABLE", 503);
     }
     const payload = await response.json() as { openid?: string; unionid?: string; errcode?: number; errmsg?: string };
     if (!response.ok || payload.errcode || !payload.openid) {

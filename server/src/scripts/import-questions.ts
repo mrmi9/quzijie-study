@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 import type { DatabaseClient } from "../db.js";
 import { createPrismaClient } from "../db.js";
 import { SUBJECTS, type SubjectId } from "../domain/subjects.js";
@@ -184,7 +185,9 @@ async function main() {
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) throw new Error("缺少 DATABASE_URL");
   const prisma = createPrismaClient(databaseUrl);
-  const contentDirectory = fileURLToPath(new URL("../../../content", import.meta.url)).replaceAll("\\", "/");
+  const contentDirectory = process.env.QUESTION_CONTENT_DIR
+    ? resolve(process.env.QUESTION_CONTENT_DIR).replaceAll("\\", "/")
+    : fileURLToPath(new URL("../../../content", import.meta.url)).replaceAll("\\", "/");
   try {
     const count = await importQuestions(prisma, contentDirectory);
     console.log(`Imported ${count} questions.`);

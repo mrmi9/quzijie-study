@@ -1,0 +1,44 @@
+name: quzijie-study-api
+
+services:
+  migrate:
+    profiles: ["tools"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migration
+    image: quzijie-api-migrate:local
+    env_file:
+      - ${QUIZIJIE_API_ENV_FILE:-server/.env}
+    environment:
+      NODE_ENV: production
+      QUESTION_CONTENT_DIR: /app/content
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: quzijie-api:local
+    restart: unless-stopped
+    env_file:
+      - ${QUIZIJIE_API_ENV_FILE:-server/.env}
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      QUESTION_CONTENT_DIR: /app/content
+    ports:
+      - "${QUIZIJIE_API_PORT:-3000}:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    read_only: true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/ready').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s

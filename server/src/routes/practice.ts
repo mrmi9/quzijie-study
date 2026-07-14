@@ -1,6 +1,5 @@
 import type { FastifyInstance } from "fastify";
 import { authenticate } from "../auth/tokens.js";
-import { AppError } from "../errors.js";
 import type { PracticeService } from "../services/practice.js";
 
 const subjectParams = {
@@ -136,9 +135,4 @@ export function registerPracticeRoutes(app: FastifyInstance, service: PracticeSe
     schema: { params: favoriteParams }
   }, async (request) => favoriteHandler(request, false));
 
-  const examNotImplemented = async () => {
-    throw new AppError("408 服务端流程将在下一里程碑接入", "NOT_IMPLEMENTED", 501);
-  };
-  app.all("/api/v1/exams", examNotImplemented);
-  app.all("/api/v1/exams/*", examNotImplemented);
 }

@@ -1,0 +1,55 @@
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: postgresql://quzijie:ci-password@localhost:5432/quzijie_dev?schema=public
+      TEST_DATABASE_URL: postgresql://quzijie:ci-password@localhost:5432/quzijie_test?schema=public
+      JWT_ACCESS_SECRET: ci-access-secret-with-at-least-thirty-two-characters
+      WECHAT_AUTH_MODE: stub
+      WECHAT_DEV_OPENID: ci-openid
+      NODE_ENV: test
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: quzijie
+          POSTGRES_PASSWORD: ci-password
+          POSTGRES_DB: quzijie_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U quzijie -d quzijie_dev"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Create test database
+        env:
+          PGPASSWORD: ci-password
+        run: psql -h localhost -U quzijie -d quzijie_dev -c 'CREATE DATABASE quzijie_test'
+      - name: Apply development migrations
+        run: npm run db:deploy --workspace server
+      - name: Import question bank
+        run: npm run server:db:seed
+      - name: Verify application
+        run: npm run verify:all
+      - name: Build deployment image
+        run: docker build --tag quzijie-api:ci .

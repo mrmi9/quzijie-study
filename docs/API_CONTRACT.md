@@ -182,7 +182,7 @@
 
 ### GET /exams/{id}
 
-返回 ExamView。若试卷已到期，服务端先幂等自动交卷，再返回 completed 状态。active 试卷不得泄露答案和解析。
+返回 ExamView。`createdAt`、`updatedAt`、`expiresAt` 和 `submittedAt` 均使用 Unix 毫秒时间戳。若试卷已到期，服务端先幂等自动交卷，再返回 completed 状态。ExamView 无论状态如何均不返回正确答案和解析，完整复盘只能通过结果接口获取。
 
 ### PUT /exams/{id}/draft
 
@@ -195,15 +195,15 @@
 }
 ```
 
-答案为整份或增量草稿均可，但同一题最多一个选项；空数组表示清除该题答案。接口可重复覆盖，不计分。到期请求应触发自动交卷。
+`answers` 是当前整份草稿的原子替换，不是增量补丁：请求中省略的旧答案会被删除，空对象表示清空全部答案，同一题最多一个选项。接口可重复覆盖且不计分。若保存时已经到期，服务端幂等自动交卷并直接返回首次 ExamResult。
 
 ### POST /exams/{id}/submit
 
-提前或自动交卷。空题计错，错误题进入所属底层学科错题本，所有题计入所属学科答题统计。重复提交必须返回第一次结果且不重复计数。
+提前或自动交卷。空题计错，错误题进入所属底层学科错题本，所有 40 题计入所属学科答题统计。考试答对不会自动把旧错题标记为已掌握。并发或重复提交必须返回第一次结果且不重复计数。
 
 ### GET /exams/{id}/result
 
-返回 `score`、`maxScore=80`、总题数、作答数、正确数、错误数、正确率、四科 `subjects` 和逐题 `reviews`。每个 review 保存交卷时题目完整版本快照、用户选择和正误。
+返回 `score`、`maxScore=80`、总题数、作答数、正确数、错误数、正确率、`submitReason=manual|expired`、四科 `subjects` 和逐题 `reviews`。每个 review 来自建卷时冻结的完整题目版本快照，包含用户选择、正确答案、解析和正误；后续修改题库不会改变历史报告。
 
 ### GET /exams?type=postgraduate-408-objective
 
@@ -213,4 +213,4 @@
 
 - 普通练习：`SUBJECT_NOT_FOUND`、`INVALID_MODE`、`INVALID_COUNT`、`CHAPTER_REQUIRED`、`EMPTY_QUESTION_POOL`、`SESSION_NOT_FOUND`、`SESSION_FINISHED`、`SESSION_INCOMPLETE`、`ANSWER_REQUIRED`、`INVALID_OPTION`、`ANSWER_ALREADY_SUBMITTED`。
 - 记录：`QUESTION_NOT_FOUND`。
-- 考试：`ACTIVE_EXAM_EXISTS`、`EXAM_POOL_INSUFFICIENT`、`EXAM_NOT_FOUND`、`EXAM_FINISHED`、`EXAM_INCOMPLETE`、`QUESTION_NOT_IN_EXAM`。
+- 考试：`INVALID_EXAM_TYPE`、`ACTIVE_EXAM_EXISTS`、`EXAM_POOL_INSUFFICIENT`、`EXAM_NOT_FOUND`、`EXAM_FINISHED`、`EXAM_INCOMPLETE`、`QUESTION_NOT_IN_EXAM`、`INVALID_OPTION`。

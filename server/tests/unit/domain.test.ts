@@ -64,6 +64,17 @@ describe("配置与微信适配器", () => {
     assert.throws(() => loadConfig({ ...baseEnv(), WECHAT_AUTH_MODE: "real" }), /WECHAT_APP_ID/);
   });
 
+  it("生产环境拒绝弱 JWT 密钥", () => {
+    assert.throws(() => loadConfig({
+      ...baseEnv(),
+      NODE_ENV: "production",
+      WECHAT_AUTH_MODE: "real",
+      WECHAT_APP_ID: "unit-app-id",
+      WECHAT_APP_SECRET: "unit-app-secret",
+      JWT_ACCESS_SECRET: "change-me-change-me-change-me-change-me"
+    }), /强度不足/);
+  });
+
   it("开发 Stub 始终映射到受控 OpenID", async () => {
     const config = loadConfig(baseEnv());
     const provider = createWechatAuthProvider(config);

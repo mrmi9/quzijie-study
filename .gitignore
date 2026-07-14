@@ -1,6 +1,7 @@
 node_modules/
 miniprogram_npm/
-server/.env
+server/.env*
+!server/.env.example
 server/src/generated/prisma/
 server/coverage/
 server/dist/

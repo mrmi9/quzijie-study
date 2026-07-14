@@ -189,6 +189,9 @@ registry.subjectIds.forEach((subjectId) => {
   const second = questionMap[exam.questions[1].id];
   core.saveExamDraft(exam.id, { [first.id]: [wrongOption(first)] });
   core.saveExamDraft(exam.id, { [first.id]: first.correctOptionIds, [second.id]: [wrongOption(second)] });
+  core.saveExamDraft(exam.id, { [second.id]: [wrongOption(second)] });
+  assert.strictEqual(core.getExam(exam.id).answers[first.id], undefined);
+  core.saveExamDraft(exam.id, { [first.id]: first.correctOptionIds, [second.id]: [wrongOption(second)] });
   const restored = core.getExam(exam.id);
   assert.deepStrictEqual(restored.answers[first.id], first.correctOptionIds);
   assert.deepStrictEqual(restored.answers[second.id], [wrongOption(second)]);

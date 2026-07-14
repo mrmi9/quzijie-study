@@ -515,6 +515,7 @@ class PracticeCore {
     if (exam.status !== 'active') throw createDomainError('模拟考试已交卷', 'EXAM_FINISHED');
     if (this.now() >= exam.expiresAt) return this.submitExam(examId);
     const allowed = new Set(exam.questionIds);
+    exam.answers = {};
     Object.keys(answers || {}).forEach((questionId) => {
       if (!allowed.has(questionId)) throw createDomainError('题目不属于当前试卷', 'QUESTION_NOT_IN_EXAM');
       const question = this.questionMap[questionId];
