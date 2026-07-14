@@ -33,6 +33,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY server/package.json ./server/package.json
 COPY --from=production-deps /app/node_modules ./node_modules
+COPY --from=production-deps /app/server/node_modules ./server/node_modules
 COPY --from=build /app/server/dist ./server/dist
 COPY --from=build /app/server/prisma ./server/prisma
 COPY --from=build /app/server/prisma.config.ts ./server/prisma.config.ts
