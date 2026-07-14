@@ -7,7 +7,7 @@ RUN npm ci --ignore-scripts
 
 COPY server ./server
 COPY content ./content
-RUN npm run server:build
+RUN DATABASE_URL=postgresql://build:build@127.0.0.1:5432/build npm run server:build
 
 FROM build AS migration
 
