@@ -1,5 +1,9 @@
 node_modules/
 miniprogram_npm/
+server/.env
+server/src/generated/prisma/
+server/coverage/
+server/dist/
 .DS_Store
 *.log
 project.private.config.json

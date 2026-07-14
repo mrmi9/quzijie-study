@@ -1,6 +1,7 @@
 const env = require('../config/env');
 
 const TOKEN_KEY = 'quzijie_access_token';
+const REFRESH_TOKEN_KEY = 'quzijie_refresh_token';
 let navigatingToLogin = false;
 
 function getToken() {
@@ -9,10 +10,21 @@ function getToken() {
 
 function setToken(token) {
   wx.setStorageSync(TOKEN_KEY, token || '');
+  wx.removeStorageSync(REFRESH_TOKEN_KEY);
+}
+
+function getRefreshToken() {
+  return wx.getStorageSync(REFRESH_TOKEN_KEY) || '';
+}
+
+function setTokens(accessToken, refreshToken) {
+  wx.setStorageSync(TOKEN_KEY, accessToken || '');
+  wx.setStorageSync(REFRESH_TOKEN_KEY, refreshToken || '');
 }
 
 function clearToken() {
   wx.removeStorageSync(TOKEN_KEY);
+  wx.removeStorageSync(REFRESH_TOKEN_KEY);
 }
 
 function isAuthenticated() {
@@ -39,8 +51,11 @@ function requireLogin(redirect) {
 
 module.exports = {
   TOKEN_KEY,
+  REFRESH_TOKEN_KEY,
   getToken,
+  getRefreshToken,
   setToken,
+  setTokens,
   clearToken,
   isAuthenticated,
   requireLogin

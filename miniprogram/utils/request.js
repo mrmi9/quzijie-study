@@ -2,6 +2,7 @@ const env = require('../config/env');
 const auth = require('./auth');
 
 let redirectingForLogin = false;
+let refreshingToken = null;
 
 function createError(message, code, statusCode, details) {
   const error = new Error(message || '请求失败');
@@ -29,8 +30,40 @@ function handleUnauthorized() {
   setTimeout(() => { redirectingForLogin = false; }, 1200);
 }
 
+function refreshAccessToken() {
+  if (refreshingToken) return refreshingToken;
+  const refreshToken = auth.getRefreshToken();
+  if (!refreshToken) return Promise.reject(createError('登录状态已失效，请重新登录', 'UNAUTHORIZED', 401));
+  refreshingToken = new Promise((resolve, reject) => {
+    wx.request({
+      url: `${env.apiBaseUrl}/api/v1/auth/refresh`,
+      method: 'POST',
+      data: { refreshToken },
+      header: { 'content-type': 'application/json' },
+      timeout: env.requestTimeout,
+      success(response) {
+        const payload = response.data || {};
+        const data = Object.prototype.hasOwnProperty.call(payload, 'data') ? payload.data : payload;
+        if (response.statusCode >= 200 && response.statusCode < 300 && data.accessToken && data.refreshToken) {
+          auth.setTokens(data.accessToken, data.refreshToken);
+          resolve(data.accessToken);
+          return;
+        }
+        reject(createError(payload.message || '登录状态已失效，请重新登录', payload.code || 'UNAUTHORIZED', response.statusCode));
+      },
+      fail(error) {
+        reject(createError('刷新登录状态失败，请检查网络后重试', 'NETWORK_ERROR', 0, error));
+      }
+    });
+  }).finally(() => { refreshingToken = null; });
+  return refreshingToken;
+}
+
 function request(options) {
   const token = auth.getToken();
+  const method = (options.method || 'GET').toUpperCase();
+  const bodyMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
+  const data = options.data === undefined && bodyMethods.includes(method) ? {} : options.data;
   const headers = Object.assign(
     { 'content-type': 'application/json' },
     token ? { Authorization: `Bearer ${token}` } : {},
@@ -40,8 +73,8 @@ function request(options) {
   return new Promise((resolve, reject) => {
     wx.request({
       url: `${env.apiBaseUrl}${options.url}`,
-      method: options.method || 'GET',
-      data: options.data,
+      method,
+      data,
       header: headers,
       timeout: options.timeout || env.requestTimeout,
       success(response) {
@@ -52,7 +85,17 @@ function request(options) {
           return;
         }
 
-        if (status === 401) {
+        if (status === 401 && !options.skipAuthRefresh && !options.retriedAfterRefresh && auth.getRefreshToken()) {
+          refreshAccessToken()
+            .then(() => request(Object.assign({}, options, { retriedAfterRefresh: true })))
+            .then(resolve)
+            .catch((error) => {
+              if (!options.skipAuthRedirect && error.statusCode === 401) handleUnauthorized();
+              reject(error);
+            });
+          return;
+        }
+        if (status === 401 && !options.skipAuthRedirect) {
           handleUnauthorized();
         }
         reject(createError(payload.message, payload.code, status, payload.details));

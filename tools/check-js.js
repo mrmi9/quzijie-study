@@ -3,7 +3,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const root = path.resolve(__dirname, '..');
-const ignored = new Set(['node_modules', 'miniprogram_npm']);
+const ignored = new Set(['.git', 'node_modules', 'miniprogram_npm', 'dist', 'generated']);
 const files = [];
 
 function walk(directory) {

@@ -1,0 +1,22 @@
+name: quzijie-study
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: quzijie-postgres
+    restart: unless-stopped
+    env_file:
+      - ./server/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - quzijie_postgres_data:/var/lib/postgresql/data
+      - ./server/docker/init-test-db.sql:/docker-entrypoint-initdb.d/01-init-test-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  quzijie_postgres_data:

@@ -1,5 +1,6 @@
 const auth = require('../../utils/auth');
 const env = require('../../config/env');
+const authApi = require('../../services/api/authApiRepository');
 
 Page({
   data: {
@@ -24,13 +25,21 @@ Page({
     }
 
     wx.login({
-      success: () => {
-        this.setData({ loading: false });
-        wx.showModal({
-          title: '等待公共登录接口',
-          content: '已取得微信登录凭证，请由团队公共登录层换取访问令牌并调用 auth.setToken。',
-          showCancel: false
-        });
+      success: (loginResult) => {
+        if (!loginResult.code) {
+          this.setData({ loading: false });
+          wx.showToast({ title: '未取得微信登录凭证', icon: 'none' });
+          return;
+        }
+        authApi.loginWithWechatCode(loginResult.code)
+          .then((result) => {
+            auth.setTokens(result.accessToken, result.refreshToken);
+            this.returnToModule();
+          })
+          .catch((error) => {
+            this.setData({ loading: false });
+            wx.showToast({ title: error.message || '微信登录失败', icon: 'none' });
+          });
       },
       fail: () => {
         this.setData({ loading: false });

@@ -1,0 +1,241 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  generatedFileExtension = "ts"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum QuestionStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum QuestionType {
+  SINGLE
+  MULTIPLE
+  JUDGE
+}
+
+enum PracticeMode {
+  CHAPTER
+  RANDOM
+  WRONG
+  FAVORITE
+}
+
+enum PracticeSessionStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+}
+
+model User {
+  id              String                @id @default(uuid()) @db.Uuid
+  wechatOpenId    String                @unique @map("wechat_open_id")
+  unionId         String?               @map("union_id")
+  status          UserStatus            @default(ACTIVE)
+  lastLoginAt     DateTime              @map("last_login_at")
+  createdAt       DateTime              @default(now()) @map("created_at")
+  updatedAt       DateTime              @updatedAt @map("updated_at")
+  refreshTokens   RefreshToken[]
+  sessions        PracticeSession[]
+  answers         PracticeAnswer[]
+  wrongRecords    WrongQuestionRecord[]
+  favorites       Favorite[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id                String    @id @default(uuid()) @db.Uuid
+  userId            String    @db.Uuid @map("user_id")
+  tokenHash         String    @unique @map("token_hash")
+  expiresAt         DateTime  @map("expires_at")
+  revokedAt         DateTime? @map("revoked_at")
+  replacedByTokenId String?   @db.Uuid @map("replaced_by_token_id")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@map("refresh_tokens")
+}
+
+model Subject {
+  id        String     @id
+  name      String
+  shortName String     @map("short_name")
+  order     Int
+  active    Boolean    @default(true)
+  chapters  Chapter[]
+  questions Question[]
+  sessions  PracticeSession[]
+
+  @@map("subjects")
+}
+
+model Chapter {
+  id        String     @id
+  subjectId String     @map("subject_id")
+  name      String
+  order     Int
+  active    Boolean    @default(true)
+  subject   Subject    @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  questions Question[]
+  sessions  PracticeSession[]
+
+  @@unique([subjectId, order])
+  @@map("chapters")
+}
+
+model Question {
+  id               String                    @id
+  subjectId        String                    @map("subject_id")
+  chapterId        String                    @map("chapter_id")
+  currentVersionId String?                   @unique @db.Uuid @map("current_version_id")
+  status           QuestionStatus            @default(ACTIVE)
+  createdAt        DateTime                  @default(now()) @map("created_at")
+  updatedAt        DateTime                  @updatedAt @map("updated_at")
+  subject          Subject                   @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  chapter          Chapter                   @relation(fields: [chapterId], references: [id], onDelete: Restrict)
+  currentVersion   QuestionVersion?          @relation("CurrentQuestionVersion", fields: [currentVersionId], references: [id], onDelete: Restrict)
+  versions         QuestionVersion[]         @relation("QuestionVersions")
+  sessionQuestions PracticeSessionQuestion[]
+  answers          PracticeAnswer[]
+  wrongRecords     WrongQuestionRecord[]
+  favorites        Favorite[]
+
+  @@index([subjectId, chapterId, status])
+  @@map("questions")
+}
+
+model QuestionVersion {
+  id                 String                    @id @default(uuid()) @db.Uuid
+  questionId         String                    @map("question_id")
+  version            Int
+  type               QuestionType
+  stem               String
+  code               String?
+  explanation        String
+  difficulty         Int
+  tags               Json
+  images             Json
+  examScopes         Json                      @map("exam_scopes")
+  correctOptionIds   Json                      @map("correct_option_ids")
+  createdAt          DateTime                  @default(now()) @map("created_at")
+  question           Question                 @relation("QuestionVersions", fields: [questionId], references: [id], onDelete: Cascade)
+  currentForQuestion Question?                 @relation("CurrentQuestionVersion")
+  options            QuestionOption[]
+  sessionQuestions   PracticeSessionQuestion[]
+
+  @@unique([questionId, version])
+  @@map("question_versions")
+}
+
+model QuestionOption {
+  id                String          @id @default(uuid()) @db.Uuid
+  questionVersionId String          @db.Uuid @map("question_version_id")
+  optionId          String          @map("option_id")
+  label             String
+  text              String
+  position          Int
+  questionVersion   QuestionVersion @relation(fields: [questionVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionVersionId, optionId])
+  @@unique([questionVersionId, position])
+  @@map("question_options")
+}
+
+model PracticeSession {
+  id             String                    @id @default(uuid()) @db.Uuid
+  userId         String                    @db.Uuid @map("user_id")
+  subjectId      String                    @map("subject_id")
+  mode           PracticeMode
+  chapterId      String?                   @map("chapter_id")
+  requestedCount Int                       @map("requested_count")
+  status         PracticeSessionStatus     @default(ACTIVE)
+  createdAt      DateTime                  @default(now()) @map("created_at")
+  updatedAt      DateTime                  @updatedAt @map("updated_at")
+  completedAt    DateTime?                 @map("completed_at")
+  abandonedAt    DateTime?                 @map("abandoned_at")
+  user           User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject        Subject                   @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  chapter        Chapter?                  @relation(fields: [chapterId], references: [id], onDelete: Restrict)
+  questions      PracticeSessionQuestion[]
+  answers        PracticeAnswer[]
+
+  @@index([userId, status, updatedAt])
+  @@map("practice_sessions")
+}
+
+model PracticeSessionQuestion {
+  sessionId        String          @db.Uuid @map("session_id")
+  questionId       String          @map("question_id")
+  questionVersionId String         @db.Uuid @map("question_version_id")
+  position         Int
+  snapshot         Json
+  session          PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  question         Question        @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  questionVersion  QuestionVersion @relation(fields: [questionVersionId], references: [id], onDelete: Restrict)
+
+  @@id([sessionId, questionId])
+  @@unique([sessionId, position])
+  @@map("practice_session_questions")
+}
+
+model PracticeAnswer {
+  id                String          @id @default(uuid()) @db.Uuid
+  sessionId         String          @db.Uuid @map("session_id")
+  questionId        String          @map("question_id")
+  userId            String          @db.Uuid @map("user_id")
+  clientAnswerId    String          @map("client_answer_id")
+  selectedOptionIds Json            @map("selected_option_ids")
+  correctOptionIds  Json            @map("correct_option_ids")
+  explanation       String
+  isCorrect         Boolean         @map("is_correct")
+  submittedAt       DateTime        @default(now()) @map("submitted_at")
+  session           PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  question          Question        @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clientAnswerId])
+  @@unique([sessionId, questionId])
+  @@index([userId, submittedAt])
+  @@map("practice_answers")
+}
+
+model WrongQuestionRecord {
+  userId       String    @db.Uuid @map("user_id")
+  questionId   String    @map("question_id")
+  wrongCount   Int       @default(1) @map("wrong_count")
+  mastered     Boolean   @default(false)
+  firstWrongAt DateTime  @default(now()) @map("first_wrong_at")
+  lastWrongAt  DateTime  @default(now()) @map("last_wrong_at")
+  masteredAt   DateTime? @map("mastered_at")
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question     Question  @relation(fields: [questionId], references: [id], onDelete: Restrict)
+
+  @@id([userId, questionId])
+  @@index([userId, mastered])
+  @@map("wrong_question_records")
+}
+
+model Favorite {
+  userId     String   @db.Uuid @map("user_id")
+  questionId String   @map("question_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Restrict)
+
+  @@id([userId, questionId])
+  @@map("favorites")
+}

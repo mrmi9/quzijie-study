@@ -2,6 +2,9 @@
   "name": "quzijie-practice",
   "version": "2.0.0",
   "private": true,
+  "workspaces": [
+    "server"
+  ],
   "description": "趣字节刷题全学科微信小程序与 408 客观题模拟",
   "scripts": {
     "generate:data": "node tools/generate-question-banks.js",
@@ -10,6 +13,15 @@
     "check:js": "node tools/check-js.js",
     "check:project": "node tools/check-project.js",
     "test": "node tests/mock-core.test.js",
-    "verify": "npm run validate:data && npm run check:js && npm run check:project && npm test"
+    "verify:miniprogram": "npm run validate:data && npm run check:js && npm run check:project && npm test",
+    "verify": "npm run verify:miniprogram",
+    "server:dev": "npm run dev --workspace server",
+    "server:build": "npm run build --workspace server",
+    "server:db:generate": "npm run db:generate --workspace server",
+    "server:db:migrate": "npm run db:migrate --workspace server",
+    "server:db:seed": "npm run db:seed --workspace server",
+    "verify:server": "npm run verify --workspace server",
+    "verify:integration": "npm run test:integration --workspace server",
+    "verify:all": "npm run verify && npm run verify:server && npm run verify:integration"
   }
 }

@@ -8,6 +8,7 @@ const budgetBytes = 1.5 * 1024 * 1024;
 const errors = [];
 const wxmlFiles = [];
 const pageFiles = [];
+const ignoredDirectories = new Set(['.git', 'node_modules', 'miniprogram_npm', 'dist', 'generated']);
 
 function readJson(file) {
   try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch (error) {
@@ -19,6 +20,7 @@ function readJson(file) {
 function walk(directory, visitor) {
   if (!fs.existsSync(directory)) return;
   fs.readdirSync(directory, { withFileTypes: true }).forEach((entry) => {
+    if (entry.isDirectory() && ignoredDirectories.has(entry.name)) return;
     const fullPath = path.join(directory, entry.name);
     if (entry.isDirectory()) walk(fullPath, visitor);
     else if (entry.isFile()) visitor(fullPath);

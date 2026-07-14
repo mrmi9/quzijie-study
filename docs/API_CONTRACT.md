@@ -11,6 +11,17 @@
 
 公共错误码：`UNAUTHORIZED`、`FORBIDDEN`、`VALIDATION_ERROR`、`NOT_FOUND`、`NETWORK_ERROR`、`TIMEOUT`、`SERVER_ERROR`。401 时前端清除失效 Token，调用公共登录能力并保存回跳地址。
 
+### 登录与令牌
+
+- `POST /auth/wechat/login`：请求 `{ "code": "wx.login 临时凭证" }`，返回 `accessToken`、`refreshToken`、过期时间和用户摘要。
+- `POST /auth/refresh`：请求 `{ "refreshToken": "..." }`；刷新令牌单次轮换，旧令牌再次使用返回 `401 UNAUTHORIZED`。
+- `POST /auth/logout`：吊销当前刷新令牌，重复退出保持幂等。
+- `GET /users/me`：返回当前业务用户摘要。
+
+访问令牌过期时，前端只发起一个并发刷新请求，并在刷新成功后重放原请求一次。网络失败保留现有令牌和页面选择；只有刷新明确返回 401 时才清除令牌并回到公共登录页。
+
+开发环境允许受控 Stub OpenID；生产环境必须使用微信 `code2Session`，且 AppSecret 仅保存在服务端环境变量中。
+
 ## 2. 核心模型
 
 ### QuestionView
@@ -131,7 +142,7 @@
 }
 ```
 
-相同 `clientAnswerId` 重试必须返回首次 `AnswerResult`，不能重复累计。题目一旦成功提交，再用其他 ID 修改应返回 `ANSWER_ALREADY_SUBMITTED`。
+相同 `clientAnswerId` 重试同一道答题请求必须返回首次 `AnswerResult`，不能重复累计。同一用户把该 ID 用于其他会话或题目时返回 `IDEMPOTENCY_KEY_REUSED`。题目一旦成功提交，再用其他 ID 修改应返回 `ANSWER_ALREADY_SUBMITTED`。
 
 ### POST /practice-sessions/{id}/finish
 
