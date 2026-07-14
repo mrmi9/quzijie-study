@@ -527,6 +527,8 @@ GitHub Actions 至少执行：
 - 新增 `DELETE /api/v1/users/me`；删除用户会由 PostgreSQL 级联清理刷新令牌、练习、错题、收藏和考试记录，旧访问/刷新令牌立即失效。
 - 新增 `npm run verify:release`，检查 HTTPS API、正式 AppID、合法域名校验、运营主体、隐私联系渠道、必要页面和 500 题交叉复核记录。
 - 发布操作清单已冻结在 `docs/RELEASE_CHECKLIST.md`；未配置真实域名和人工复核前，发布门禁预期失败，防止误上传 Mock 或示例配置。
+- 本地 `npm run verify:all` 已通过：500 题、18 页面、8 项服务端单元测试、7 组 PostgreSQL 集成测试；微信开发者工具已重新编译并实际检查账户与隐私页面。
+- GitHub Actions 运行 `29324837814` 已通过 PostgreSQL 迁移、题库导入、全量验证、API/迁移镜像构建和容器冒烟。
 
 ### 18.2 当前下一目标
 
