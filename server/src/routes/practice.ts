@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { authenticate } from "../auth/tokens.js";
+import type { AuthenticateHandler } from "../auth/tokens.js";
 import type { PracticeService } from "../services/practice.js";
 
 const subjectParams = {
@@ -26,7 +26,11 @@ const favoriteParams = {
   }
 } as const;
 
-export function registerPracticeRoutes(app: FastifyInstance, service: PracticeService): void {
+export function registerPracticeRoutes(
+  app: FastifyInstance,
+  service: PracticeService,
+  authenticate: AuthenticateHandler
+): void {
   app.get("/api/v1/learning/overview", { preHandler: authenticate }, async (request) => ({
     data: await service.getLearningOverview(request.userId)
   }));

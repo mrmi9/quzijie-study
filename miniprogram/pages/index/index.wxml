@@ -45,5 +45,13 @@
       <text class="module-status">{{item.attemptedCount}} / {{item.totalQuestions}} 题 · {{item.progressPercent}}%</text>
     </view>
   </view>
+
+  <view class="account-entry card" bindtap="openAccount">
+    <view>
+      <text class="account-entry-title">账户与数据</text>
+      <text class="account-entry-subtitle">隐私说明、退出登录与删除账户</text>
+    </view>
+    <text class="account-entry-arrow">›</text>
+  </view>
   </block>
 </view>

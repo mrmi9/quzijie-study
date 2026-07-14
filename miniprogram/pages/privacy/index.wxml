@@ -1,0 +1,24 @@
+<view class="page-shell privacy-page safe-bottom">
+  <view class="card privacy-card">
+    <text class="privacy-title">趣字节刷题隐私说明</text>
+    <text class="privacy-updated">发布前版本 · 最后更新 2026-07-14</text>
+
+    <text class="privacy-heading">我们处理哪些数据</text>
+    <text class="privacy-text">使用微信登录时，服务端通过微信临时登录凭证取得用于识别账户的 OpenID；我们还保存你的答题记录、练习进度、错题、收藏和 408 考试记录。</text>
+
+    <text class="privacy-heading">处理目的</text>
+    <text class="privacy-text">上述数据仅用于识别学习账户、同步学习进度、生成错题与收藏记录，以及展示练习和考试结果。首版不读取微信昵称、头像、手机号、位置、通讯录或相册。</text>
+
+    <text class="privacy-heading">保存与安全</text>
+    <text class="privacy-text">登录密钥只保存在服务端；小程序本地仅保存登录令牌和网络失败时的答题草稿。正式环境通过 HTTPS 传输，并限制服务端和数据库访问权限。</text>
+
+    <text class="privacy-heading">你的选择</text>
+    <text class="privacy-text">你可以在“首页 → 账户与数据”退出登录或永久删除账户。删除账户会清除服务端账户及其练习、错题、收藏和考试历史，且无法恢复。</text>
+
+    <text class="privacy-heading">运营者与联系渠道</text>
+    <text class="privacy-text">运营者：{{operatorName}}</text>
+    <text class="privacy-text">隐私联系渠道：{{privacyContact}}</text>
+
+    <text class="privacy-note">微信公众平台中公示并审核通过的《用户隐私保护指引》为正式版本；提交审核前必须与本页及实际数据处理行为保持一致。</text>
+  </view>
+</view>

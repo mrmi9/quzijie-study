@@ -22,5 +22,6 @@ module.exports = {
     skipAuthRefresh: true,
     skipAuthRedirect: true
   }),
-  getMe: () => request({ url: '/api/v1/users/me' })
+  getMe: () => request({ url: '/api/v1/users/me' }),
+  deleteMe: () => request({ url: '/api/v1/users/me', method: 'DELETE' })
 };

@@ -84,6 +84,34 @@ describe("真实 PostgreSQL API 闭环", () => {
     assert.equal(replay.json().code, "UNAUTHORIZED");
   });
 
+  it("删除账户会级联清除数据并立即使全部令牌失效", async () => {
+    const user = await login("delete-account-user");
+    const deleted = await app.inject({
+      method: "DELETE",
+      url: "/api/v1/users/me",
+      headers: authorization(user.accessToken)
+    });
+    assert.equal(deleted.statusCode, 200);
+    assert.equal(deleted.json().data.deleted, true);
+    assert.equal(await prisma.user.count({ where: { id: user.user.id } }), 0);
+
+    const accessReplay = await app.inject({
+      method: "GET",
+      url: "/api/v1/users/me",
+      headers: authorization(user.accessToken)
+    });
+    assert.equal(accessReplay.statusCode, 401);
+    assert.equal(accessReplay.json().code, "UNAUTHORIZED");
+
+    const refreshReplay = await app.inject({
+      method: "POST",
+      url: "/api/v1/auth/refresh",
+      payload: { refreshToken: user.refreshToken }
+    });
+    assert.equal(refreshReplay.statusCode, 401);
+    assert.equal(refreshReplay.json().code, "UNAUTHORIZED");
+  });
+
   it("408题池不足时不创建任何试卷", async () => {
     const candidates = await prisma.question.findMany({
       where: { subjectId: "ds", status: "ACTIVE", currentVersion: { is: { type: "SINGLE" } } },

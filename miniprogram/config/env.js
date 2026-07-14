@@ -6,12 +6,32 @@ function storageValue(key) {
   }
 }
 
+function accountEnvVersion() {
+  try {
+    const info = typeof wx !== 'undefined' && wx.getAccountInfoSync
+      ? wx.getAccountInfoSync()
+      : null;
+    return info && info.miniProgram && info.miniProgram.envVersion
+      ? info.miniProgram.envVersion
+      : 'develop';
+  } catch (error) {
+    return 'develop';
+  }
+}
+
+const release = require('./release');
 const storedMode = storageValue('quzijie_repository_mode');
 const storedApiBaseUrl = storageValue('quzijie_api_base_url');
+const envVersion = accountEnvVersion();
+const isPublishedBuild = envVersion === 'trial' || envVersion === 'release';
 
 module.exports = {
-  repositoryMode: storedMode === 'api' ? 'api' : 'mock',
-  apiBaseUrl: storedApiBaseUrl || 'http://127.0.0.1:3000',
+  envVersion,
+  isPublishedBuild,
+  repositoryMode: isPublishedBuild ? 'api' : (storedMode === 'api' ? 'api' : 'mock'),
+  apiBaseUrl: isPublishedBuild ? release.apiBaseUrl : (storedApiBaseUrl || 'http://127.0.0.1:3000'),
+  operatorName: release.operatorName,
+  privacyContact: release.privacyContact,
   requestTimeout: 10000,
   mockLatency: 120,
   loginPage: '/pages/login/index'

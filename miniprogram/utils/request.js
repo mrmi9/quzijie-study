@@ -32,6 +32,9 @@ function handleUnauthorized() {
 
 function refreshAccessToken() {
   if (refreshingToken) return refreshingToken;
+  if (!env.apiBaseUrl) {
+    return Promise.reject(createError('发布环境尚未配置 API 地址', 'API_BASE_URL_MISSING', 0));
+  }
   const refreshToken = auth.getRefreshToken();
   if (!refreshToken) return Promise.reject(createError('登录状态已失效，请重新登录', 'UNAUTHORIZED', 401));
   refreshingToken = new Promise((resolve, reject) => {
@@ -60,6 +63,9 @@ function refreshAccessToken() {
 }
 
 function request(options) {
+  if (env.repositoryMode === 'api' && !env.apiBaseUrl) {
+    return Promise.reject(createError('发布环境尚未配置 API 地址', 'API_BASE_URL_MISSING', 0));
+  }
   const token = auth.getToken();
   const method = (options.method || 'GET').toUpperCase();
   const bodyMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];

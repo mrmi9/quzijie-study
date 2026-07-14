@@ -48,3 +48,15 @@
   background: #fff6dc;
   font-size: 24rpx;
 }
+
+.privacy-consent {
+  display: flex;
+  justify-content: center;
+  margin-top: 28rpx;
+  color: #718096;
+  font-size: 23rpx;
+}
+
+.privacy-link {
+  color: #2563eb;
+}

@@ -34,6 +34,7 @@ npm run verify
 npm run verify:server
 npm run verify:integration
 npm run verify:all
+npm run verify:release
 ```
 
 集成测试会迁移 `quzijie_test`，覆盖 500 题导入、Token 轮换、普通练习、408 组卷、草稿、并发幂等交卷、到期交卷、错题统计和历史快照。测试库不得指向开发库或生产库。
@@ -53,3 +54,5 @@ wx.setStorageSync('quzijie_api_base_url', 'http://127.0.0.1:3000')
 wx.setStorageSync('quzijie_repository_mode', 'mock')
 wx.removeStorageSync('quzijie_api_base_url')
 ```
+
+上述 Storage 开关只对开发版有效。体验版和正式版会强制使用 `miniprogram/config/release.js` 中的 HTTPS 地址，避免误把 Mock 版本提交审核。配置预发布域名后必须运行 `npm run verify:release`。

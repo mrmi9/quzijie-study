@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { authenticate } from "../auth/tokens.js";
+import type { AuthenticateHandler } from "../auth/tokens.js";
 import type { ExamService } from "../services/exam.js";
 
 const examParams = {
@@ -11,7 +11,11 @@ const examParams = {
 
 const examTypeSchema = { const: "postgraduate-408-objective" } as const;
 
-export function registerExamRoutes(app: FastifyInstance, service: ExamService): void {
+export function registerExamRoutes(
+  app: FastifyInstance,
+  service: ExamService,
+  authenticate: AuthenticateHandler
+): void {
   app.post<{ Body: { type: string } }>("/api/v1/exams", {
     preHandler: authenticate,
     schema: {

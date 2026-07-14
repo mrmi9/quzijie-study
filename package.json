@@ -12,7 +12,8 @@
     "validate:data": "node tools/validate-questions.js",
     "check:js": "node tools/check-js.js",
     "check:project": "node tools/check-project.js",
-    "test": "node tests/mock-core.test.js",
+    "check:release": "node tools/check-release.js",
+    "test": "node tests/mock-core.test.js && node tests/release-config.test.js",
     "verify:miniprogram": "npm run validate:data && npm run check:js && npm run check:project && npm test",
     "verify": "npm run verify:miniprogram",
     "server:dev": "npm run dev --workspace server",
@@ -22,6 +23,7 @@
     "server:db:seed": "npm run db:seed --workspace server",
     "verify:server": "npm run verify --workspace server",
     "verify:integration": "npm run test:integration --workspace server",
-    "verify:all": "npm run verify && npm run verify:server && npm run verify:integration"
+    "verify:all": "npm run verify && npm run verify:server && npm run verify:integration",
+    "verify:release": "npm run verify:all && npm run check:release"
   }
 }

@@ -65,13 +65,25 @@ export async function rotateTokenPair(
   };
 }
 
-export async function authenticate(request: FastifyRequest): Promise<void> {
-  try {
-    await request.jwtVerify();
-    const payload = request.user as { sub?: string };
-    if (!payload.sub) throw new Error("missing subject");
-    request.userId = payload.sub;
-  } catch {
-    throw new AppError("请登录后继续", "UNAUTHORIZED", 401);
-  }
+export type AuthenticateHandler = (request: FastifyRequest) => Promise<void>;
+
+export function createAuthenticate(prisma: DatabaseClient): AuthenticateHandler {
+  return async (request: FastifyRequest): Promise<void> => {
+    let userId = "";
+    try {
+      await request.jwtVerify();
+      const payload = request.user as { sub?: string };
+      if (!payload.sub) throw new Error("missing subject");
+      userId = payload.sub;
+    } catch {
+      throw new AppError("请登录后继续", "UNAUTHORIZED", 401);
+    }
+
+    const user = await prisma.user.findFirst({
+      where: { id: userId, status: "ACTIVE" },
+      select: { id: true }
+    });
+    if (!user) throw new AppError("登录状态已失效，请重新登录", "UNAUTHORIZED", 401);
+    request.userId = user.id;
+  };
 }

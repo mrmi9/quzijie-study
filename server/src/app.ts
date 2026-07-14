@@ -10,6 +10,7 @@ import { registerPracticeRoutes } from "./routes/practice.js";
 import { registerExamRoutes } from "./routes/exams.js";
 import { PracticeService } from "./services/practice.js";
 import { ExamService } from "./services/exam.js";
+import { createAuthenticate } from "./auth/tokens.js";
 
 export interface AppDependencies {
   config: AppConfig;
@@ -48,14 +49,16 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
     }
   });
 
+  const authenticate = createAuthenticate(deps.prisma);
   registerAuthRoutes(app, {
     prisma: deps.prisma,
     config: deps.config,
-    wechatProvider: deps.wechatProvider || createWechatAuthProvider(deps.config)
+    wechatProvider: deps.wechatProvider || createWechatAuthProvider(deps.config),
+    authenticate
   });
   const examService = new ExamService(deps.prisma);
-  registerPracticeRoutes(app, new PracticeService(deps.prisma, examService));
-  registerExamRoutes(app, examService);
+  registerPracticeRoutes(app, new PracticeService(deps.prisma, examService), authenticate);
+  registerExamRoutes(app, examService, authenticate);
   examService.start((error) => app.log.error({ err: error }, "expired exam finalization failed"));
   app.addHook("onClose", async () => examService.stop());
 

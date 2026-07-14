@@ -1,0 +1,24 @@
+<view class="page-shell account-page safe-bottom">
+  <view class="card account-card">
+    <text class="account-title">学习账户</text>
+    <text wx:if="{{loading}}" class="account-meta">正在加载...</text>
+    <text wx:elif="{{createdAt}}" class="account-meta">{{isMock ? createdAt : '创建于 ' + createdAt}}</text>
+    <text wx:if="{{error}}" class="account-error">{{error}}</text>
+  </view>
+
+  <view class="card menu-card" bindtap="openPrivacy">
+    <view>
+      <text class="menu-title">隐私说明</text>
+      <text class="menu-subtitle">查看收集的数据、使用目的和删除方式</text>
+    </view>
+    <text class="menu-arrow">›</text>
+  </view>
+
+  <button class="secondary-button action-button" bindtap="logout">退出登录</button>
+
+  <view class="danger-zone card">
+    <text class="danger-title">删除账户与数据</text>
+    <text class="danger-description">删除后不可恢复；再次登录会创建一个全新的学习账户。</text>
+    <button class="danger-button" loading="{{deleting}}" bindtap="deleteAccount">永久删除</button>
+  </view>
+</view>

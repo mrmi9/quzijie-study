@@ -69,10 +69,12 @@
 - [ ] 配置合法 AppID、HTTPS 后端、request 合法域名、隐私与登录流程后再提交审核。
 - [x] API 镜像使用非 root 用户构建，`/health` 与 `/ready` 分别通过，Compose 配置中不包含 PostgreSQL 服务。
 - [ ] 在独立数据库上执行迁移镜像、幂等题库导入、API 启动和上一镜像回滚演练。
+- [x] 账户与数据、隐私说明页面在微信开发者工具窄屏模拟器中可正常渲染；退出和永久删除入口清晰分离。
+- [x] PostgreSQL 集成测试确认 `DELETE /api/v1/users/me` 级联删除账户数据，旧访问令牌和刷新令牌均立即返回 401。
 
 ## 2026-07-14 本地联调记录
 
-- [x] Windows 11、本地 PostgreSQL 17：`npm run verify:all` 通过；500 题、16 页面、8 项服务端单元测试和 6 组 PostgreSQL 集成测试通过。
+- [x] Windows 11、本地 PostgreSQL 17：`npm run verify:all` 通过；500 题、18 页面、8 项服务端单元测试和 7 组 PostgreSQL 集成测试通过。
 - [x] 微信开发者工具 Stable v2.01.2510290：真实 `wx.login/code2Session` 连续登录两次识别为同一业务用户；401 刷新和原请求重放通过，旧刷新令牌复用由集成测试确认为 401。
 - [x] 微信开发者工具真实 API：创建 40 题试卷，配比为 12/12/9/7；第 1 题上一题禁用，选项保存后未自动跳转，固定下一题进入第 2 题。
 - [x] 微信开发者工具真实 API：提前交卷准确提示 39 题未答，结果页显示 80 分制、四科表现、正确答案和快照解析。
@@ -80,3 +82,4 @@
 - [x] Docker Desktop 引擎可用，`docker compose -f compose.api.yaml config --quiet` 通过，Compose 未定义 PostgreSQL 服务。
 - [x] GitHub Actions 运行 `29322765212` 已完成 API/迁移镜像构建、数据库迁移、500 题导入、非 root 启动、`/health`、`/ready` 和优雅关闭；本地 Docker Hub 下载超时不再阻塞镜像门禁。
 - [ ] iOS、Android 真机、预发布 HTTPS、合法域名、备份恢复和多实例演练尚未执行。
+- [x] `npm run check:release` 能准确阻止空 HTTPS API、缺失运营主体/隐私联系方式和未完成的 500 题交叉复核。

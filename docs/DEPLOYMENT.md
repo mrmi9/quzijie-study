@@ -21,6 +21,14 @@ WECHAT_APP_SECRET=正式AppSecret
 
 Windows Docker 连接本机 PostgreSQL 时，`DB_HOST` 使用 `host.docker.internal`，并确保 PostgreSQL 已允许来自 Docker 网络的连接。正式部署使用内网数据库地址，不使用该 Windows 专用主机名。
 
+体验版和正式版的 API 地址填写在 `miniprogram/config/release.js`。该地址必须是已备案的 HTTPS 业务域名，不使用 IP、`localhost` 或路径；开发版仍可通过本地 Storage 指向 `http://127.0.0.1:3000`。部署和微信后台域名配置完成后执行：
+
+```powershell
+npm run verify:release
+```
+
+该门禁还会检查运营主体、隐私联系渠道和 500 题人工交叉复核记录，未完成时会明确失败，不能绕过后上传审核。
+
 ## 3. 构建、迁移和启动
 
 ```powershell

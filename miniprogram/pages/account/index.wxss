@@ -1,0 +1,68 @@
+.account-card,
+.menu-card,
+.danger-zone {
+  padding: 30rpx;
+}
+
+.account-title,
+.account-meta,
+.account-error,
+.menu-title,
+.menu-subtitle,
+.danger-title,
+.danger-description {
+  display: block;
+}
+
+.account-title,
+.menu-title,
+.danger-title {
+  font-weight: 700;
+}
+
+.account-title {
+  font-size: 36rpx;
+}
+
+.account-meta,
+.menu-subtitle,
+.danger-description {
+  margin-top: 10rpx;
+  color: #718096;
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.account-error {
+  margin-top: 16rpx;
+  color: #b42318;
+}
+
+.menu-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24rpx;
+}
+
+.menu-arrow {
+  color: #94a3b8;
+  font-size: 48rpx;
+}
+
+.action-button {
+  margin-top: 32rpx;
+}
+
+.danger-zone {
+  margin-top: 48rpx;
+  border: 2rpx solid #fecaca;
+}
+
+.danger-title {
+  color: #b42318;
+}
+
+.danger-zone .danger-button {
+  margin-top: 24rpx;
+}

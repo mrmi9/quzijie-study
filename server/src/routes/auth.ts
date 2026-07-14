@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 import type { AppConfig } from "../config.js";
 import type { DatabaseClient } from "../db.js";
 import type { WechatAuthProvider } from "../auth/wechat.js";
-import { authenticate, hashRefreshToken, issueTokenPair, rotateTokenPair } from "../auth/tokens.js";
+import { hashRefreshToken, issueTokenPair, rotateTokenPair, type AuthenticateHandler } from "../auth/tokens.js";
 
 const codeBodySchema = {
   type: "object",
@@ -20,9 +20,14 @@ const refreshBodySchema = {
 
 export function registerAuthRoutes(
   app: FastifyInstance,
-  deps: { prisma: DatabaseClient; config: AppConfig; wechatProvider: WechatAuthProvider }
+  deps: {
+    prisma: DatabaseClient;
+    config: AppConfig;
+    wechatProvider: WechatAuthProvider;
+    authenticate: AuthenticateHandler;
+  }
 ): void {
-  const { prisma, config, wechatProvider } = deps;
+  const { prisma, config, wechatProvider, authenticate } = deps;
 
   app.post<{ Body: { code: string } }>("/api/v1/auth/wechat/login", {
     schema: { body: codeBodySchema },
@@ -63,5 +68,13 @@ export function registerAuthRoutes(
         lastLoginAt: user.lastLoginAt.toISOString()
       }
     };
+  });
+
+  app.delete("/api/v1/users/me", { preHandler: authenticate }, async (request) => {
+    const deleted = await prisma.user.deleteMany({
+      where: { id: request.userId, status: "ACTIVE" }
+    });
+    if (deleted.count !== 1) throw new Error("authenticated user disappeared before deletion");
+    return { data: { deleted: true } };
   });
 }

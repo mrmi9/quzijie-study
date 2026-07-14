@@ -97,6 +97,9 @@ function packageSize(directory, exclude) {
   return total;
 }
 const projectConfig = readJson(path.join(root, 'project.config.json'));
+if (projectConfig && projectConfig.setting?.urlCheck !== true) {
+  errors.push('共享 project.config.json 必须开启合法域名校验；本地开发例外只写入被忽略的 project.private.config.json');
+}
 const packIgnores = (projectConfig?.packOptions?.ignore || []).map((entry) => ({
   value: String(entry.value || '').replaceAll('\\', '/').replace(/^\.\//, '').replace(/\/$/, ''),
   type: entry.type

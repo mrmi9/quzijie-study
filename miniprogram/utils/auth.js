@@ -27,6 +27,33 @@ function clearToken() {
   wx.removeStorageSync(REFRESH_TOKEN_KEY);
 }
 
+function removeKeysByPrefix(prefixes) {
+  const storage = wx.getStorageInfoSync();
+  (storage.keys || []).forEach((key) => {
+    if (prefixes.some((prefix) => key.startsWith(prefix))) wx.removeStorageSync(key);
+  });
+}
+
+function clearLocalDrafts() {
+  removeKeysByPrefix(['practice_draft_', 'exam_draft_']);
+}
+
+function clearUserData() {
+  const fixedKeys = new Set([
+    TOKEN_KEY,
+    REFRESH_TOKEN_KEY,
+    'practice_mock_state_v2',
+    'cpp_mock_state_v1'
+  ]);
+  const storage = wx.getStorageInfoSync();
+  (storage.keys || []).forEach((key) => {
+    if (fixedKeys.has(key)) {
+      wx.removeStorageSync(key);
+    }
+  });
+  clearLocalDrafts();
+}
+
 function isAuthenticated() {
   return Boolean(getToken());
 }
@@ -57,6 +84,8 @@ module.exports = {
   setToken,
   setTokens,
   clearToken,
+  clearLocalDrafts,
+  clearUserData,
   isAuthenticated,
   requireLogin
 };

@@ -3,7 +3,9 @@
     "pages/index/index",
     "pages/wrong/index",
     "pages/favorites/index",
-    "pages/login/index"
+    "pages/login/index",
+    "pages/account/index",
+    "pages/privacy/index"
   ],
   "subPackages": [
     {
