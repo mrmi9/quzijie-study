@@ -51,5 +51,30 @@ jobs:
         run: npm run server:db:seed
       - name: Verify application
         run: npm run verify:all
-      - name: Build deployment image
-        run: docker build --tag quzijie-api:ci .
+      - name: Build deployment images
+        run: |
+          docker build --tag quzijie-api:ci .
+          docker build --target migration --tag quzijie-api-migrate:ci .
+      - name: Smoke deployment images
+        run: |
+          set -euo pipefail
+          docker run --rm --network host --env DATABASE_URL quzijie-api-migrate:ci
+          docker run --rm --network host --env DATABASE_URL quzijie-api-migrate:ci npm run db:seed:compiled --workspace server
+          container=quzijie-api-ci
+          cleanup() { docker rm -f "$container" >/dev/null 2>&1 || true; }
+          trap cleanup EXIT
+          docker run --detach --name "$container" --network host \
+            --env DATABASE_URL \
+            --env JWT_ACCESS_SECRET \
+            --env NODE_ENV=production \
+            --env WECHAT_AUTH_MODE=real \
+            --env WECHAT_APP_ID=ci-app-id \
+            --env WECHAT_APP_SECRET=ci-app-secret \
+            quzijie-api:ci
+          test "$(docker exec "$container" node -e 'process.stdout.write(String(process.getuid()))')" != "0"
+          curl --fail --retry 15 --retry-connrefused --retry-delay 1 http://127.0.0.1:3000/health
+          curl --fail http://127.0.0.1:3000/ready
+          docker stop --time 10 "$container"
+          test "$(docker inspect --format '{{.State.ExitCode}}' "$container")" = "0"
+          docker rm "$container"
+          trap - EXIT
