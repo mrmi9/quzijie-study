@@ -36,6 +36,7 @@ FROM node:24-alpine AS runtime
 ENV NODE_ENV=production \
     HOST=0.0.0.0 \
     PORT=3000 \
+    WECHAT_AUTH_MODE=cloud \
     QUESTION_CONTENT_DIR=/app/content \
     PRISMA_ENGINES_MIRROR=https://registry.npmmirror.com/-/binary/prisma
 
