@@ -50,7 +50,11 @@ class RealWechatAuthProvider implements WechatAuthProvider {
 }
 
 export function createWechatAuthProvider(config: AppConfig): WechatAuthProvider {
-  return config.wechatAuthMode === "real"
-    ? new RealWechatAuthProvider(config.wechatAppId, config.wechatAppSecret)
-    : new StubWechatAuthProvider(config.wechatDevOpenId);
+  if (config.wechatAuthMode === "real") {
+    return new RealWechatAuthProvider(config.wechatAppId, config.wechatAppSecret);
+  }
+  if (config.wechatAuthMode === "stub") {
+    return new StubWechatAuthProvider(config.wechatDevOpenId);
+  }
+  throw new Error("cloud 模式直接使用云托管身份请求头，不创建 code2Session 适配器");
 }

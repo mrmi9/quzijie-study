@@ -1,6 +1,12 @@
 const request = require('../../utils/request');
 
 module.exports = {
+  loginWithCloudIdentity: () => request({
+    url: '/api/v1/auth/wechat/cloud-login',
+    method: 'POST',
+    skipAuthRefresh: true,
+    skipAuthRedirect: true
+  }),
   loginWithWechatCode: (code) => request({
     url: '/api/v1/auth/wechat/login',
     method: 'POST',

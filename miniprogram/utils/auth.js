@@ -22,6 +22,11 @@ function setTokens(accessToken, refreshToken) {
   wx.setStorageSync(REFRESH_TOKEN_KEY, refreshToken || '');
 }
 
+function setCloudSession() {
+  wx.setStorageSync(TOKEN_KEY, 'cloud-wechat-session');
+  wx.removeStorageSync(REFRESH_TOKEN_KEY);
+}
+
 function clearToken() {
   wx.removeStorageSync(TOKEN_KEY);
   wx.removeStorageSync(REFRESH_TOKEN_KEY);
@@ -83,6 +88,7 @@ module.exports = {
   getRefreshToken,
   setToken,
   setTokens,
+  setCloudSession,
   clearToken,
   clearLocalDrafts,
   clearUserData,

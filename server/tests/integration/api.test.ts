@@ -55,7 +55,7 @@ after(async () => {
   await prisma?.$disconnect();
 });
 
-describe("真实 PostgreSQL API 闭环", () => {
+describe("真实 MySQL API 闭环", () => {
   it("健康检查和500题导入正常", async () => {
     const response = await app.inject({ method: "GET", url: "/health" });
     assert.equal(response.statusCode, 200);
@@ -64,6 +64,42 @@ describe("真实 PostgreSQL API 闭环", () => {
     assert.equal(readiness.json().data.database, "ok");
     assert.equal(await prisma.question.count(), 500);
     assert.equal(await prisma.question.count({ where: { subjectId: "cpp" } }), 100);
+  });
+
+  it("云托管身份头完成登录并拒绝缺少可信来源的请求", async () => {
+    const cloudConfig = loadConfig({
+      NODE_ENV: "test",
+      DATABASE_URL: process.env.TEST_DATABASE_URL,
+      WECHAT_AUTH_MODE: "cloud"
+    });
+    const cloudApp = await buildApp({ config: cloudConfig, prisma });
+    const headers = {
+      "x-wx-source": "wx_client",
+      "x-wx-openid": "integration-cloud-user"
+    };
+    try {
+      const missingSource = await cloudApp.inject({
+        method: "POST",
+        url: "/api/v1/auth/wechat/cloud-login",
+        headers: { "x-wx-openid": headers["x-wx-openid"] }
+      });
+      assert.equal(missingSource.statusCode, 401);
+      assert.equal(missingSource.json().code, "CLOUD_IDENTITY_MISSING");
+
+      const loggedIn = await cloudApp.inject({
+        method: "POST",
+        url: "/api/v1/auth/wechat/cloud-login",
+        headers
+      });
+      assert.equal(loggedIn.statusCode, 200, loggedIn.body);
+      assert.equal(loggedIn.json().data.authenticated, true);
+
+      const me = await cloudApp.inject({ method: "GET", url: "/api/v1/users/me", headers });
+      assert.equal(me.statusCode, 200, me.body);
+      assert.equal(me.json().data.id, loggedIn.json().data.user.id);
+    } finally {
+      await cloudApp.close();
+    }
   });
 
   it("刷新令牌只能轮换使用一次", async () => {

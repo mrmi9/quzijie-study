@@ -1,4 +1,6 @@
-export type WechatAuthMode = "stub" | "real";
+import { resolveDatabaseUrl } from "./database-url.js";
+
+export type WechatAuthMode = "stub" | "real" | "cloud";
 
 export interface AppConfig {
   nodeEnv: "development" | "test" | "production";
@@ -34,13 +36,14 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
   const nodeEnv = (source.NODE_ENV || "development") as AppConfig["nodeEnv"];
   if (!["development", "test", "production"].includes(nodeEnv)) throw new Error("NODE_ENV 配置无效");
   const wechatAuthMode = (source.WECHAT_AUTH_MODE || "stub") as WechatAuthMode;
-  if (!["stub", "real"].includes(wechatAuthMode)) throw new Error("WECHAT_AUTH_MODE 只能为 stub 或 real");
+  if (!["stub", "real", "cloud"].includes(wechatAuthMode)) throw new Error("WECHAT_AUTH_MODE 只能为 stub、real 或 cloud");
   if (nodeEnv === "production" && wechatAuthMode === "stub") throw new Error("生产环境禁止启用微信 Stub 登录");
   const jwtAccessSecret = source.JWT_ACCESS_SECRET || "";
-  if (jwtAccessSecret.length < 32) throw new Error("JWT_ACCESS_SECRET 至少需要 32 个字符");
-  if (nodeEnv === "production" && weakProductionSecret(jwtAccessSecret)) throw new Error("生产环境 JWT_ACCESS_SECRET 强度不足");
-  const databaseUrl = source.DATABASE_URL || "";
-  if (!databaseUrl) throw new Error("缺少 DATABASE_URL");
+  if (wechatAuthMode !== "cloud" && jwtAccessSecret.length < 32) throw new Error("JWT_ACCESS_SECRET 至少需要 32 个字符");
+  if (nodeEnv === "production" && wechatAuthMode !== "cloud" && weakProductionSecret(jwtAccessSecret)) {
+    throw new Error("生产环境 JWT_ACCESS_SECRET 强度不足");
+  }
+  const databaseUrl = resolveDatabaseUrl(source);
   const wechatAppId = source.WECHAT_APP_ID || "";
   const wechatAppSecret = source.WECHAT_APP_SECRET || "";
   if (wechatAuthMode === "real" && (!wechatAppId || !wechatAppSecret)) {

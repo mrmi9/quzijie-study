@@ -1,5 +1,7 @@
 # 趣字节刷题通用 API 契约 v2
 
+> 微信云托管生产模式通过 `wx.cloud.callContainer` 调用。平台注入 `X-WX-SOURCE`、`X-WX-OPENID`（以及可用时的 `X-WX-UNIONID`），后端据此识别用户，不要求客户端保存 JWT。`POST /auth/wechat/cloud-login` 创建或恢复业务用户。下文的 `wx.login + JWT` 仅用于旧自建服务和本地兼容模式。
+
 ## 1. 通用约定
 
 - Base URL 由环境配置提供，路径前缀为 `/api/v1`。

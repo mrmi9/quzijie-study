@@ -14,6 +14,7 @@ function loadEnv(envVersion, storage = {}) {
 
 const developDefault = loadEnv('develop');
 assert.equal(developDefault.repositoryMode, 'mock');
+assert.equal(developDefault.transport, 'http');
 assert.equal(developDefault.apiBaseUrl, 'http://127.0.0.1:3000');
 
 const developApi = loadEnv('develop', {
@@ -21,6 +22,7 @@ const developApi = loadEnv('develop', {
   quzijie_api_base_url: 'http://127.0.0.1:4000'
 });
 assert.equal(developApi.repositoryMode, 'api');
+assert.equal(developApi.transport, 'http');
 assert.equal(developApi.apiBaseUrl, 'http://127.0.0.1:4000');
 
 const trial = loadEnv('trial', {
@@ -28,14 +30,20 @@ const trial = loadEnv('trial', {
   quzijie_api_base_url: 'http://127.0.0.1:4000'
 });
 assert.equal(trial.repositoryMode, 'api');
-assert.equal(trial.apiBaseUrl, 'https://api.qushuati.cloud:8443');
+assert.equal(trial.transport, 'cloud');
+assert.equal(trial.cloudEnvId, 'prod-d4gnnimmh1d0677fc');
+assert.equal(trial.cloudService, 'express-tfts');
+assert.equal(trial.apiBaseUrl, '');
 
 const release = loadEnv('release', {
   quzijie_repository_mode: 'mock',
   quzijie_api_base_url: 'http://127.0.0.1:4000'
 });
 assert.equal(release.repositoryMode, 'api');
-assert.equal(release.apiBaseUrl, 'https://api.qushuati.cloud:8443');
+assert.equal(release.transport, 'cloud');
+assert.equal(release.cloudEnvId, 'prod-d4gnnimmh1d0677fc');
+assert.equal(release.cloudService, 'express-tfts');
+assert.equal(release.apiBaseUrl, '');
 
 delete global.wx;
 delete require.cache[require.resolve(envPath)];

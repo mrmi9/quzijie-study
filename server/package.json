@@ -11,6 +11,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "prisma generate && tsc -p tsconfig.json",
     "start": "node dist/src/server.js",
+    "start:cloud": "node dist/src/scripts/cloudrun-bootstrap.js",
     "typecheck": "prisma generate && tsc --noEmit",
     "test": "npm run build && node --test dist/tests/unit/*.test.js",
     "test:integration": "prisma migrate deploy --config prisma.test.config.ts && npm run build && node --test dist/tests/integration/*.test.js",
@@ -24,17 +25,16 @@
   "dependencies": {
     "@fastify/jwt": "^10.0.0",
     "@fastify/rate-limit": "^10.3.0",
-    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/adapter-mariadb": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "dotenv": "^17.2.3",
     "fastify": "^5.10.0",
     "fastify-plugin": "^5.1.0",
-    "pg": "^8.16.3"
+    "mariadb": "^3.4.5",
+    "prisma": "^7.8.0"
   },
   "devDependencies": {
     "@types/node": "^24.10.0",
-    "@types/pg": "^8.15.6",
-    "prisma": "^7.8.0",
     "tsx": "^4.20.6",
     "typescript": "5.9.3"
   }

@@ -1,5 +1,7 @@
 # 趣字节刷题 API 部署说明
 
+> 本文后续内容保留旧的自建 PostgreSQL 部署方案用于追溯。当前微信云托管版本请以 [WXCLOUDRUN_DEPLOYMENT.md](WXCLOUDRUN_DEPLOYMENT.md) 为准。
+
 ## 1. 部署边界
 
 `Dockerfile` 只构建 API 和独立迁移镜像；`compose.api.yaml` 不包含 PostgreSQL。开发机继续使用已安装的数据库，正式环境应连接独立 PostgreSQL 17 服务。

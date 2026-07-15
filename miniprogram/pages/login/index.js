@@ -24,6 +24,19 @@ Page({
       return;
     }
 
+    if (env.transport === 'cloud') {
+      authApi.loginWithCloudIdentity()
+        .then(() => {
+          auth.setCloudSession();
+          this.returnToModule();
+        })
+        .catch((error) => {
+          this.setData({ loading: false });
+          wx.showToast({ title: error.message || '微信登录失败', icon: 'none' });
+        });
+      return;
+    }
+
     wx.login({
       success: (loginResult) => {
         if (!loginResult.code) {

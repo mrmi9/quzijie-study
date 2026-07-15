@@ -3,6 +3,7 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { AppConfig } from "../config.js";
 import type { DatabaseClient } from "../db.js";
 import { AppError } from "../errors.js";
+import { readCloudWechatIdentity } from "./cloud.js";
 
 export function hashRefreshToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
@@ -67,8 +68,19 @@ export async function rotateTokenPair(
 
 export type AuthenticateHandler = (request: FastifyRequest) => Promise<void>;
 
-export function createAuthenticate(prisma: DatabaseClient): AuthenticateHandler {
+export function createAuthenticate(prisma: DatabaseClient, config: AppConfig): AuthenticateHandler {
   return async (request: FastifyRequest): Promise<void> => {
+    if (config.wechatAuthMode === "cloud") {
+      const identity = readCloudWechatIdentity(request);
+      const user = await prisma.user.findFirst({
+        where: { wechatOpenId: identity.openId, status: "ACTIVE" },
+        select: { id: true }
+      });
+      if (!user) throw new AppError("请登录后继续", "UNAUTHORIZED", 401);
+      request.userId = user.id;
+      return;
+    }
+
     let userId = "";
     try {
       await request.jwtVerify();

@@ -1,5 +1,7 @@
 # 趣字节刷题
 
+> 当前分支面向微信云托管：小程序通过 `wx.cloud.callContainer` 调用环境 `prod-d4gnnimmh1d0677fc` 中的 `express-tfts` 服务，后端使用 Fastify、Prisma 和 MySQL。部署步骤见 [微信云托管部署说明](docs/WXCLOUDRUN_DEPLOYMENT.md)。
+
 原生微信小程序首版，包含 500 道唯一题目、七个底层学科和考研 408 客观题专项模拟。项目默认使用 Mock 仓储，可在没有后端的情况下完整演示；仓库同时包含 PostgreSQL + Fastify/Prisma 后端，普通练习可切换到真实 API，页面代码不变。
 
 ## 已实现范围
@@ -59,6 +61,7 @@ npm run verify:release # 在全量门禁后检查 HTTPS API、隐私信息和题
 - [发布候选版清单](docs/RELEASE_CHECKLIST.md)
 - [预发布与生产运行手册](docs/OPERATIONS_RUNBOOK.md)
 - [后端本地开发说明](server/README.md)
+- [微信云托管部署说明](docs/WXCLOUDRUN_DEPLOYMENT.md)
 
 ## 发布边界
 

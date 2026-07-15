@@ -62,11 +62,24 @@ function refreshAccessToken() {
   return refreshingToken;
 }
 
+function send(options) {
+  if (env.transport === 'cloud') {
+    return wx.cloud.callContainer(Object.assign({}, options, {
+      config: { env: env.cloudEnvId },
+      path: options.url,
+      header: Object.assign({}, options.header, { 'X-WX-SERVICE': env.cloudService })
+    }));
+  }
+  return new Promise((resolve, reject) => {
+    wx.request(Object.assign({}, options, { success: resolve, fail: reject }));
+  });
+}
+
 function request(options) {
-  if (env.repositoryMode === 'api' && !env.apiBaseUrl) {
+  if (env.repositoryMode === 'api' && env.transport !== 'cloud' && !env.apiBaseUrl) {
     return Promise.reject(createError('发布环境尚未配置 API 地址', 'API_BASE_URL_MISSING', 0));
   }
-  const token = auth.getToken();
+  const token = env.transport === 'cloud' ? '' : auth.getToken();
   const method = (options.method || 'GET').toUpperCase();
   const bodyMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
   const data = options.data === undefined && bodyMethods.includes(method) ? {} : options.data;
@@ -76,47 +89,43 @@ function request(options) {
     options.header || {}
   );
 
-  return new Promise((resolve, reject) => {
-    wx.request({
-      url: `${env.apiBaseUrl}${options.url}`,
+  return send({
+      url: env.transport === 'cloud' ? options.url : `${env.apiBaseUrl}${options.url}`,
       method,
       data,
       header: headers,
-      timeout: options.timeout || env.requestTimeout,
-      success(response) {
+      timeout: options.timeout || env.requestTimeout
+    }).then((response) => {
         const status = response.statusCode;
         const payload = response.data || {};
         if (status >= 200 && status < 300) {
-          resolve(Object.prototype.hasOwnProperty.call(payload, 'data') ? payload.data : payload);
-          return;
+          return Object.prototype.hasOwnProperty.call(payload, 'data') ? payload.data : payload;
         }
 
-        if (status === 401 && !options.skipAuthRefresh && !options.retriedAfterRefresh && auth.getRefreshToken()) {
-          refreshAccessToken()
+        if (env.transport !== 'cloud' && status === 401 && !options.skipAuthRefresh
+          && !options.retriedAfterRefresh && auth.getRefreshToken()) {
+          return refreshAccessToken()
             .then(() => request(Object.assign({}, options, { retriedAfterRefresh: true })))
-            .then(resolve)
             .catch((error) => {
               if (!options.skipAuthRedirect && error.statusCode === 401) handleUnauthorized();
-              reject(error);
+              throw error;
             });
-          return;
         }
         if (status === 401 && !options.skipAuthRedirect) {
           handleUnauthorized();
         }
-        reject(createError(payload.message, payload.code, status, payload.details));
-      },
-      fail(error) {
+        throw createError(payload.message, payload.code, status, payload.details);
+      })
+      .catch((error) => {
+        if (error && error.code && error.statusCode !== undefined) throw error;
         const isTimeout = String(error.errMsg || '').includes('timeout');
-        reject(createError(
+        throw createError(
           isTimeout ? '请求超时，请稍后重试' : '网络异常，请检查连接后重试',
           isTimeout ? 'REQUEST_TIMEOUT' : 'NETWORK_ERROR',
           0,
           error
-        ));
-      }
-    });
-  });
+        );
+      });
 }
 
 module.exports = request;

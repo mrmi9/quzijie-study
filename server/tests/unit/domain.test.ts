@@ -28,7 +28,7 @@ const snapshot: QuestionSnapshot = {
 function baseEnv(): NodeJS.ProcessEnv {
   return {
     NODE_ENV: "test",
-    DATABASE_URL: "postgresql://unused",
+    DATABASE_URL: "mysql://unused:unused@localhost:3306/unused",
     JWT_ACCESS_SECRET: "12345678901234567890123456789012",
     WECHAT_AUTH_MODE: "stub",
     WECHAT_DEV_OPENID: "unit-openid"
@@ -79,5 +79,18 @@ describe("配置与微信适配器", () => {
     const config = loadConfig(baseEnv());
     const provider = createWechatAuthProvider(config);
     assert.deepEqual(await provider.exchangeCode("temporary-code"), { openId: "unit-openid" });
+  });
+
+  it("云托管生产模式可从 MYSQL 环境变量生成连接地址且不需要 AppSecret", () => {
+    const config = loadConfig({
+      NODE_ENV: "production",
+      WECHAT_AUTH_MODE: "cloud",
+      MYSQL_ADDRESS: "10.0.0.8:3306",
+      MYSQL_USERNAME: "root",
+      MYSQL_PASSWORD: "p@ss/word",
+      MYSQL_DATABASE: "quzijie"
+    });
+    assert.equal(config.databaseUrl, "mysql://root:p%40ss%2Fword@10.0.0.8:3306/quzijie");
+    assert.equal(config.jwtAccessSecret, "");
   });
 });

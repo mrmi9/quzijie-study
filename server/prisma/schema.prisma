@@ -7,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
 }
 
 enum UserStatus {
@@ -50,7 +50,7 @@ enum ExamSubmitReason {
 }
 
 model User {
-  id            String                @id @default(uuid()) @db.Uuid
+  id            String                @id @default(uuid()) @db.Char(36)
   wechatOpenId  String                @unique @map("wechat_open_id")
   unionId       String?               @map("union_id")
   status        UserStatus            @default(ACTIVE)
@@ -68,12 +68,12 @@ model User {
 }
 
 model RefreshToken {
-  id                String    @id @default(uuid()) @db.Uuid
-  userId            String    @map("user_id") @db.Uuid
+  id                String    @id @default(uuid()) @db.Char(36)
+  userId            String    @map("user_id") @db.Char(36)
   tokenHash         String    @unique @map("token_hash")
   expiresAt         DateTime  @map("expires_at")
   revokedAt         DateTime? @map("revoked_at")
-  replacedByTokenId String?   @map("replaced_by_token_id") @db.Uuid
+  replacedByTokenId String?   @map("replaced_by_token_id") @db.Char(36)
   createdAt         DateTime  @default(now()) @map("created_at")
   user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -113,7 +113,7 @@ model Question {
   id               String                    @id
   subjectId        String                    @map("subject_id")
   chapterId        String                    @map("chapter_id")
-  currentVersionId String?                   @unique @map("current_version_id") @db.Uuid
+  currentVersionId String?                   @unique @map("current_version_id") @db.Char(36)
   status           QuestionStatus            @default(ACTIVE)
   createdAt        DateTime                  @default(now()) @map("created_at")
   updatedAt        DateTime                  @updatedAt @map("updated_at")
@@ -132,13 +132,13 @@ model Question {
 }
 
 model QuestionVersion {
-  id                 String                    @id @default(uuid()) @db.Uuid
+  id                 String                    @id @default(uuid()) @db.Char(36)
   questionId         String                    @map("question_id")
   version            Int
   type               QuestionType
-  stem               String
-  code               String?
-  explanation        String
+  stem               String                    @db.Text
+  code               String?                   @db.Text
+  explanation        String                    @db.Text
   difficulty         Int
   tags               Json
   images             Json
@@ -156,11 +156,11 @@ model QuestionVersion {
 }
 
 model QuestionOption {
-  id                String          @id @default(uuid()) @db.Uuid
-  questionVersionId String          @map("question_version_id") @db.Uuid
+  id                String          @id @default(uuid()) @db.Char(36)
+  questionVersionId String          @map("question_version_id") @db.Char(36)
   optionId          String          @map("option_id")
   label             String
-  text              String
+  text              String          @db.Text
   position          Int
   questionVersion   QuestionVersion @relation(fields: [questionVersionId], references: [id], onDelete: Cascade)
 
@@ -170,8 +170,8 @@ model QuestionOption {
 }
 
 model PracticeSession {
-  id             String                    @id @default(uuid()) @db.Uuid
-  userId         String                    @map("user_id") @db.Uuid
+  id             String                    @id @default(uuid()) @db.Char(36)
+  userId         String                    @map("user_id") @db.Char(36)
   subjectId      String                    @map("subject_id")
   mode           PracticeMode
   chapterId      String?                   @map("chapter_id")
@@ -192,9 +192,9 @@ model PracticeSession {
 }
 
 model PracticeSessionQuestion {
-  sessionId         String          @map("session_id") @db.Uuid
+  sessionId         String          @map("session_id") @db.Char(36)
   questionId        String          @map("question_id")
-  questionVersionId String          @map("question_version_id") @db.Uuid
+  questionVersionId String          @map("question_version_id") @db.Char(36)
   position          Int
   snapshot          Json
   session           PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
@@ -207,14 +207,14 @@ model PracticeSessionQuestion {
 }
 
 model PracticeAnswer {
-  id                String          @id @default(uuid()) @db.Uuid
-  sessionId         String          @map("session_id") @db.Uuid
+  id                String          @id @default(uuid()) @db.Char(36)
+  sessionId         String          @map("session_id") @db.Char(36)
   questionId        String          @map("question_id")
-  userId            String          @map("user_id") @db.Uuid
+  userId            String          @map("user_id") @db.Char(36)
   clientAnswerId    String          @map("client_answer_id")
   selectedOptionIds Json            @map("selected_option_ids")
   correctOptionIds  Json            @map("correct_option_ids")
-  explanation       String
+  explanation       String          @db.Text
   isCorrect         Boolean         @map("is_correct")
   submittedAt       DateTime        @default(now()) @map("submitted_at")
   session           PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
@@ -228,7 +228,7 @@ model PracticeAnswer {
 }
 
 model WrongQuestionRecord {
-  userId       String    @map("user_id") @db.Uuid
+  userId       String    @map("user_id") @db.Char(36)
   questionId   String    @map("question_id")
   wrongCount   Int       @default(1) @map("wrong_count")
   mastered     Boolean   @default(false)
@@ -244,7 +244,7 @@ model WrongQuestionRecord {
 }
 
 model Favorite {
-  userId     String   @map("user_id") @db.Uuid
+  userId     String   @map("user_id") @db.Char(36)
   questionId String   @map("question_id")
   createdAt  DateTime @default(now()) @map("created_at")
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -255,8 +255,8 @@ model Favorite {
 }
 
 model Exam {
-  id           String            @id @default(uuid()) @db.Uuid
-  userId       String            @map("user_id") @db.Uuid
+  id           String            @id @default(uuid()) @db.Char(36)
+  userId       String            @map("user_id") @db.Char(36)
   type         String
   status       ExamStatus        @default(ACTIVE)
   createdAt    DateTime          @default(now()) @map("created_at")
@@ -274,9 +274,9 @@ model Exam {
 }
 
 model ExamQuestion {
-  examId            String          @map("exam_id") @db.Uuid
+  examId            String          @map("exam_id") @db.Char(36)
   questionId        String          @map("question_id")
-  questionVersionId String          @map("question_version_id") @db.Uuid
+  questionVersionId String          @map("question_version_id") @db.Char(36)
   subjectId         String          @map("subject_id")
   position          Int
   points            Int             @default(2)
@@ -296,7 +296,7 @@ model ExamQuestion {
 }
 
 model ExamDraft {
-  examId           String       @map("exam_id") @db.Uuid
+  examId           String       @map("exam_id") @db.Char(36)
   questionId       String       @map("question_id")
   selectedOptionId String       @map("selected_option_id")
   updatedAt        DateTime     @updatedAt @map("updated_at")
@@ -307,7 +307,7 @@ model ExamDraft {
 }
 
 model ExamResult {
-  examId        String           @id @map("exam_id") @db.Uuid
+  examId        String           @id @map("exam_id") @db.Char(36)
   totalCount    Int              @map("total_count")
   answeredCount Int              @map("answered_count")
   correctCount  Int              @map("correct_count")

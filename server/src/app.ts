@@ -24,6 +24,8 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
       level: deps.config.nodeEnv === "production" ? "info" : "debug",
       redact: [
         "req.headers.authorization",
+        "req.headers.x-wx-openid",
+        "req.headers.x-wx-unionid",
         "req.body.code",
         "req.body.refreshToken",
         "res.headers.set-cookie"
@@ -33,7 +35,9 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
   });
 
   await app.register(rateLimit, { global: false });
-  await app.register(fastifyJwt, { secret: deps.config.jwtAccessSecret });
+  if (deps.config.wechatAuthMode !== "cloud") {
+    await app.register(fastifyJwt, { secret: deps.config.jwtAccessSecret });
+  }
 
   app.get("/health", async () => ({
     data: { status: "ok", timestamp: new Date().toISOString() }
@@ -49,11 +53,13 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
     }
   });
 
-  const authenticate = createAuthenticate(deps.prisma);
+  const authenticate = createAuthenticate(deps.prisma, deps.config);
   registerAuthRoutes(app, {
     prisma: deps.prisma,
     config: deps.config,
-    wechatProvider: deps.wechatProvider || createWechatAuthProvider(deps.config),
+    wechatProvider: deps.config.wechatAuthMode === "cloud"
+      ? undefined
+      : (deps.wechatProvider || createWechatAuthProvider(deps.config)),
     authenticate
   });
   const examService = new ExamService(deps.prisma);

@@ -27,22 +27,28 @@ function weakSecret(value) {
 function validateValues(values, expectedAppId) {
   const errors = [];
   if (values.NODE_ENV !== 'production') errors.push('NODE_ENV 必须为 production');
-  if (values.WECHAT_AUTH_MODE !== 'real') errors.push('WECHAT_AUTH_MODE 必须为 real');
-  if (!values.WECHAT_APP_ID || values.WECHAT_APP_ID !== expectedAppId) errors.push('WECHAT_APP_ID 必须与 project.config.json 一致');
-  if (!values.WECHAT_APP_SECRET || /replace|example|待填写/i.test(values.WECHAT_APP_SECRET)) errors.push('WECHAT_APP_SECRET 缺失或仍为占位值');
-  if (weakSecret(values.JWT_ACCESS_SECRET)) errors.push('JWT_ACCESS_SECRET 强度不足或仍为示例值');
+  if (values.WECHAT_AUTH_MODE !== 'cloud') errors.push('WECHAT_AUTH_MODE 必须为 cloud');
 
-  try {
-    const database = new URL(values.DATABASE_URL || '');
-    if (!['postgresql:', 'postgres:'].includes(database.protocol)) errors.push('DATABASE_URL 必须使用 PostgreSQL');
-    if (!database.hostname || !database.username || !database.password || !database.pathname.slice(1)) {
-      errors.push('DATABASE_URL 必须包含主机、数据库、用户名和密码');
+  if (values.DATABASE_URL) {
+    try {
+      const database = new URL(values.DATABASE_URL);
+      if (database.protocol !== 'mysql:') errors.push('DATABASE_URL 必须使用 MySQL');
+      if (!database.hostname || !database.username || !database.password || !database.pathname.slice(1)) {
+        errors.push('DATABASE_URL 必须包含主机、数据库、用户名和密码');
+      }
+      if (/quzijie_dev_password|change-me|example|password/i.test(database.password)) {
+        errors.push('DATABASE_URL 仍在使用示例或弱密码');
+      }
+    } catch {
+      errors.push('DATABASE_URL 不是有效的 MySQL 连接地址');
     }
-    if (/quzijie_dev_password|change-me|example|password/i.test(database.password)) {
-      errors.push('DATABASE_URL 仍在使用示例或弱密码');
+  } else {
+    if (!/^[^:]+:\d+$/.test(values.MYSQL_ADDRESS || '')) errors.push('MYSQL_ADDRESS 必须使用 host:port 格式');
+    if (!values.MYSQL_USERNAME) errors.push('MYSQL_USERNAME 缺失');
+    if (!values.MYSQL_PASSWORD || /change-me|example|password/i.test(values.MYSQL_PASSWORD)) {
+      errors.push('MYSQL_PASSWORD 缺失或仍为示例值');
     }
-  } catch {
-    errors.push('DATABASE_URL 不是有效的 PostgreSQL 连接地址');
+    if (!/^[A-Za-z0-9_]+$/.test(values.MYSQL_DATABASE || '')) errors.push('MYSQL_DATABASE 无效');
   }
 
   const port = Number(values.PORT || 3000);

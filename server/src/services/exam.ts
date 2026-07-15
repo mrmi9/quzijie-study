@@ -93,10 +93,10 @@ export class ExamService {
 
   private async lockOwnedExam(tx: TransactionClient, userId: string, examId: string) {
     const rows = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
-      SELECT "id"
-      FROM "exams"
-      WHERE "id" = CAST(${examId} AS UUID)
-        AND "user_id" = CAST(${userId} AS UUID)
+      SELECT id
+      FROM exams
+      WHERE id = ${examId}
+        AND user_id = ${userId}
       FOR UPDATE
     `);
     if (!rows.length) throw new AppError("模拟考试不存在或无权访问", "EXAM_NOT_FOUND", 404);
@@ -217,9 +217,10 @@ export class ExamService {
     let examId: string;
     try {
       examId = await this.prisma.$transaction(async (tx) => {
-        await tx.$queryRaw(Prisma.sql`
-          SELECT pg_advisory_xact_lock(hashtextextended(${`exam:${userId}:${type}`}, 0)) IS NULL AS "locked"
+        const ownerRows = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+          SELECT id FROM users WHERE id = ${userId} FOR UPDATE
         `);
+        if (!ownerRows.length) throw new AppError("请登录后继续", "UNAUTHORIZED", 401);
         const active = await tx.exam.findFirst({ where: { userId, type, status: "ACTIVE" } });
         if (active) {
           await this.lockOwnedExam(tx, userId, active.id);
@@ -409,11 +410,11 @@ export class ExamService {
     const now = this.now();
     return this.prisma.$transaction(async (tx) => {
       const rows = await tx.$queryRaw<Array<{ id: string; userId: string }>>(Prisma.sql`
-        SELECT "id", "user_id" AS "userId"
-        FROM "exams"
-        WHERE "status" = 'ACTIVE'
-          AND "expires_at" <= ${now}
-        ORDER BY "expires_at" ASC
+        SELECT id, user_id AS userId
+        FROM exams
+        WHERE status = 'ACTIVE'
+          AND expires_at <= ${now}
+        ORDER BY expires_at ASC
         LIMIT ${limit}
         FOR UPDATE SKIP LOCKED
       `);

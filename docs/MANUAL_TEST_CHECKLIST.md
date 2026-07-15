@@ -1,5 +1,15 @@
 # 微信开发者工具与真机验收清单
 
+## 2026-07-15 微信云托管迁移记录
+
+- [x] Prisma 数据源切换为 MySQL，并生成独立 MySQL 初始迁移；旧 PostgreSQL 迁移已归档。
+- [x] 小程序发布配置切换为 `prod-d4gnnimmh1d0677fc / express-tfts`，请求层改用 `wx.cloud.callContainer`。
+- [x] 云托管登录改用平台注入的 OpenID，不再要求 AppSecret、JWT 和刷新令牌。
+- [x] MySQL 8 真实集成测试通过：迁移、500 题导入、云身份登录、C/C++ 练习、408 并发与到期交卷共 8 项通过。
+- [x] 最终 Docker 镜像以非 root 用户启动，自动迁移和空库导入成功，`/health`、`/ready` 均返回 `ok`。
+- [ ] 重置已暴露的云数据库密码，并在 `express-tfts` 服务中保存新值。
+- [ ] 将本项目版本部署到微信云托管并完成体验版 iOS/Android 真机验收。
+
 ## 自动门禁
 
 - [ ] 执行 `npm run verify:all`，500 题、小程序检查、服务端单元测试和 PostgreSQL 集成测试全部通过。
