@@ -15,7 +15,10 @@ sudo install -m 0644 "${project_dir}/ops/nginx/quzijie-rate-limit.conf" /etc/ngi
 sudo install -m 0644 "${project_dir}/ops/nginx/quzijie-api.conf" /etc/nginx/sites-available/quzijie-api.conf
 sudo install -m 0755 "${project_dir}/ops/certbot/quzijie-nginx-reload.sh" /etc/letsencrypt/renewal-hooks/deploy/quzijie-nginx-reload.sh
 sudo ln -sfn /etc/nginx/sites-available/quzijie-api.conf /etc/nginx/sites-enabled/quzijie-api.conf
-sudo rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/quzijie-acme-bootstrap.conf
+sudo rm -f \
+  /etc/nginx/sites-enabled/default \
+  /etc/nginx/sites-enabled/quzijie-acme-bootstrap.conf \
+  /etc/nginx/sites-enabled/quzijie-api
 sudo nginx -t
 sudo systemctl enable --now nginx
 sudo systemctl reload nginx
