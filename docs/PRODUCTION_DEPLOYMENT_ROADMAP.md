@@ -583,3 +583,33 @@ GitHub Actions 至少执行：
 3. 由米文立实际完成 500 题交叉复核，填写日期、结论和修改记录；姓名登记不等同于复核已经通过。
 4. 执行 `npm run verify:release`，上传体验版，在 iOS/Android 真机完成真实登录、七学科、408、弱网恢复和账户删除验收。
 5. 完成小程序类目、隐私指引和审核材料后提交微信审核；审核通过再发布正式版并进入上线观察。
+
+## 21. 2026-07-15 域名与 HTTPS 入口推进
+
+### 21.1 已完成
+
+- `api.qushuati.cloud`、根域名和 `www` 的 A 记录已解析到腾讯云服务器 `43.165.170.150`，公网 ACME HTTP 验证成功。
+- 已安装 Nginx 1.24.0 和 Certbot 2.9.0，为 `api.qushuati.cloud` 签发 Let's Encrypt 证书，证书有效期至 2026-10-13，并启用自动续期。
+- 为避免影响现有 Xray 443，API 固定使用 `https://api.qushuati.cloud:8443`；Nginx 将 8443 反向代理到仅回环监听的 `127.0.0.1:3000`，80 仅处理 ACME 和 HTTPS 跳转。
+- Nginx 启用 TLS 1.2/1.3、HSTS、1MB 请求体限制、20 请求/秒 IP 限流和统一转发头；配置校验通过，原 443、9000、10000、2096 服务监听保持不变。
+- 正式小程序发布配置已写入相同的 HTTPS 地址，仓库新增可重复安装的 Nginx 配置与运维脚本。
+
+### 21.2 公网验收结果与当前阻塞
+
+- 腾讯云轻量应用服务器防火墙已新增 TCP 8443、来源 `0.0.0.0/0`，未修改 443 规则。
+- 外网 `Test-NetConnection` 通过；`node tools/verify-deployment.js https://api.qushuati.cloud:8443` 验证 `health=ok`、`readiness=ok`、`database=ok`。
+- 公网 `/health` 和 `/ready` 均返回 HTTP 200，HSTS、`nosniff`、`no-referrer` 与 `no-store` 响应头生效；TLS 1.2 连接成功。
+- 服务器复查确认 Nginx 监听 80/8443、API 仅监听 `127.0.0.1:3000`，Xray 的 443/10000 和 3x-ui 的 9000/2096 均保持活动。
+- Certbot 模拟续期成功，续期部署钩子会先执行 `nginx -t` 再重载 Nginx。
+- 本轮 `npm run verify:all` 通过；`npm run check:release` 只剩 500 题交叉复核日期与结论两项预期门禁。
+
+当前只剩两个发布侧阻塞：
+
+1. 微信公众平台必须把 `https://api.qushuati.cloud:8443`（包含端口）加入 `request` 合法域名。
+2. 米文立仍需实际完成 500 题交叉复核并填写日期、结论和修改记录；当前只登记了复核人，发布门禁不得据此视为通过。
+
+### 21.3 后续顺序
+
+1. 在微信后台添加精确的 `request` 合法域名，执行 `npm run verify:release`；预期只剩内容复核门禁。
+2. 完成题库交叉复核后上传体验版，在 iOS/Android 真机验证真实登录、七学科、408、弱网恢复和账户删除。
+3. 补齐服务类目、隐私指引和审核材料，提交审核；通过后发布并进入上线观察。

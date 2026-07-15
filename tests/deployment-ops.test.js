@@ -30,6 +30,7 @@ assert.match(errors, /JWT_ACCESS_SECRET/);
 assert.match(errors, /DATABASE_URL/);
 
 assert.deepEqual(validateBaseUrl('https://api.quzijie.test').errors, []);
+assert.deepEqual(validateBaseUrl('https://api.qushuati.cloud:8443').errors, []);
 assert.match(validateBaseUrl('http://api.quzijie.test').errors.join('\n'), /HTTPS/);
 assert.deepEqual(validateBaseUrl('http://127.0.0.1:3000', true).errors, []);
 assert.match(validateBaseUrl('https://api.quzijie.test/api').errors.join('\n'), /路径/);
@@ -42,6 +43,12 @@ const restoreScript = fs.readFileSync(path.join(root, 'ops/restore-postgres.sh')
 const backupInstaller = fs.readFileSync(path.join(root, 'ops/install-backup-timer.sh'), 'utf8');
 const backupService = fs.readFileSync(path.join(root, 'ops/systemd/quzijie-backup.service'), 'utf8');
 const backupTimer = fs.readFileSync(path.join(root, 'ops/systemd/quzijie-backup.timer'), 'utf8');
+const httpsInstaller = fs.readFileSync(path.join(root, 'ops/install-https-proxy.sh'), 'utf8');
+const nginxSite = fs.readFileSync(path.join(root, 'ops/nginx/quzijie-api.conf'), 'utf8');
+const nginxRateLimit = fs.readFileSync(path.join(root, 'ops/nginx/quzijie-rate-limit.conf'), 'utf8');
+const certificateReloadHook = fs.readFileSync(path.join(root, 'ops/certbot/quzijie-nginx-reload.sh'), 'utf8');
+const acmeBootstrap = fs.readFileSync(path.join(root, 'ops/bootstrap-acme.sh'), 'utf8');
+const acmeSite = fs.readFileSync(path.join(root, 'ops/nginx/quzijie-acme-bootstrap.conf'), 'utf8');
 assert.match(deployScript, /QUIZIJIE_COMPOSE_OVERRIDE_FILE/);
 assert.match(rollbackScript, /QUIZIJIE_COMPOSE_OVERRIDE_FILE/);
 assert.match(deployScript, /QUIZIJIE_PREFLIGHT_IMAGE:-node:24-alpine/);
@@ -55,5 +62,17 @@ assert.match(backupInstaller, /systemctl enable --now quzijie-backup.timer/);
 assert.match(backupService, /NoNewPrivileges=true/);
 assert.match(backupService, /ReadWritePaths=\/opt\/quzijie-study\/backups/);
 assert.match(backupTimer, /OnCalendar=\*-\*-\* 03:20:00 Asia\/Shanghai/);
+assert.match(httpsInstaller, /nginx -t/);
+assert.match(httpsInstaller, /api\.qushuati\.cloud/);
+assert.match(httpsInstaller, /rm -f .*quzijie-acme-bootstrap\.conf/);
+assert.match(nginxSite, /listen 8443 ssl http2/);
+assert.match(nginxSite, /proxy_pass http:\/\/127\.0\.0\.1:3000/);
+assert.match(nginxSite, /https:\/\/\$host:8443\$request_uri/);
+assert.match(nginxRateLimit, /rate=20r\/s/);
+assert.match(certificateReloadHook, /nginx -t/);
+assert.match(certificateReloadHook, /systemctl reload nginx/);
+assert.match(acmeBootstrap, /quzijie-acme-bootstrap\.conf/);
+assert.match(acmeBootstrap, /nginx -t/);
+assert.match(acmeSite, /\.well-known\/acme-challenge/);
 
 console.log('Deployment operation tests passed: environment and public endpoint gates are enforced.');

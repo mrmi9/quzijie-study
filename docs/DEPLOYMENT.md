@@ -24,7 +24,7 @@ Windows Docker 连接本机 PostgreSQL 时，`DB_HOST` 使用 `host.docker.inter
 
 当 PostgreSQL 运行在同一台 Linux 宿主机上时，API 的 `DATABASE_URL` 使用专用 Docker 网桥网关；宿主机备份和恢复使用仅回环访问的 `DATABASE_ADMIN_URL`。首次部署先创建隔离网桥，再叠加 `compose.host-postgres.yaml`，避免把 PostgreSQL 暴露到公网。
 
-体验版和正式版的 API 地址填写在 `miniprogram/config/release.js`。该地址必须是已备案的 HTTPS 业务域名，不使用 IP、`localhost` 或路径；开发版仍可通过本地 Storage 指向 `http://127.0.0.1:3000`。部署和微信后台域名配置完成后执行：
+体验版和正式版的 API 地址填写在 `miniprogram/config/release.js`。该地址必须是已备案的 HTTPS 业务域名，不使用 IP、`localhost` 或路径；开发版仍可通过本地 Storage 指向 `http://127.0.0.1:3000`。当前腾讯云部署使用 `https://api.qushuati.cloud:8443`：服务器 443 继续供既有 Xray 使用，微信后台的 `request` 合法域名也必须填写完全相同且包含端口的地址。部署和微信后台域名配置完成后执行：
 
 ```powershell
 npm run verify:release
@@ -72,5 +72,8 @@ Invoke-RestMethod http://127.0.0.1:3000/ready
 - `ops/restore-postgres.sh`：带双重确认的恢复演练入口。
 - `tools/verify-deployment.js`：从公网验证 HTTPS、存活和数据库就绪。
 - `ops/upload-miniprogram.ps1`：发布门禁通过后调用微信开发者工具上传代码。
+- `ops/nginx/quzijie-api.conf`：当前域名的 80/8443 Nginx 反向代理与 TLS 基线。
+- `ops/bootstrap-acme.sh`：首次签发证书前安装仅用于 ACME HTTP-01 的 80 端口站点。
+- `ops/install-https-proxy.sh`：证书签发后安装并验证 Nginx 配置，不修改既有 443 监听。
 
 完整操作步骤见 [预发布与生产运行手册](OPERATIONS_RUNBOOK.md)。

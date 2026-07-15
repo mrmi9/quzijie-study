@@ -1,6 +1,6 @@
 # 趣字节刷题预发布与生产运行手册
 
-本手册用于 Linux + Docker Compose + 外部 PostgreSQL 17。API 容器仅绑定 `127.0.0.1:3000`，公网入口必须由 Caddy、Nginx 或云负载均衡提供 HTTPS 443。
+本手册用于 Linux + Docker Compose + 外部 PostgreSQL 17。API 容器仅绑定 `127.0.0.1:3000`，公网入口必须由 Nginx 或云负载均衡提供 HTTPS。当前腾讯云主机的 443 已由 Xray 使用，因此趣字节 API 独立使用 8443，不迁移或修改既有 3x-ui/Xray 服务。
 
 ## 1. 镜像发布
 
@@ -69,11 +69,28 @@ bash ops/deploy.sh
 
 脚本依次执行环境预检、镜像拉取、独立迁移、可选的 500 题幂等导入、API 启动和 `/ready` 检查。只有健康检查通过后才记录当前镜像。
 
-反向代理应转发到 `http://127.0.0.1:3000`，并保留 `X-Request-Id`、`X-Forwarded-For` 和 `X-Forwarded-Proto`。完成 DNS 与证书后，从外部验证：
+反向代理应转发到 `http://127.0.0.1:3000`，并保留 `X-Request-Id`、`X-Forwarded-For` 和 `X-Forwarded-Proto`。当前域名先使用 80 端口 Webroot 完成 ACME 验证，再安装仓库内的最终配置：
 
 ```bash
-node tools/verify-deployment.js https://api.example.com
+sudo apt-get update
+sudo apt-get install -y nginx certbot
+cd /opt/quzijie-study
+bash ops/bootstrap-acme.sh
+export CERT_EMAIL='由运维人员在终端输入，不写入仓库'
+sudo certbot certonly --webroot -w /var/www/certbot \
+  -d api.qushuati.cloud --email "$CERT_EMAIL" --agree-tos --no-eff-email
+bash ops/install-https-proxy.sh
 ```
+
+腾讯云轻量应用服务器防火墙只新增 TCP 8443、来源 `0.0.0.0/0`；80 用于 ACME 验证与跳转，443 继续保留给 Xray。Nginx 只接受 TLS 1.2/1.3，证书续期后必须执行 `nginx -t && systemctl reload nginx`。完成 DNS、证书与云防火墙后，从外部验证：
+
+```bash
+node tools/verify-deployment.js https://api.qushuati.cloud:8443
+curl -fsS https://api.qushuati.cloud:8443/health
+curl -fsS https://api.qushuati.cloud:8443/ready
+```
+
+微信公众平台的 `request` 合法域名必须填写 `https://api.qushuati.cloud:8443`。只填写不带端口的域名不会匹配小程序请求。
 
 ## 4. 日常升级
 

@@ -94,4 +94,16 @@
 - [x] 生成 PostgreSQL 自定义格式备份并通过 `pg_restore --list`；恢复到一次性测试数据库后核对 500 题，再删除测试数据库，主库和在线 API 未受影响。
 - [x] 安装每日 PostgreSQL 备份 systemd timer，安装时的首次任务成功，备份保留期为 14 天。
 - [x] 执行上一镜像回滚并通过 `/ready`，随后重新发布当前 Git SHA 镜像并再次通过就绪检查。
-- [ ] 域名审核通过后配置 DNS、TLS 和微信 `request` 合法域名，再通过体验版完成真实公网 API 验收。
+- [ ] DNS、TLS 与公网 8443 已配置；待添加微信 `request` 合法域名后，通过体验版完成真实公网 API 验收。
+
+## 2026-07-15 HTTPS 入口建设记录
+
+- [x] `api.qushuati.cloud`、`qushuati.cloud` 和 `www.qushuati.cloud` 的 A 记录均正常解析到 `43.165.170.150`。
+- [x] 在不修改 Xray 443 的前提下安装 Nginx 1.24.0，并建立 `8443 → 127.0.0.1:3000` 反向代理；80 只用于 ACME 与 HTTPS 跳转。
+- [x] Let's Encrypt 证书签发成功，有效期至 2026-10-13；Certbot 定时续期已启用，续期后配置校验并重载 Nginx。
+- [x] Nginx 配置通过 `nginx -t`，服务器监听 80/8443，Xray 的 443/10000 与 3x-ui 的 9000/2096 保持不变。
+- [x] 腾讯云轻量应用服务器防火墙已放行 TCP 8443；公网端口连接、`/health`、`/ready`、TLS 1.2、证书链和部署验证脚本均通过。
+- [x] `certbot renew --dry-run --no-random-sleep-on-renew` 模拟续期成功，续期部署钩子通过 `nginx -t` 后重载服务。
+- [x] `npm run verify:all` 通过：500 题、18 页面、8 项服务端单元测试和 7 项 PostgreSQL 集成测试全部成功。
+- [x] `npm run check:release` 只剩“交叉复核日期”和“复核结论”两项预期门禁，不再报告 HTTPS API 配置错误。
+- [ ] 微信公众平台尚未添加 `https://api.qushuati.cloud:8443` 为 `request` 合法域名。

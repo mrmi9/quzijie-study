@@ -28,14 +28,14 @@ const trial = loadEnv('trial', {
   quzijie_api_base_url: 'http://127.0.0.1:4000'
 });
 assert.equal(trial.repositoryMode, 'api');
-assert.equal(trial.apiBaseUrl, '');
+assert.equal(trial.apiBaseUrl, 'https://api.qushuati.cloud:8443');
 
 const release = loadEnv('release', {
   quzijie_repository_mode: 'mock',
   quzijie_api_base_url: 'http://127.0.0.1:4000'
 });
 assert.equal(release.repositoryMode, 'api');
-assert.equal(release.apiBaseUrl, '');
+assert.equal(release.apiBaseUrl, 'https://api.qushuati.cloud:8443');
 
 delete global.wx;
 delete require.cache[require.resolve(envPath)];
