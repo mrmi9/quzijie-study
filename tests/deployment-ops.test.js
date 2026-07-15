@@ -87,6 +87,8 @@ const cloudMigrationIndex = cloudBootstrap.indexOf('await run("npm", ["run", "db
 assert.ok(cloudListenIndex >= 0 && cloudListenIndex < cloudMigrationIndex,
   'CloudRun must listen before starting database migrations');
 assert.match(cloudBootstrap, /allowPublicKeyRetrieval: true/);
+assert.match(cloudBootstrap, /Refusing to recover the interrupted initial migration because tables contain data/);
+assert.match(cloudBootstrap, /Automatically rolled back after an interrupted empty-database bootstrap/);
 assert.match(databaseClient, /allowPublicKeyRetrieval: true/);
 assert.match(releaseConfig, /prod-d4gnnimmh1d0677fc/);
 assert.match(releaseConfig, /express-tfts/);
