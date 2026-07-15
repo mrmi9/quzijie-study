@@ -94,7 +94,7 @@
 - [x] 生成 PostgreSQL 自定义格式备份并通过 `pg_restore --list`；恢复到一次性测试数据库后核对 500 题，再删除测试数据库，主库和在线 API 未受影响。
 - [x] 安装每日 PostgreSQL 备份 systemd timer，安装时的首次任务成功，备份保留期为 14 天。
 - [x] 执行上一镜像回滚并通过 `/ready`，随后重新发布当前 Git SHA 镜像并再次通过就绪检查。
-- [ ] DNS、TLS 与公网 8443 已配置；待添加微信 `request` 合法域名后，通过体验版完成真实公网 API 验收。
+- [ ] DNS、TLS、公网 8443 与微信 `request` 合法域名均已配置；待通过体验版完成真实公网 API 验收。
 
 ## 2026-07-15 HTTPS 入口建设记录
 
@@ -106,4 +106,4 @@
 - [x] `certbot renew --dry-run --no-random-sleep-on-renew` 模拟续期成功，续期部署钩子通过 `nginx -t` 后重载服务。
 - [x] `npm run verify:all` 通过：500 题、18 页面、8 项服务端单元测试和 7 项 PostgreSQL 集成测试全部成功。
 - [x] `npm run check:release` 只剩“交叉复核日期”和“复核结论”两项预期门禁，不再报告 HTTPS API 配置错误。
-- [ ] 微信公众平台尚未添加 `https://api.qushuati.cloud:8443` 为 `request` 合法域名。
+- [x] 微信公众平台已添加 `https://api.qushuati.cloud:8443` 为 `request` 合法域名。
