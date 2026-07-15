@@ -7,12 +7,13 @@
 - [x] 云托管登录改用平台注入的 OpenID，不再要求 AppSecret、JWT 和刷新令牌。
 - [x] MySQL 8 真实集成测试通过：迁移、500 题导入、云身份登录、C/C++ 练习、408 并发与到期交卷共 8 项通过。
 - [x] 最终 Docker 镜像以非 root 用户启动，自动迁移和空库导入成功，`/health`、`/ready` 均返回 `ok`。
-- [ ] 重置已暴露的云数据库密码，并在 `express-tfts` 服务中保存新值。
-- [ ] 将本项目版本部署到微信云托管并完成体验版 iOS/Android 真机验收。
+- [x] 已重置暴露过的云数据库密码，并由微信云托管向 `express-tfts` 注入新值。
+- [x] 本项目已部署到微信云托管；公网 `/health`、`/ready` 与 MySQL 状态均为 `ok`。
+- [ ] 上传 `2.1.0` 体验版并完成 Android 全流程及 iOS 核心流程真机验收。
 
 ## 自动门禁
 
-- [ ] 执行 `npm run verify:all`，500 题、小程序检查、服务端单元测试和 PostgreSQL 集成测试全部通过。
+- [x] 2026-07-15 执行 `npm run verify:miniprogram`、`npm run verify:server`、MySQL 8 下的 `npm run verify:integration` 和 `npm run check:release`：500 题、18 页面、9 项服务端测试、8 项真实 MySQL API 闭环及云托管发布门禁全部通过。
 - [ ] 微信开发者工具执行“清缓存并编译”，控制台无错误或未处理 Promise。
 - [ ] 在至少一台 iOS 和一台 Android 真机预览，检查常见窄屏、长屏和底部安全区。
 
@@ -41,8 +42,8 @@
 - [ ] 答题、收藏和恢复时模拟 401，登录后返回原页且状态不丢失。
 - [ ] 空题库、空错题、空收藏均显示明确空状态，不进入空白答题页。
 - [ ] 将仓储切为 API 后所有页面仍走相同流程，页面源码中没有 `wx.request`。
-- [ ] 真实微信模式连续登录两次得到同一业务用户；日志、客户端包和 Git 中没有 AppSecret、微信 code 或 Token。
-- [ ] 刷新令牌成功轮换，旧刷新令牌再次使用返回 401，原业务请求只重放一次。
+- [ ] 微信云托管模式连续登录两次得到同一业务用户；日志、客户端包和 Git 中没有 AppSecret、OpenID 或 UnionID 的值。
+- [ ] 缺少可信云身份头的请求返回 401；永久删除账户后原身份的业务请求返回 401，再次微信登录创建无历史数据的新账户。
 
 ## 错题、掌握与收藏
 
@@ -76,13 +77,13 @@
 
 - [x] 已按 `content/REVIEW_STATUS.md` 完成 500 题技术交叉复核并记录责任人、日期、结论和修改；详细证据见 `content/QUESTION_BANK_AUDIT_2026-07-15.md`。
 - [x] 已重点核对 7 道代码题、75 道难题、53 道进阶单选及 C/C++/STL 的标准边界与实现前提。
-- [ ] 配置合法 AppID、HTTPS 后端、request 合法域名、隐私与登录流程后再提交审核。
+- [ ] 确认正式 AppID、微信云托管环境/服务、公众平台隐私指引和登录流程后再提交审核；`callContainer` 模式不要求配置独立 HTTPS API 地址。
 - [x] API 镜像使用非 root 用户构建，`/health` 与 `/ready` 分别通过，Compose 配置中不包含 PostgreSQL 服务。
 - [x] 已在腾讯云独立数据库上执行迁移镜像、幂等题库导入、API 启动和上一镜像回滚/重新发布演练。
 - [x] 账户与数据、隐私说明页面在微信开发者工具窄屏模拟器中可正常渲染；退出和永久删除入口清晰分离。
-- [x] PostgreSQL 集成测试确认 `DELETE /api/v1/users/me` 级联删除账户数据，旧访问令牌和刷新令牌均立即返回 401。
+- [x] MySQL 8 集成测试确认云身份账户可永久删除，删除后原身份请求返回 401，再次登录会创建新的业务账户。
 
-## 2026-07-14 本地联调记录
+## 2026-07-14 本地联调记录（历史，已由微信云托管方案取代）
 
 - [x] Windows 11、本地 PostgreSQL 17：`npm run verify:all` 通过；500 题、18 页面、8 项服务端单元测试和 7 组 PostgreSQL 集成测试通过。
 - [x] 微信开发者工具 Stable v2.01.2510290：真实 `wx.login/code2Session` 连续登录两次识别为同一业务用户；401 刷新和原请求重放通过，旧刷新令牌复用由集成测试确认为 401。
@@ -91,10 +92,10 @@
 - [x] 联调结束后恢复默认 Mock 模式并重新编译，未观察到项目业务编译错误。
 - [x] Docker Desktop 引擎可用，`docker compose -f compose.api.yaml config --quiet` 通过，Compose 未定义 PostgreSQL 服务。
 - [x] GitHub Actions 运行 `29322765212` 已完成 API/迁移镜像构建、数据库迁移、500 题导入、非 root 启动、`/health`、`/ready` 和优雅关闭；本地 Docker Hub 下载超时不再阻塞镜像门禁。
-- [ ] iOS、Android 真机、预发布 HTTPS、合法域名和多实例演练尚未执行。
-- [x] `npm run check:release` 能准确阻止空 HTTPS API、缺失运营主体/隐私联系方式和未完成的 500 题交叉复核。
+- [x] 当前正式发布门禁已切换为 MySQL 8 与微信云托管环境/服务校验；旧 PostgreSQL、预发布 HTTPS 和 `request` 合法域名不再作为本次上线前置条件。
+- [x] `npm run check:release` 在云托管模式校验 `cloudEnvId`、`cloudService`、运营主体、隐私联系方式和 500 题交叉复核；仅 HTTP 模式要求 HTTPS API 地址。
 
-## 2026-07-14 腾讯云预发布部署记录
+## 2026-07-14 腾讯云预发布部署记录（历史，不作为正式发布或回滚基线）
 
 - [x] Ubuntu 24.04 服务器安装 Docker Engine 29.6.1、Compose 5.3.1 与 PostgreSQL 17.10；原 3x-ui/Xray 的 443、9000、10000、2096 监听保持不变。
 - [x] PostgreSQL 仅监听回环地址和 `172.28.250.0/24` 专用 Docker 网桥，API 仅绑定 `127.0.0.1:3000`，未开放新的公网端口。
@@ -105,9 +106,9 @@
 - [x] 安装每日 PostgreSQL 备份 systemd timer，安装时的首次任务成功，备份保留期为 14 天。
 - [x] 执行上一镜像回滚并通过 `/ready`，随后重新发布当前 Git SHA 镜像并再次通过就绪检查。
 - [x] DNS、TLS、公网 8443 与微信 `request` 合法域名均已配置。
-- [ ] 待通过体验版完成真实公网 API、iOS/Android 真机与弱网恢复验收。
+- [x] 该独立 PostgreSQL/HTTPS 预发布链路已停止作为小程序发布目标；体验版改为验证微信云托管链路。
 
-## 2026-07-15 HTTPS 入口建设记录
+## 2026-07-15 HTTPS 入口建设记录（历史，不作为微信云托管发布门禁）
 
 - [x] `api.qushuati.cloud`、`qushuati.cloud` 和 `www.qushuati.cloud` 的 A 记录均正常解析到 `43.165.170.150`。
 - [x] 在不修改 Xray 443 的前提下安装 Nginx 1.24.0，并建立 `8443 → 127.0.0.1:3000` 反向代理；80 只用于 ACME 与 HTTPS 跳转。
@@ -119,7 +120,7 @@
 - [x] `npm run check:release` 只剩“交叉复核日期”和“复核结论”两项预期门禁，不再报告 HTTPS API 配置错误。
 - [x] 微信公众平台已添加 `https://api.qushuati.cloud:8443` 为 `request` 合法域名。
 
-## 2026-07-15 题库同步与微信开发版本上传记录
+## 2026-07-15 题库同步与旧开发版本上传记录（历史，需由云托管正式版覆盖）
 
 - [x] `npm run verify:release` 全部通过：500 题、7 学科、45 章节、题型与难度配比、内容审计、18 页面、8 项服务端单元测试和 7 组 PostgreSQL 集成测试均通过。
 - [x] 题库复核提交 `e0537728cf9e7922577ddeb5f6ed47fc264249c4` 已推送到 `main`，GitHub Actions 运行 `29393859076` 成功。
@@ -127,5 +128,5 @@
 - [x] 部署前备份 `/opt/quzijie-study/backups/quzijie-20260715T062040Z.dump` 可读取；公网 `/health`、`/ready` 和数据库就绪检查通过，原 443、9000、10000、2096 服务保持不变。
 - [x] 微信开发者工具 CLI 已登录，并成功向 AppID `wx69380e593ebd5ac7` 上传开发版本 `2.1.0`，说明为“500题复核与公网API体验版”。
 - [x] 上传包体积：总计 1,687,233 字节，主包 1,614,635 字节，`/modules/cpp/` 分包 72,598 字节。
-- [ ] 在微信公众平台版本管理中将开发版本 `2.1.0` 设为体验版，并确认体验二维码与体验成员权限。
+- [ ] 用当前 `codex/wechat-cloudrun` 分支重新上传云托管正式版 `2.1.0`，覆盖旧 HTTP 开发版本；再在公众平台将其设为体验版并确认体验二维码与体验成员权限。
 - [ ] 使用 `2.1.0` 体验版在至少一台 iOS 与一台 Android 真机完成本清单；记录设备、系统、微信版本、测试人、日期、问题截图和相关 `questionId`。

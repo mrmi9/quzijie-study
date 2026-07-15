@@ -66,7 +66,7 @@ describe("真实 MySQL API 闭环", () => {
     assert.equal(await prisma.question.count({ where: { subjectId: "cpp" } }), 100);
   });
 
-  it("云托管身份头完成登录并拒绝缺少可信来源的请求", async () => {
+  it("云托管身份头完成登录、删除和重新开户，并拒绝缺少可信来源的请求", async () => {
     const cloudConfig = loadConfig({
       NODE_ENV: "test",
       DATABASE_URL: process.env.TEST_DATABASE_URL,
@@ -97,6 +97,22 @@ describe("真实 MySQL API 闭环", () => {
       const me = await cloudApp.inject({ method: "GET", url: "/api/v1/users/me", headers });
       assert.equal(me.statusCode, 200, me.body);
       assert.equal(me.json().data.id, loggedIn.json().data.user.id);
+
+      const deleted = await cloudApp.inject({ method: "DELETE", url: "/api/v1/users/me", headers });
+      assert.equal(deleted.statusCode, 200, deleted.body);
+      assert.equal(deleted.json().data.deleted, true);
+
+      const afterDelete = await cloudApp.inject({ method: "GET", url: "/api/v1/users/me", headers });
+      assert.equal(afterDelete.statusCode, 401, afterDelete.body);
+      assert.equal(afterDelete.json().code, "UNAUTHORIZED");
+
+      const reloggedIn = await cloudApp.inject({
+        method: "POST",
+        url: "/api/v1/auth/wechat/cloud-login",
+        headers
+      });
+      assert.equal(reloggedIn.statusCode, 200, reloggedIn.body);
+      assert.notEqual(reloggedIn.json().data.user.id, loggedIn.json().data.user.id);
     } finally {
       await cloudApp.close();
     }

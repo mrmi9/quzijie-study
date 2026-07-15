@@ -1,5 +1,6 @@
 const assert = require('assert');
 const path = require('path');
+const { validateReleaseTransport } = require('../tools/check-release');
 
 const envPath = path.resolve(__dirname, '..', 'miniprogram', 'config', 'env.js');
 
@@ -44,6 +45,42 @@ assert.equal(release.transport, 'cloud');
 assert.equal(release.cloudEnvId, 'prod-d4gnnimmh1d0677fc');
 assert.equal(release.cloudService, 'express-tfts');
 assert.equal(release.apiBaseUrl, '');
+
+assert.deepEqual(validateReleaseTransport({
+  transport: 'cloud',
+  cloudEnvId: 'prod-d4gnnimmh1d0677fc',
+  cloudService: 'express-tfts',
+  apiBaseUrl: ''
+}), []);
+assert.match(validateReleaseTransport({
+  transport: 'cloud',
+  cloudEnvId: '',
+  cloudService: 'Express Service'
+}).join('\n'), /cloudEnvId/);
+assert.match(validateReleaseTransport({
+  transport: 'cloud',
+  cloudEnvId: '',
+  cloudService: 'Express Service'
+}).join('\n'), /cloudService/);
+assert.match(validateReleaseTransport({
+  transport: 'cloud',
+  cloudEnvId: 'https:evil',
+  cloudService: 'express-tfts'
+}).join('\n'), /cloudEnvId/);
+assert.match(validateReleaseTransport({
+  transport: 'cloud',
+  cloudEnvId: 'prod-valid',
+  cloudService: 'express-tfts-'
+}).join('\n'), /cloudService/);
+assert.deepEqual(validateReleaseTransport({
+  transport: 'http',
+  apiBaseUrl: 'https://api.quzijie.example'
+}), []);
+assert.match(validateReleaseTransport({
+  transport: 'http',
+  apiBaseUrl: 'http://127.0.0.1:3000'
+}).join('\n'), /HTTPS|localhost|IP/);
+assert.match(validateReleaseTransport({ transport: 'unknown' }).join('\n'), /transport/);
 
 delete global.wx;
 delete require.cache[require.resolve(envPath)];
