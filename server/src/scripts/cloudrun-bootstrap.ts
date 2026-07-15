@@ -24,7 +24,8 @@ async function ensureDatabase(connectionString: string): Promise<void> {
     host: options.host,
     port: options.port,
     user: options.user,
-    password: options.password
+    password: options.password,
+    allowPublicKeyRetrieval: true
   });
   try {
     await connection.query(
@@ -53,13 +54,20 @@ async function seedEmptyDatabase(connectionString: string): Promise<void> {
 async function main(): Promise<void> {
   const databaseUrl = resolveDatabaseUrl(process.env);
   process.env.DATABASE_URL = databaseUrl;
+
+  // CloudRun starts probing the configured port immediately. Listen before the
+  // one-time database bootstrap so a slow migration is not mistaken for a
+  // crashed container.
+  await import("../server.js");
+  console.log("HTTP server started; preparing the cloud database.");
+
   await ensureDatabase(databaseUrl);
   await run("npm", ["run", "db:deploy"]);
   await seedEmptyDatabase(databaseUrl);
-  await import("../server.js");
+  console.log("Cloud database bootstrap completed.");
 }
 
 main().catch((error) => {
   console.error("CloudRun bootstrap failed", error);
-  process.exitCode = 1;
+  process.exit(1);
 });

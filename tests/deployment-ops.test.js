@@ -37,6 +37,8 @@ assert.match(validateBaseUrl('https://api.quzijie.test/api').errors.join('\n'), 
 
 const root = path.resolve(__dirname, '..');
 const dockerfile = fs.readFileSync(path.join(root, 'Dockerfile'), 'utf8');
+const cloudBootstrap = fs.readFileSync(path.join(root, 'server/src/scripts/cloudrun-bootstrap.ts'), 'utf8');
+const databaseClient = fs.readFileSync(path.join(root, 'server/src/db.ts'), 'utf8');
 const releaseConfig = fs.readFileSync(path.join(root, 'miniprogram/config/release.js'), 'utf8');
 const deployScript = fs.readFileSync(path.join(root, 'ops/deploy.sh'), 'utf8');
 const rollbackScript = fs.readFileSync(path.join(root, 'ops/rollback.sh'), 'utf8');
@@ -80,6 +82,12 @@ assert.match(acmeBootstrap, /quzijie-acme-bootstrap\.conf/);
 assert.match(acmeBootstrap, /nginx -t/);
 assert.match(acmeSite, /\.well-known\/acme-challenge/);
 assert.match(dockerfile, /start:cloud/);
+const cloudListenIndex = cloudBootstrap.indexOf('await import("../server.js")');
+const cloudMigrationIndex = cloudBootstrap.indexOf('await run("npm", ["run", "db:deploy"])');
+assert.ok(cloudListenIndex >= 0 && cloudListenIndex < cloudMigrationIndex,
+  'CloudRun must listen before starting database migrations');
+assert.match(cloudBootstrap, /allowPublicKeyRetrieval: true/);
+assert.match(databaseClient, /allowPublicKeyRetrieval: true/);
 assert.match(releaseConfig, /prod-d4gnnimmh1d0677fc/);
 assert.match(releaseConfig, /express-tfts/);
 
