@@ -43,7 +43,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds002",
@@ -89,7 +89,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds003",
@@ -125,7 +125,7 @@
       "C"
     ],
     "explanation": "大 O 记号：给出函数增长率的渐进上界。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "概论与复杂度",
       "大 O 记号"
@@ -135,7 +135,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds004",
@@ -144,7 +144,7 @@
     "chapterName": "概论与复杂度",
     "chapterOrder": 1,
     "type": "multiple",
-    "stem": "围绕“原地算法”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“概论与复杂度”中围绕“原地算法”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -172,7 +172,7 @@
       "C"
     ],
     "explanation": "正确配对是“原地算法—只使用常数级或很少额外空间的算法”和“摊还分析—把一系列操作的总成本平均到每次操作”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "概论与复杂度",
       "原地算法"
@@ -182,7 +182,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds005",
@@ -218,7 +218,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds006",
@@ -227,44 +227,45 @@
     "chapterName": "概论与复杂度",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“概论与复杂度”时，下列哪个术语与“描述输入规模增长时基本操作次数的增长趋势”相符？",
+    "stem": "代码执行 `for (i=1; i<=n; ++i) for (j=1; j<=i; ++j) work();`，work 为常数时间操作。总时间复杂度是多少？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "空间复杂度"
+        "text": "Θ(log n)"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "大 O 记号"
+        "text": "Θ(n)"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "原地算法"
+        "text": "Θ(n log n)"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "时间复杂度"
+        "text": "Θ(n²)"
       }
     ],
     "correctOptionIds": [
       "D"
     ],
-    "explanation": "时间复杂度：描述输入规模增长时基本操作次数的增长趋势。",
+    "explanation": "work 的执行次数为 1+2+…+n=n(n+1)/2，因此增长阶为 Θ(n²)。",
     "difficulty": 3,
     "tags": [
       "概论与复杂度",
-      "时间复杂度"
+      "时间复杂度",
+      "求和"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds007",
@@ -273,44 +274,45 @@
     "chapterName": "概论与复杂度",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“概论与复杂度”时，关于“空间复杂度”，下列描述哪项正确？",
+    "stem": "递归计算时输入数组本身占 Θ(n) 空间，算法另外使用深度为 Θ(n) 的调用栈。按“额外空间”口径，其空间复杂度是多少？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "只使用常数级或很少额外空间的算法"
+        "text": "Θ(1)"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "把一系列操作的总成本平均到每次操作"
+        "text": "Θ(log n)"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "描述算法额外存储需求随输入规模的增长趋势"
+        "text": "Θ(n)"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "给出函数增长率的渐进上界"
+        "text": "Θ(n²)"
       }
     ],
     "correctOptionIds": [
       "C"
     ],
-    "explanation": "空间复杂度：描述算法额外存储需求随输入规模的增长趋势。",
-    "difficulty": 1,
+    "explanation": "空间复杂度通常关注算法额外占用；深度为 Θ(n) 的递归栈需要线性额外空间，输入数组不重复计入。",
+    "difficulty": 2,
     "tags": [
       "概论与复杂度",
-      "空间复杂度"
+      "空间复杂度",
+      "递归栈"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds008",
@@ -319,44 +321,45 @@
     "chapterName": "概论与复杂度",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“概论与复杂度”时，下列哪个术语与“给出函数增长率的渐进上界”相符？",
+    "stem": "若 `T(n)=3n²+20n+7`，下列哪个渐进上界最紧且常用于描述其增长率？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "顺序表"
+        "text": "O(1)"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "大 O 记号"
+        "text": "O(n)"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "原地算法"
+        "text": "O(n²)"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "摊还分析"
+        "text": "O(2ⁿ)"
       }
     ],
     "correctOptionIds": [
-      "B"
+      "C"
     ],
-    "explanation": "大 O 记号：给出函数增长率的渐进上界。",
+    "explanation": "最高次项 n² 主导增长，常数系数和低次项在渐进分析中被忽略，因此紧的常用上界为 O(n²)。",
     "difficulty": 2,
     "tags": [
       "概论与复杂度",
-      "大 O 记号"
+      "大 O 记号",
+      "渐进上界"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds009",
@@ -365,45 +368,47 @@
     "chapterName": "概论与复杂度",
     "chapterOrder": 1,
     "type": "multiple",
-    "stem": "再次围绕“原地算法”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "动态数组容量不足时按 2 倍扩容。对从空数组开始连续执行 n 次尾部插入，下列哪些说法正确？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "原地算法：只使用常数级或很少额外空间的算法"
+        "text": "某一次触发扩容的插入可能需要 Θ(n) 时间"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "摊还分析：把一系列操作的总成本平均到每次操作"
+        "text": "n 次插入搬移元素的总量为 Θ(n)"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "顺序表：每个结点保存数据和指向后继的链接"
+        "text": "尾部插入的摊还时间为 O(1)"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "单链表：用连续存储区域保存线性表元素"
+        "text": "每一次尾部插入的最坏时间都是 O(1)"
       }
     ],
     "correctOptionIds": [
       "A",
-      "B"
+      "B",
+      "C"
     ],
-    "explanation": "正确配对是“原地算法—只使用常数级或很少额外空间的算法”和“摊还分析—把一系列操作的总成本平均到每次操作”。",
+    "explanation": "单次扩容要搬移已有元素，最坏可达线性时间；但几何扩容使历次搬移总量为线性级，因此摊还每次 O(1)。",
     "difficulty": 3,
     "tags": [
       "概论与复杂度",
-      "原地算法"
+      "摊还分析",
+      "动态数组"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds010",
@@ -412,7 +417,7 @@
     "chapterName": "概论与复杂度",
     "chapterOrder": 1,
     "type": "judge",
-    "stem": "再次判断：摊还分析是指“用连续存储区域保存线性表元素”。",
+    "stem": "辨析判断：摊还分析是指“用连续存储区域保存线性表元素”。",
     "options": [
       {
         "id": "A",
@@ -429,7 +434,7 @@
       "B"
     ],
     "explanation": "摊还分析的准确含义是：把一系列操作的总成本平均到每次操作。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "概论与复杂度",
       "摊还分析"
@@ -439,7 +444,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds011",
@@ -475,7 +480,7 @@
       "C"
     ],
     "explanation": "顺序表：用连续存储区域保存线性表元素。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "线性表",
       "顺序表"
@@ -485,7 +490,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds012",
@@ -531,7 +536,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds013",
@@ -577,7 +582,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds014",
@@ -586,7 +591,7 @@
     "chapterName": "线性表",
     "chapterOrder": 2,
     "type": "multiple",
-    "stem": "围绕“循环链表”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“线性表”中围绕“循环链表”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -624,7 +629,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds015",
@@ -660,7 +665,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds016",
@@ -696,7 +701,7 @@
       "B"
     ],
     "explanation": "随机访问：按下标在常数时间内定位顺序表元素。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "线性表",
       "随机访问"
@@ -706,7 +711,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds017",
@@ -715,44 +720,45 @@
     "chapterName": "线性表",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "在“线性表”主题中，下列哪个术语与“已知目标位置结点时主要通过修改链接完成”相符？",
+    "stem": "单链表中 p 指向结点 P，需要把新结点 x 插入到 P 之后。下列指针更新顺序正确的是哪一个？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "链表插入"
+        "text": "`p->next = x; x->next = p->next;`"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "栈"
+        "text": "`x->next = p->next; p->next = x;`"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "队列"
+        "text": "`x = p->next; p->next = x;`"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "栈顶"
+        "text": "`p = x; x->next = nullptr;`"
       }
     ],
     "correctOptionIds": [
-      "A"
+      "B"
     ],
-    "explanation": "链表插入：已知目标位置结点时主要通过修改链接完成。",
+    "explanation": "必须先让 x 记住原后继，再让 p 指向 x；若先覆盖 p->next，就可能丢失原后继链接。",
     "difficulty": 3,
     "tags": [
       "线性表",
-      "链表插入"
+      "单链表",
+      "插入"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds018",
@@ -761,44 +767,45 @@
     "chapterName": "线性表",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“线性表”时，关于“顺序表”，下列描述哪项正确？",
+    "stem": "长度为 n 的顺序表在下标 0 处插入一个元素，且容量足够。需要移动的既有元素数量量级是多少？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "每个结点保存数据和指向后继的链接"
+        "text": "Θ(1)"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "结点同时保存前驱和后继链接"
+        "text": "Θ(log n)"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "尾结点的后继链接回到表头形成环"
+        "text": "Θ(n)"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "用连续存储区域保存线性表元素"
+        "text": "Θ(n²)"
       }
     ],
     "correctOptionIds": [
-      "D"
+      "C"
     ],
-    "explanation": "顺序表：用连续存储区域保存线性表元素。",
-    "difficulty": 1,
+    "explanation": "顺序表连续存储，在表头插入需要把原有 n 个元素整体后移一个位置，因此移动量为 Θ(n)。",
+    "difficulty": 2,
     "tags": [
       "线性表",
-      "顺序表"
+      "顺序表",
+      "插入复杂度"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds019",
@@ -807,7 +814,7 @@
     "chapterName": "线性表",
     "chapterOrder": 2,
     "type": "multiple",
-    "stem": "再次围绕“单链表”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“线性表”的适用条件角度辨析“单链表”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -845,7 +852,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds020",
@@ -854,7 +861,7 @@
     "chapterName": "线性表",
     "chapterOrder": 2,
     "type": "judge",
-    "stem": "再次判断：双链表是指“尾结点的后继链接回到表头形成环”。",
+    "stem": "辨析判断：双链表是指“尾结点的后继链接回到表头形成环”。",
     "options": [
       {
         "id": "A",
@@ -871,7 +878,7 @@
       "B"
     ],
     "explanation": "双链表的准确含义是：结点同时保存前驱和后继链接。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "线性表",
       "双链表"
@@ -881,7 +888,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds021",
@@ -890,44 +897,45 @@
     "chapterName": "线性表",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“线性表”时，下列哪个术语与“尾结点的后继链接回到表头形成环”相符？",
+    "stem": "只有一个尾指针 rear 指向循环单链表尾结点。要在 O(1) 时间取得首元结点，应访问哪个表达式？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "循环链表"
+        "text": "rear"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "头结点"
+        "text": "rear->next"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "随机访问"
+        "text": "rear->next->next->next"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "链表插入"
+        "text": "必须从空指针开始遍历"
       }
     ],
     "correctOptionIds": [
-      "A"
+      "B"
     ],
-    "explanation": "循环链表：尾结点的后继链接回到表头形成环。",
-    "difficulty": 1,
+    "explanation": "循环单链表尾结点的 next 指回表头，因此 rear->next 就是首元结点，可常数时间定位。",
+    "difficulty": 2,
     "tags": [
       "线性表",
-      "循环链表"
+      "循环链表",
+      "尾指针"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds022",
@@ -936,44 +944,45 @@
     "chapterName": "线性表",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“线性表”时，关于“头结点”，下列描述哪项正确？",
+    "stem": "带头结点的单链表为空时，若头指针为 head，通常应满足什么条件？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "按下标在常数时间内定位顺序表元素"
+        "text": "head 为 nullptr"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "已知目标位置结点时主要通过修改链接完成"
+        "text": "head->next 为 nullptr"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "遵循后进先出规则的受限线性表"
+        "text": "head->next 指向随机地址"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "位于首元结点之前并简化边界操作的辅助结点"
+        "text": "head 必须等于尾结点数据域"
       }
     ],
     "correctOptionIds": [
-      "D"
+      "B"
     ],
-    "explanation": "头结点：位于首元结点之前并简化边界操作的辅助结点。",
+    "explanation": "头结点本身仍存在，所以 head 非空；空表没有首元结点，通常用 head->next==nullptr 表示。",
     "difficulty": 2,
     "tags": [
       "线性表",
-      "头结点"
+      "头结点",
+      "空链表"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds023",
@@ -982,44 +991,45 @@
     "chapterName": "线性表",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“线性表”时，下列哪个术语与“按下标在常数时间内定位顺序表元素”相符？",
+    "stem": "既要按下标频繁读取第 i 个元素，又很少在中间插入删除。下列结构通常更合适的是哪一个？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "栈"
+        "text": "顺序表"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "队列"
+        "text": "单链表"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "随机访问"
+        "text": "仅含尾指针的链表"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "链表插入"
+        "text": "链式栈且禁止遍历"
       }
     ],
     "correctOptionIds": [
-      "C"
+      "A"
     ],
-    "explanation": "随机访问：按下标在常数时间内定位顺序表元素。",
-    "difficulty": 1,
+    "explanation": "顺序表连续存储，可按下标 O(1) 随机访问；链表按位置访问通常需要从已知结点逐步遍历。",
+    "difficulty": 2,
     "tags": [
       "线性表",
-      "随机访问"
+      "随机访问",
+      "顺序表"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds024",
@@ -1028,7 +1038,7 @@
     "chapterName": "线性表",
     "chapterOrder": 2,
     "type": "multiple",
-    "stem": "再次围绕“链表插入”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“线性表”的适用条件角度辨析“链表插入”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1066,7 +1076,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds025",
@@ -1075,7 +1085,7 @@
     "chapterName": "栈与队列",
     "chapterOrder": 3,
     "type": "judge",
-    "stem": "判断：栈是指“遵循后进先出规则的受限线性表”。",
+    "stem": "检查括号序列是否合法时，可以把左括号压栈，遇到右括号时与栈顶匹配；最终栈为空且过程中无失配才表示合法。",
     "options": [
       {
         "id": "A",
@@ -1091,18 +1101,19 @@
     "correctOptionIds": [
       "A"
     ],
-    "explanation": "栈的准确含义是：遵循后进先出规则的受限线性表。",
+    "explanation": "栈的后进先出特性与嵌套括号“最后打开、最先关闭”的顺序一致；还必须检查提前出现右括号和结束后栈非空两类错误。",
     "difficulty": 3,
     "tags": [
       "栈与队列",
-      "栈"
+      "栈",
+      "括号匹配"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds026",
@@ -1148,7 +1159,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds027",
@@ -1184,7 +1195,7 @@
       "C"
     ],
     "explanation": "栈顶：栈中执行插入和删除操作的一端。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "栈与队列",
       "栈顶"
@@ -1194,7 +1205,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds028",
@@ -1203,44 +1214,45 @@
     "chapterName": "栈与队列",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "在“栈与队列”主题中，下列哪个术语与“用取模让顺序存储空间首尾逻辑相接”相符？",
+    "stem": "容量为 10 的循环队列采用“浪费一个单元”区分空和满，front=7、rear=2。当前元素个数是多少？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "字符串模式匹配"
+        "text": "3"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "循环队列"
+        "text": "5"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "双端队列"
+        "text": "7"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "递归调用栈"
+        "text": "9"
       }
     ],
     "correctOptionIds": [
       "B"
     ],
-    "explanation": "循环队列：用取模让顺序存储空间首尾逻辑相接。",
+    "explanation": "元素个数为 (rear-front+capacity)%capacity=(2-7+10)%10=5。浪费一个单元影响最大可用容量，但不改变该计数公式。",
     "difficulty": 3,
     "tags": [
       "栈与队列",
-      "循环队列"
+      "循环队列",
+      "取模"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds029",
@@ -1249,7 +1261,7 @@
     "chapterName": "栈与队列",
     "chapterOrder": 3,
     "type": "multiple",
-    "stem": "围绕“双端队列”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“栈与队列”中围绕“双端队列”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1277,7 +1289,7 @@
       "B"
     ],
     "explanation": "正确配对是“双端队列—允许在线性结构两端插入和删除”和“递归调用栈—保存函数参数、局部状态和返回位置”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "栈与队列",
       "双端队列"
@@ -1287,7 +1299,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds030",
@@ -1323,7 +1335,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds031",
@@ -1332,44 +1344,45 @@
     "chapterName": "栈与队列",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“栈与队列”时，关于“栈”，下列描述哪项正确？",
+    "stem": "撤销编辑操作要求“最后执行的修改最先被撤销”。最适合保存操作历史的结构是什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "栈中执行插入和删除操作的一端"
+        "text": "栈"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "用取模让顺序存储空间首尾逻辑相接"
+        "text": "普通队列"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "遵循后进先出规则的受限线性表"
+        "text": "只读数组"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "遵循先进先出规则的受限线性表"
+        "text": "无序集合"
       }
     ],
     "correctOptionIds": [
-      "C"
+      "A"
     ],
-    "explanation": "栈：遵循后进先出规则的受限线性表。",
-    "difficulty": 1,
+    "explanation": "撤销遵循后进先出：最后压入的操作记录最先弹出，因此栈最符合访问顺序。",
+    "difficulty": 2,
     "tags": [
       "栈与队列",
-      "栈"
+      "栈",
+      "撤销操作"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds032",
@@ -1378,12 +1391,12 @@
     "chapterName": "栈与队列",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“栈与队列”时，下列哪个术语与“遵循先进先出规则的受限线性表”相符？",
+    "stem": "打印任务按到达先后依次处理，不考虑优先级。最适合组织等待任务的结构是什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "双端队列"
+        "text": "栈"
       },
       {
         "id": "B",
@@ -1393,29 +1406,30 @@
       {
         "id": "C",
         "label": "C",
-        "text": "栈顶"
+        "text": "二叉搜索树"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "循环队列"
+        "text": "散列表"
       }
     ],
     "correctOptionIds": [
       "B"
     ],
-    "explanation": "队列：遵循先进先出规则的受限线性表。",
-    "difficulty": 1,
+    "explanation": "普通打印队列遵循先进先出，先到达的任务先出队处理。",
+    "difficulty": 2,
     "tags": [
       "栈与队列",
-      "队列"
+      "队列",
+      "先进先出"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds033",
@@ -1424,44 +1438,45 @@
     "chapterName": "栈与队列",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“栈与队列”时，关于“栈顶”，下列描述哪项正确？",
+    "stem": "顺序栈用数组 `data[capacity]` 和 top 表示当前栈顶下标，约定空栈 top=-1。压入新元素时正确的核心操作是什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "栈中执行插入和删除操作的一端"
+        "text": "data[top--]=x"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "用取模让顺序存储空间首尾逻辑相接"
+        "text": "data[++top]=x"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "允许在线性结构两端插入和删除"
+        "text": "data[top]=x 且 top 不变"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "保存函数参数、局部状态和返回位置"
+        "text": "data[0]=x 后清空数组"
       }
     ],
     "correctOptionIds": [
-      "A"
+      "B"
     ],
-    "explanation": "栈顶：栈中执行插入和删除操作的一端。",
+    "explanation": "top 指向当前栈顶，空栈为 -1；压栈先把 top 加一，再把元素写入新的栈顶位置。",
     "difficulty": 2,
     "tags": [
       "栈与队列",
-      "栈顶"
+      "栈顶",
+      "顺序栈"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds034",
@@ -1470,7 +1485,7 @@
     "chapterName": "栈与队列",
     "chapterOrder": 3,
     "type": "multiple",
-    "stem": "再次围绕“循环队列”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“栈与队列”的适用条件角度辨析“循环队列”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1498,7 +1513,7 @@
       "D"
     ],
     "explanation": "正确配对是“循环队列—用取模让顺序存储空间首尾逻辑相接”和“双端队列—允许在线性结构两端插入和删除”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "栈与队列",
       "循环队列"
@@ -1508,7 +1523,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds035",
@@ -1517,7 +1532,7 @@
     "chapterName": "栈与队列",
     "chapterOrder": 3,
     "type": "judge",
-    "stem": "再次判断：双端队列是指“允许在线性结构两端插入和删除”。",
+    "stem": "辨析判断：双端队列是指“允许在线性结构两端插入和删除”。",
     "options": [
       {
         "id": "A",
@@ -1534,7 +1549,7 @@
       "A"
     ],
     "explanation": "双端队列的准确含义是：允许在线性结构两端插入和删除。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "栈与队列",
       "双端队列"
@@ -1544,7 +1559,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds036",
@@ -1553,44 +1568,45 @@
     "chapterName": "栈与队列",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“栈与队列”时，下列哪个术语与“保存函数参数、局部状态和返回位置”相符？",
+    "stem": "快速排序每次都选到当前区间的最小元素作为枢轴。对 n 个互异元素，递归调用栈的最大深度和时间复杂度分别是什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "稀疏矩阵"
+        "text": "Θ(log n) 与 Θ(n log n)"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "递归调用栈"
+        "text": "Θ(n) 与 Θ(n²)"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "字符串模式匹配"
+        "text": "Θ(n) 与 Θ(n log n)"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "KMP 算法"
+        "text": "Θ(log n) 与 Θ(n²)"
       }
     ],
     "correctOptionIds": [
       "B"
     ],
-    "explanation": "递归调用栈：保存函数参数、局部状态和返回位置。",
+    "explanation": "每次划分只缩小一个元素，递归链长度为 Θ(n)，比较总量为 (n-1)+(n-2)+…+1=Θ(n²)。",
     "difficulty": 3,
     "tags": [
       "栈与队列",
-      "递归调用栈"
+      "递归调用栈",
+      "快速排序"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds037",
@@ -1636,7 +1652,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds038",
@@ -1672,7 +1688,7 @@
       "D"
     ],
     "explanation": "KMP 算法：利用已匹配前后缀信息避免主串指针回退。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "串与数组",
       "KMP 算法"
@@ -1682,7 +1698,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds039",
@@ -1691,7 +1707,7 @@
     "chapterName": "串与数组",
     "chapterOrder": 4,
     "type": "multiple",
-    "stem": "围绕“稀疏矩阵”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“串与数组”中围绕“稀疏矩阵”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1719,7 +1735,7 @@
       "D"
     ],
     "explanation": "正确配对是“稀疏矩阵—大多数元素为零且适合压缩存储的矩阵”和“多维数组行优先—先连续存放同一行元素再存放下一行”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "串与数组",
       "稀疏矩阵"
@@ -1729,7 +1745,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds040",
@@ -1755,7 +1771,7 @@
       "B"
     ],
     "explanation": "多维数组行优先的准确含义是：先连续存放同一行元素再存放下一行。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "串与数组",
       "多维数组行优先"
@@ -1765,7 +1781,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds041",
@@ -1774,7 +1790,7 @@
     "chapterName": "串与数组",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“串与数组”时，下列哪个术语与“在主串中寻找模式串出现位置的问题”相符？",
+    "stem": "结合“串与数组”中的相关概念，下列哪个术语与“在主串中寻找模式串出现位置的问题”相符？",
     "options": [
       {
         "id": "A",
@@ -1801,7 +1817,7 @@
       "A"
     ],
     "explanation": "字符串模式匹配：在主串中寻找模式串出现位置的问题。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "串与数组",
       "字符串模式匹配"
@@ -1811,7 +1827,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds042",
@@ -1820,7 +1836,7 @@
     "chapterName": "串与数组",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“串与数组”时，关于“KMP 算法”，下列描述哪项正确？",
+    "stem": "结合“串与数组”中的相关概念，关于“KMP 算法”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -1857,7 +1873,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds043",
@@ -1866,7 +1882,7 @@
     "chapterName": "串与数组",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“串与数组”时，下列哪个术语与“大多数元素为零且适合压缩存储的矩阵”相符？",
+    "stem": "结合“串与数组”中的相关概念，下列哪个术语与“大多数元素为零且适合压缩存储的矩阵”相符？",
     "options": [
       {
         "id": "A",
@@ -1893,7 +1909,7 @@
       "C"
     ],
     "explanation": "稀疏矩阵：大多数元素为零且适合压缩存储的矩阵。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "串与数组",
       "稀疏矩阵"
@@ -1903,7 +1919,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds044",
@@ -1912,45 +1928,47 @@
     "chapterName": "串与数组",
     "chapterOrder": 4,
     "type": "multiple",
-    "stem": "再次围绕“多维数组行优先”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "二维数组 `A[m][n]` 按行优先连续存储，每个元素占 w 字节，首地址为 B。关于 `A[i][j]`，下列哪些说法正确？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "满二叉树：每个结点最多有两个有序子树的树结构"
+        "text": "字节偏移可写为 `(i*n+j)*w`"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "多维数组行优先：先连续存放同一行元素再存放下一行"
+        "text": "同一行相邻两元素地址相差 w"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "树：无环且连通的层次型结点结构"
+        "text": "从一行末尾到下一行开头在内存中仍然连续"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "二叉树：每层结点数都达到最大值的二叉树"
+        "text": "字节偏移应写为 `(j*m+i)*w`"
       }
     ],
     "correctOptionIds": [
+      "A",
       "B",
       "C"
     ],
-    "explanation": "正确配对是“多维数组行优先—先连续存放同一行元素再存放下一行”和“树—无环且连通的层次型结点结构”。",
+    "explanation": "行优先使最右维连续变化，线性下标为 i*n+j；一行末尾后的下一个元素正是下一行首元素。",
     "difficulty": 3,
     "tags": [
       "串与数组",
-      "多维数组行优先"
+      "行优先",
+      "地址计算"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds045",
@@ -1986,7 +2004,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds046",
@@ -2022,7 +2040,7 @@
       "D"
     ],
     "explanation": "二叉树：每个结点最多有两个有序子树的树结构。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "树与二叉树",
       "二叉树"
@@ -2032,7 +2050,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds047",
@@ -2078,7 +2096,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds048",
@@ -2124,7 +2142,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds049",
@@ -2133,7 +2151,7 @@
     "chapterName": "树与二叉树",
     "chapterOrder": 5,
     "type": "multiple",
-    "stem": "围绕“前序遍历”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“树与二叉树”中围绕“前序遍历”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -2171,7 +2189,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds050",
@@ -2197,7 +2215,7 @@
       "B"
     ],
     "explanation": "中序遍历的准确含义是：按左子树、根、右子树顺序访问。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "树与二叉树",
       "中序遍历"
@@ -2207,7 +2225,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds051",
@@ -2221,7 +2239,7 @@
       {
         "id": "A",
         "label": "A",
-        "text": "任一结点左右子树高度差受到限制的二叉搜索树"
+        "text": "任一结点左右子树高度差绝对值不超过 1 的二叉搜索树"
       },
       {
         "id": "B",
@@ -2243,7 +2261,7 @@
       "C"
     ],
     "explanation": "后序遍历：按左子树、右子树、根顺序访问。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "树与二叉树",
       "后序遍历"
@@ -2253,7 +2271,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds052",
@@ -2262,44 +2280,45 @@
     "chapterName": "树与二叉树",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "在“树与二叉树”主题中，下列哪个术语与“借助队列按深度从小到大访问结点”相符？",
+    "stem": "二叉树根为 A；A 的左右孩子为 B、C；B 的左右孩子为 D、E；C 只有右孩子 F。层序遍历结果是什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "邻接矩阵"
+        "text": "A B D E C F"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "层序遍历"
+        "text": "D B E A C F"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "平衡二叉树"
+        "text": "A B C D E F"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "图"
+        "text": "D E B F C A"
       }
     ],
     "correctOptionIds": [
-      "B"
+      "C"
     ],
-    "explanation": "层序遍历：借助队列按深度从小到大访问结点。",
+    "explanation": "层序遍历借助队列按深度从小到大访问：先 A，再 B、C，最后 D、E、F。",
     "difficulty": 3,
     "tags": [
       "树与二叉树",
-      "层序遍历"
+      "层序遍历",
+      "二叉树"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds053",
@@ -2308,12 +2327,12 @@
     "chapterName": "树与二叉树",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "在“树与二叉树”主题中，关于“平衡二叉树”，下列描述哪项正确？",
+    "stem": "在“树与二叉树”主题中，关于“AVL 平衡二叉树”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "任一结点左右子树高度差受到限制的二叉搜索树"
+        "text": "任一结点左右子树高度差绝对值不超过 1 的二叉搜索树"
       },
       {
         "id": "B",
@@ -2334,18 +2353,18 @@
     "correctOptionIds": [
       "A"
     ],
-    "explanation": "平衡二叉树：任一结点左右子树高度差受到限制的二叉搜索树。",
+    "explanation": "AVL 平衡二叉树：任一结点左右子树高度差绝对值不超过 1 的二叉搜索树。",
     "difficulty": 1,
     "tags": [
       "树与二叉树",
-      "平衡二叉树"
+      "AVL 平衡二叉树"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds054",
@@ -2354,7 +2373,7 @@
     "chapterName": "树与二叉树",
     "chapterOrder": 5,
     "type": "multiple",
-    "stem": "再次围绕“树”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“树与二叉树”的适用条件角度辨析“树”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -2392,7 +2411,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds055",
@@ -2401,7 +2420,7 @@
     "chapterName": "树与二叉树",
     "chapterOrder": 5,
     "type": "judge",
-    "stem": "再次判断：二叉树是指“每个结点最多有两个有序子树的树结构”。",
+    "stem": "结点关键字互异时，一棵二叉树可由其前序遍历序列和中序遍历序列唯一确定。",
     "options": [
       {
         "id": "A",
@@ -2417,18 +2436,19 @@
     "correctOptionIds": [
       "A"
     ],
-    "explanation": "二叉树的准确含义是：每个结点最多有两个有序子树的树结构。",
+    "explanation": "前序序列确定当前根，中序序列把其余结点唯一划分为左右子树；对子树递归应用即可唯一重建。关键字不互异时需要额外信息。",
     "difficulty": 3,
     "tags": [
       "树与二叉树",
-      "二叉树"
+      "二叉树",
+      "遍历重建"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds056",
@@ -2437,7 +2457,7 @@
     "chapterName": "树与二叉树",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“树与二叉树”时，下列哪个术语与“每层结点数都达到最大值的二叉树”相符？",
+    "stem": "结合“树与二叉树”中的相关概念，下列哪个术语与“每层结点数都达到最大值的二叉树”相符？",
     "options": [
       {
         "id": "A",
@@ -2474,7 +2494,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds057",
@@ -2483,7 +2503,7 @@
     "chapterName": "树与二叉树",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“树与二叉树”时，关于“完全二叉树”，下列描述哪项正确？",
+    "stem": "结合“树与二叉树”中的相关概念，关于“完全二叉树”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -2510,7 +2530,7 @@
       "A"
     ],
     "explanation": "完全二叉树：除最后一层外全满且末层结点从左连续排列。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "树与二叉树",
       "完全二叉树"
@@ -2520,7 +2540,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds058",
@@ -2529,7 +2549,7 @@
     "chapterName": "树与二叉树",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“树与二叉树”时，下列哪个术语与“按根、左子树、右子树顺序访问”相符？",
+    "stem": "结合“树与二叉树”中的相关概念，下列哪个术语与“按根、左子树、右子树顺序访问”相符？",
     "options": [
       {
         "id": "A",
@@ -2566,7 +2586,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds059",
@@ -2575,17 +2595,17 @@
     "chapterName": "树与二叉树",
     "chapterOrder": 5,
     "type": "multiple",
-    "stem": "再次围绕“中序遍历”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“树与二叉树”的适用条件角度辨析“中序遍历”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "层序遍历：任一结点左右子树高度差受到限制的二叉搜索树"
+        "text": "层序遍历：任一结点左右子树高度差绝对值不超过 1 的二叉搜索树"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "平衡二叉树：借助队列按深度从小到大访问结点"
+        "text": "AVL 平衡二叉树：借助队列按深度从小到大访问结点"
       },
       {
         "id": "C",
@@ -2603,7 +2623,7 @@
       "D"
     ],
     "explanation": "正确配对是“中序遍历—按左子树、根、右子树顺序访问”和“后序遍历—按左子树、右子树、根顺序访问”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "树与二叉树",
       "中序遍历"
@@ -2613,7 +2633,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds060",
@@ -2622,7 +2642,7 @@
     "chapterName": "树与二叉树",
     "chapterOrder": 5,
     "type": "judge",
-    "stem": "再次判断：后序遍历是指“借助队列按深度从小到大访问结点”。",
+    "stem": "辨析判断：后序遍历是指“借助队列按深度从小到大访问结点”。",
     "options": [
       {
         "id": "A",
@@ -2649,7 +2669,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds061",
@@ -2658,7 +2678,7 @@
     "chapterName": "树与二叉树",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“树与二叉树”时，关于“层序遍历”，下列描述哪项正确？",
+    "stem": "结合“树与二叉树”中的相关概念，关于“层序遍历”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -2668,7 +2688,7 @@
       {
         "id": "B",
         "label": "B",
-        "text": "任一结点左右子树高度差受到限制的二叉搜索树"
+        "text": "任一结点左右子树高度差绝对值不超过 1 的二叉搜索树"
       },
       {
         "id": "C",
@@ -2695,7 +2715,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds062",
@@ -2704,7 +2724,7 @@
     "chapterName": "树与二叉树",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“树与二叉树”时，下列哪个术语与“任一结点左右子树高度差受到限制的二叉搜索树”相符？",
+    "stem": "结合“树与二叉树”中的相关概念，下列哪个术语与“任一结点左右子树高度差绝对值不超过 1 的二叉搜索树”相符？",
     "options": [
       {
         "id": "A",
@@ -2724,24 +2744,24 @@
       {
         "id": "D",
         "label": "D",
-        "text": "平衡二叉树"
+        "text": "AVL 平衡二叉树"
       }
     ],
     "correctOptionIds": [
       "D"
     ],
-    "explanation": "平衡二叉树：任一结点左右子树高度差受到限制的二叉搜索树。",
-    "difficulty": 2,
+    "explanation": "AVL 平衡二叉树：任一结点左右子树高度差绝对值不超过 1 的二叉搜索树。",
+    "difficulty": 1,
     "tags": [
       "树与二叉树",
-      "平衡二叉树"
+      "AVL 平衡二叉树"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds063",
@@ -2750,44 +2770,45 @@
     "chapterName": "图",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "在“图”主题中，下列哪个术语与“由顶点集合和连接顶点的边集合构成”相符？",
+    "stem": "用邻接表存储含 V 个顶点、E 条边的图，完整执行一次 BFS 的时间复杂度通常是多少？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "邻接表"
+        "text": "Θ(V)"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "广度优先搜索"
+        "text": "Θ(E)"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "图"
+        "text": "Θ(V+E)"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "邻接矩阵"
+        "text": "Θ(VE)"
       }
     ],
     "correctOptionIds": [
       "C"
     ],
-    "explanation": "图：由顶点集合和连接顶点的边集合构成。",
+    "explanation": "每个顶点至多入队一次，每条边在扫描邻接表时被检查常数次，因此总复杂度为 Θ(V+E)。",
     "difficulty": 3,
     "tags": [
       "图",
-      "图"
+      "广度优先搜索",
+      "邻接表"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds064",
@@ -2796,7 +2817,7 @@
     "chapterName": "图",
     "chapterOrder": 6,
     "type": "multiple",
-    "stem": "围绕“邻接矩阵”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“图”中围绕“邻接矩阵”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -2824,7 +2845,7 @@
       "C"
     ],
     "explanation": "正确配对是“邻接矩阵—用二维矩阵表示顶点之间是否存在边”和“邻接表—为每个顶点保存相邻顶点列表”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "图",
       "邻接矩阵"
@@ -2834,7 +2855,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds065",
@@ -2860,7 +2881,7 @@
       "A"
     ],
     "explanation": "邻接表的准确含义是：为每个顶点保存相邻顶点列表。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "图",
       "邻接表"
@@ -2870,7 +2891,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds066",
@@ -2916,7 +2937,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds067",
@@ -2962,7 +2983,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds068",
@@ -2998,7 +3019,7 @@
       "B"
     ],
     "explanation": "拓扑排序：把有向无环图顶点排成满足先后关系的序列。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "图",
       "拓扑排序"
@@ -3008,7 +3029,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds069",
@@ -3017,7 +3038,7 @@
     "chapterName": "图",
     "chapterOrder": 6,
     "type": "multiple",
-    "stem": "围绕“最小生成树”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“图”中围绕“最小生成树”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -3045,7 +3066,7 @@
       "B"
     ],
     "explanation": "正确配对是“最小生成树—连通加权无向图中权值和最小的生成树”和“Dijkstra 算法—求非负权图中单源最短路径的贪心算法”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "图",
       "最小生成树"
@@ -3055,7 +3076,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds070",
@@ -3091,7 +3112,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds071",
@@ -3100,44 +3121,45 @@
     "chapterName": "图",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "再次辨析“图”时，下列哪个术语与“由顶点集合和连接顶点的边集合构成”相符？",
+    "stem": "图中存在负权边，但没有负权回路。直接使用标准 Dijkstra 算法求单源最短路，最准确的判断是什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "邻接表"
+        "text": "仍一定正确"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "广度优先搜索"
+        "text": "只要顶点数为偶数就正确"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "图"
+        "text": "算法前提不满足，可能过早确定顶点而得到错误结果"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "邻接矩阵"
+        "text": "会自动转换为拓扑排序"
       }
     ],
     "correctOptionIds": [
       "C"
     ],
-    "explanation": "图：由顶点集合和连接顶点的边集合构成。",
+    "explanation": "Dijkstra 的贪心正确性依赖边权非负。负权边可能在某顶点被确定后产生更短路径，应改用适合负权边的算法。",
     "difficulty": 3,
     "tags": [
       "图",
-      "图"
+      "Dijkstra",
+      "负权边"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds072",
@@ -3146,7 +3168,7 @@
     "chapterName": "图",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "再次辨析“图”时，关于“邻接矩阵”，下列描述哪项正确？",
+    "stem": "结合“图”中的相关概念，关于“邻接矩阵”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -3183,7 +3205,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds073",
@@ -3192,7 +3214,7 @@
     "chapterName": "图",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "再次辨析“图”时，下列哪个术语与“为每个顶点保存相邻顶点列表”相符？",
+    "stem": "结合“图”中的相关概念，下列哪个术语与“为每个顶点保存相邻顶点列表”相符？",
     "options": [
       {
         "id": "A",
@@ -3219,7 +3241,7 @@
       "A"
     ],
     "explanation": "邻接表：为每个顶点保存相邻顶点列表。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "图",
       "邻接表"
@@ -3229,7 +3251,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds074",
@@ -3238,7 +3260,7 @@
     "chapterName": "图",
     "chapterOrder": 6,
     "type": "multiple",
-    "stem": "再次围绕“广度优先搜索”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“图”的适用条件角度辨析“广度优先搜索”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -3266,7 +3288,7 @@
       "D"
     ],
     "explanation": "正确配对是“广度优先搜索—借助队列逐层访问图中顶点”和“深度优先搜索—沿路径深入后再回溯访问图中顶点”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "图",
       "广度优先搜索"
@@ -3276,7 +3298,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds075",
@@ -3285,7 +3307,7 @@
     "chapterName": "图",
     "chapterOrder": 6,
     "type": "judge",
-    "stem": "再次判断：深度优先搜索是指“沿路径深入后再回溯访问图中顶点”。",
+    "stem": "辨析判断：深度优先搜索是指“沿路径深入后再回溯访问图中顶点”。",
     "options": [
       {
         "id": "A",
@@ -3312,7 +3334,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds076",
@@ -3321,7 +3343,7 @@
     "chapterName": "图",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "再次辨析“图”时，关于“拓扑排序”，下列描述哪项正确？",
+    "stem": "结合“图”中的相关概念，关于“拓扑排序”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -3348,7 +3370,7 @@
       "B"
     ],
     "explanation": "拓扑排序：把有向无环图顶点排成满足先后关系的序列。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "图",
       "拓扑排序"
@@ -3358,7 +3380,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds077",
@@ -3367,7 +3389,7 @@
     "chapterName": "图",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "再次辨析“图”时，下列哪个术语与“连通加权无向图中权值和最小的生成树”相符？",
+    "stem": "结合“图”中的相关概念，下列哪个术语与“连通加权无向图中权值和最小的生成树”相符？",
     "options": [
       {
         "id": "A",
@@ -3404,7 +3426,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds078",
@@ -3413,7 +3435,7 @@
     "chapterName": "图",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "再次辨析“图”时，关于“Dijkstra 算法”，下列描述哪项正确？",
+    "stem": "结合“图”中的相关概念，关于“Dijkstra 算法”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -3450,7 +3472,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds079",
@@ -3459,45 +3481,47 @@
     "chapterName": "查找与散列",
     "chapterOrder": 7,
     "type": "multiple",
-    "stem": "围绕“顺序查找”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "设计一个键分布不均且装载量会持续增长的散列表时，关于冲突处理与性能，下列哪些说法正确？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "二叉搜索树：把关键字映射到散列表地址的函数"
+        "text": "拉链法可让多个关键字位于同一桶对应的链或序列中"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "散列函数：左子树关键字较小且右子树关键字较大的树"
+        "text": "开放定址法查找时需要遵循与插入一致的探测序列"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "顺序查找：从一端开始逐个比较目标关键字"
+        "text": "负载因子过高通常会增加冲突与查找成本"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "二分查找：在有序顺序存储表中反复折半缩小范围"
+        "text": "只要使用散列函数，就能保证最坏查找时间为 O(1)"
       }
     ],
     "correctOptionIds": [
-      "C",
-      "D"
+      "A",
+      "B",
+      "C"
     ],
-    "explanation": "正确配对是“顺序查找—从一端开始逐个比较目标关键字”和“二分查找—在有序顺序存储表中反复折半缩小范围”。",
+    "explanation": "拉链和开放定址是常见冲突处理方式，负载因子会影响性能；恶劣输入或冲突下最坏查找仍可能退化为线性时间。",
     "difficulty": 3,
     "tags": [
       "查找与散列",
-      "顺序查找"
+      "散列冲突",
+      "负载因子"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds080",
@@ -3523,7 +3547,7 @@
       "B"
     ],
     "explanation": "二分查找的准确含义是：在有序顺序存储表中反复折半缩小范围。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "查找与散列",
       "二分查找"
@@ -3533,7 +3557,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds081",
@@ -3569,7 +3593,7 @@
       "A"
     ],
     "explanation": "二叉搜索树：左子树关键字较小且右子树关键字较大的树。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "查找与散列",
       "二叉搜索树"
@@ -3579,7 +3603,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds082",
@@ -3588,44 +3612,45 @@
     "chapterName": "查找与散列",
     "chapterOrder": 7,
     "type": "single",
-    "stem": "在“查找与散列”主题中，下列哪个术语与“把关键字映射到散列表地址的函数”相符？",
+    "stem": "一个散列表有 1000 个桶，当前保存 800 个元素。按“元素数/桶数”定义，其负载因子是多少？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "散列冲突"
+        "text": "0.2"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "稳定排序"
+        "text": "0.8"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "直接插入排序"
+        "text": "1.25"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "散列函数"
+        "text": "800"
       }
     ],
     "correctOptionIds": [
-      "D"
+      "B"
     ],
-    "explanation": "散列函数：把关键字映射到散列表地址的函数。",
+    "explanation": "负载因子 α=n/m=800/1000=0.8。它用于描述表的拥挤程度，但不同冲突策略对 α 的约束不同。",
     "difficulty": 3,
     "tags": [
       "查找与散列",
-      "散列函数"
+      "负载因子",
+      "散列表"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds083",
@@ -3671,7 +3696,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds084",
@@ -3680,7 +3705,7 @@
     "chapterName": "查找与散列",
     "chapterOrder": 7,
     "type": "multiple",
-    "stem": "再次围绕“顺序查找”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“查找与散列”的适用条件角度辨析“顺序查找”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -3718,7 +3743,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds085",
@@ -3727,7 +3752,7 @@
     "chapterName": "查找与散列",
     "chapterOrder": 7,
     "type": "judge",
-    "stem": "再次判断：二分查找是指“在有序顺序存储表中反复折半缩小范围”。",
+    "stem": "辨析判断：二分查找是指“在有序顺序存储表中反复折半缩小范围”。",
     "options": [
       {
         "id": "A",
@@ -3754,7 +3779,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds086",
@@ -3763,7 +3788,7 @@
     "chapterName": "查找与散列",
     "chapterOrder": 7,
     "type": "single",
-    "stem": "再次辨析“查找与散列”时，下列哪个术语与“左子树关键字较小且右子树关键字较大的树”相符？",
+    "stem": "结合“查找与散列”中的相关概念，下列哪个术语与“左子树关键字较小且右子树关键字较大的树”相符？",
     "options": [
       {
         "id": "A",
@@ -3800,7 +3825,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds087",
@@ -3809,7 +3834,7 @@
     "chapterName": "查找与散列",
     "chapterOrder": 7,
     "type": "single",
-    "stem": "再次辨析“查找与散列”时，关于“散列函数”，下列描述哪项正确？",
+    "stem": "结合“查找与散列”中的相关概念，关于“散列函数”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -3836,7 +3861,7 @@
       "C"
     ],
     "explanation": "散列函数：把关键字映射到散列表地址的函数。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "查找与散列",
       "散列函数"
@@ -3846,7 +3871,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds088",
@@ -3855,7 +3880,7 @@
     "chapterName": "查找与散列",
     "chapterOrder": 7,
     "type": "single",
-    "stem": "再次辨析“查找与散列”时，下列哪个术语与“不同关键字被映射到同一散列地址”相符？",
+    "stem": "结合“查找与散列”中的相关概念，下列哪个术语与“不同关键字被映射到同一散列地址”相符？",
     "options": [
       {
         "id": "A",
@@ -3892,7 +3917,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds089",
@@ -3901,7 +3926,7 @@
     "chapterName": "排序",
     "chapterOrder": 8,
     "type": "multiple",
-    "stem": "围绕“稳定排序”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“排序”中围绕“稳定排序”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -3939,7 +3964,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds090",
@@ -3948,7 +3973,7 @@
     "chapterName": "排序",
     "chapterOrder": 8,
     "type": "judge",
-    "stem": "判断：直接插入排序是指“围绕枢轴划分并递归处理子区间”。",
+    "stem": "直接插入排序通常是稳定的原地排序；其最坏时间复杂度为 Θ(n²)，但输入接近有序时可接近线性时间。",
     "options": [
       {
         "id": "A",
@@ -3962,20 +3987,21 @@
       }
     ],
     "correctOptionIds": [
-      "B"
+      "A"
     ],
-    "explanation": "直接插入排序的准确含义是：把当前元素插入前部已有序序列。",
+    "explanation": "插入时不跨越相等元素即可保持稳定，只需常数额外空间；逆序输入移动量为平方级，近乎有序时移动较少。",
     "difficulty": 3,
     "tags": [
       "排序",
-      "直接插入排序"
+      "直接插入排序",
+      "稳定性"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds091",
@@ -4021,7 +4047,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds092",
@@ -4057,7 +4083,7 @@
       "B"
     ],
     "explanation": "归并排序：合并有序子序列得到更大有序序列。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "排序",
       "归并排序"
@@ -4067,7 +4093,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds093",
@@ -4113,7 +4139,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds094",
@@ -4122,7 +4148,7 @@
     "chapterName": "排序",
     "chapterOrder": 8,
     "type": "multiple",
-    "stem": "围绕“基数排序”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“排序”中围绕“基数排序”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -4150,7 +4176,7 @@
       "D"
     ],
     "explanation": "正确配对是“基数排序—按关键字各位进行多趟分配与收集”和“时间复杂度—描述输入规模增长时基本操作次数的增长趋势”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "排序",
       "基数排序"
@@ -4160,7 +4186,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds095",
@@ -4169,7 +4195,7 @@
     "chapterName": "排序",
     "chapterOrder": 8,
     "type": "judge",
-    "stem": "再次判断：稳定排序是指“相等关键字元素排序后相对次序保持不变”。",
+    "stem": "辨析判断：稳定排序是指“相等关键字元素排序后相对次序保持不变”。",
     "options": [
       {
         "id": "A",
@@ -4186,7 +4212,7 @@
       "A"
     ],
     "explanation": "稳定排序的准确含义是：相等关键字元素排序后相对次序保持不变。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "排序",
       "稳定排序"
@@ -4196,7 +4222,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds096",
@@ -4205,7 +4231,7 @@
     "chapterName": "排序",
     "chapterOrder": 8,
     "type": "single",
-    "stem": "再次辨析“排序”时，关于“直接插入排序”，下列描述哪项正确？",
+    "stem": "结合“排序”中的相关概念，关于“直接插入排序”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -4242,7 +4268,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds097",
@@ -4251,7 +4277,7 @@
     "chapterName": "排序",
     "chapterOrder": 8,
     "type": "single",
-    "stem": "再次辨析“排序”时，下列哪个术语与“围绕枢轴划分并递归处理子区间”相符？",
+    "stem": "结合“排序”中的相关概念，下列哪个术语与“围绕枢轴划分并递归处理子区间”相符？",
     "options": [
       {
         "id": "A",
@@ -4278,7 +4304,7 @@
       "A"
     ],
     "explanation": "快速排序：围绕枢轴划分并递归处理子区间。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "排序",
       "快速排序"
@@ -4288,7 +4314,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds098",
@@ -4297,44 +4323,45 @@
     "chapterName": "排序",
     "chapterOrder": 8,
     "type": "single",
-    "stem": "再次辨析“排序”时，关于“归并排序”，下列描述哪项正确？",
+    "stem": "归并排序的递推式为 `T(n)=2T(n/2)+Θ(n)`。依据主定理，其时间复杂度是多少？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "利用堆选择当前最大或最小元素"
+        "text": "Θ(log n)"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "按关键字各位进行多趟分配与收集"
+        "text": "Θ(n)"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "描述输入规模增长时基本操作次数的增长趋势"
+        "text": "Θ(n log n)"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "合并有序子序列得到更大有序序列"
+        "text": "Θ(n²)"
       }
     ],
     "correctOptionIds": [
-      "D"
+      "C"
     ],
-    "explanation": "归并排序：合并有序子序列得到更大有序序列。",
+    "explanation": "两次规模为 n/2 的递归与一次线性合并处于主定理的平衡情形，得到 Θ(n log n)。",
     "difficulty": 3,
     "tags": [
       "排序",
-      "归并排序"
+      "归并排序",
+      "递推式"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds099",
@@ -4343,7 +4370,7 @@
     "chapterName": "排序",
     "chapterOrder": 8,
     "type": "multiple",
-    "stem": "再次围绕“堆排序”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“排序”的适用条件角度辨析“堆排序”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -4371,7 +4398,7 @@
       "D"
     ],
     "explanation": "正确配对是“堆排序—利用堆选择当前最大或最小元素”和“基数排序—按关键字各位进行多趟分配与收集”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "排序",
       "堆排序"
@@ -4381,7 +4408,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "ds100",
@@ -4390,7 +4417,7 @@
     "chapterName": "排序",
     "chapterOrder": 8,
     "type": "judge",
-    "stem": "再次判断：基数排序是指“描述输入规模增长时基本操作次数的增长趋势”。",
+    "stem": "辨析判断：基数排序是指“描述输入规模增长时基本操作次数的增长趋势”。",
     "options": [
       {
         "id": "A",
@@ -4417,6 +4444,6 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   }
 ]

@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const banks = require('./question-bank-facts');
+const hardOverrides = require('./question-bank-hard-overrides');
+const advancedOverrides = require('./question-bank-advanced-overrides');
 
 const root = path.resolve(__dirname, '..');
 const optionLabels = ['A', 'B', 'C', 'D'];
@@ -19,14 +21,6 @@ function makeOptions(entries, shift) {
   }));
 }
 
-function difficultySequence(total, counts) {
-  const pool = [];
-  counts.forEach((count, index) => {
-    for (let current = 0; current < count; current += 1) pool.push(index + 1);
-  });
-  return Array.from({ length: total }, (_, index) => pool[(index * 37) % total]);
-}
-
 function generateBank(bank) {
   const allFacts = bank.chapters.flatMap((chapter) => chapter.facts.map((fact) => ({
     chapter,
@@ -34,7 +28,6 @@ function generateBank(bank) {
     definition: fact[1]
   })));
   const total = bank.chapters.reduce((sum, chapter) => sum + chapter.count, 0);
-  const difficulties = difficultySequence(total, bank.difficultyCounts);
   const questions = [];
   let globalIndex = 0;
 
@@ -53,7 +46,7 @@ function generateBank(bank) {
 
       if (type === 'single') {
         const inverse = (localIndex + chapterIndex) % 2 === 1;
-        const prefix = occurrence ? '再次辨析“' + chapter.name + '”时，' : '在“' + chapter.name + '”主题中，';
+        const prefix = occurrence ? '结合“' + chapter.name + '”中的相关概念，' : '在“' + chapter.name + '”主题中，';
         stem = inverse
           ? prefix + '下列哪个术语与“' + current.definition + '”相符？'
           : prefix + '关于“' + current.term + '”，下列描述哪项正确？';
@@ -62,7 +55,9 @@ function generateBank(bank) {
           : [{ text: current.definition, correct: true }].concat(other.map((item) => ({ text: item.definition, correct: false })));
         explanation = current.term + '：' + current.definition + '。';
       } else if (type === 'multiple') {
-        stem = (occurrence ? '再次围绕“' : '围绕“') + current.term + '”及相关概念，下列“术语—说明”配对中哪些正确？';
+        stem = occurrence
+          ? '从“' + chapter.name + '”的适用条件角度辨析“' + current.term + '”，下列“术语—说明”配对中哪些正确？'
+          : '在“' + chapter.name + '”中围绕“' + current.term + '”及相关概念，下列“术语—说明”配对中哪些正确？';
         entries = [
           { text: current.term + '：' + current.definition, correct: true },
           { text: other[0].term + '：' + other[0].definition, correct: true },
@@ -73,7 +68,7 @@ function generateBank(bank) {
       } else {
         const correctStatement = globalIndex % 2 === 0;
         const shownDefinition = correctStatement ? current.definition : other[0].definition;
-        stem = (occurrence ? '再次判断：' : '判断：') + current.term + '是指“' + shownDefinition + '”。';
+        stem = (occurrence ? '辨析判断：' : '判断：') + current.term + '是指“' + shownDefinition + '”。';
         entries = [
           { text: '正确', correct: correctStatement },
           { text: '错误', correct: !correctStatement }
@@ -84,8 +79,9 @@ function generateBank(bank) {
       const optionsWithFlags = type === 'judge'
         ? entries.map((entry, index) => ({ id: optionLabels[index], label: optionLabels[index], text: entry.text, correct: entry.correct }))
         : makeOptions(entries, globalIndex % entries.length);
-      questions.push({
-        id: bank.prefix + String(globalIndex + 1).padStart(3, '0'),
+      const questionId = bank.prefix + String(globalIndex + 1).padStart(3, '0');
+      const question = {
+        id: questionId,
         subjectId: bank.subjectId,
         chapterId: chapter.id,
         chapterName: chapter.name,
@@ -95,16 +91,64 @@ function generateBank(bank) {
         options: optionsWithFlags.map(({ id, label, text }) => ({ id, label, text })),
         correctOptionIds: optionsWithFlags.filter((option) => option.correct).map((option) => option.id),
         explanation,
-        difficulty: difficulties[globalIndex],
+        difficulty: 1,
         tags: [chapter.name, current.term],
         images: [],
         examScopes: bank.examScopes,
         status: 'active',
-        version: 1
-      });
+        version: 2
+      };
+      const override = hardOverrides[questionId];
+      if (override) {
+        if (question.type !== override.type) throw new Error(`${questionId} 覆盖题型必须保持为 ${question.type}`);
+        question.stem = override.stem;
+        question.options = override.options;
+        question.correctOptionIds = override.correctOptionIds;
+        question.explanation = override.explanation;
+        question.tags = [chapter.name].concat(override.tags);
+        question.difficulty = 3;
+        question.version = 2;
+      } else if (advancedOverrides[questionId]) {
+        const advancedOverride = advancedOverrides[questionId];
+        if (question.type !== advancedOverride.type) throw new Error(`${questionId} 进阶覆盖题型必须保持为 ${question.type}`);
+        question.stem = advancedOverride.stem;
+        question.options = advancedOverride.options;
+        question.correctOptionIds = advancedOverride.correctOptionIds;
+        question.explanation = advancedOverride.explanation;
+        question.tags = [chapter.name].concat(advancedOverride.tags);
+        question.difficulty = 2;
+        question.version = 2;
+      } else {
+        question.difficultyRank = question.type === 'multiple'
+          ? 0
+          : question.type === 'judge' && question.correctOptionIds.includes('B')
+            ? 1
+            : occurrence
+              ? 2
+              : question.type === 'judge' ? 3 : 4;
+      }
+      questions.push(question);
       globalIndex += 1;
     }
   });
+  const hardQuestions = questions.filter((question) => question.difficulty === 3);
+  if (hardQuestions.length !== bank.difficultyCounts[2]) {
+    throw new Error(`${bank.subjectId} 难题覆盖应为 ${bank.difficultyCounts[2]}，当前为 ${hardQuestions.length}`);
+  }
+  const curatedAdvanced = questions.filter((question) => question.difficulty === 2).length;
+  const remainingAdvanced = bank.difficultyCounts[1] - curatedAdvanced;
+  if (remainingAdvanced < 0) {
+    throw new Error(`${bank.subjectId} 人工进阶题数量 ${curatedAdvanced} 超过配额 ${bank.difficultyCounts[1]}`);
+  }
+  const advancedCandidates = questions
+    .filter((question) => question.difficulty === 1)
+    .sort((left, right) => left.difficultyRank - right.difficultyRank || left.id.localeCompare(right.id));
+  advancedCandidates.slice(0, remainingAdvanced).forEach((question) => { question.difficulty = 2; });
+  const advancedQuestions = questions.filter((question) => question.difficulty === 2);
+  if (advancedQuestions.length !== bank.difficultyCounts[1]) {
+    throw new Error(`${bank.subjectId} 进阶题应为 ${bank.difficultyCounts[1]}，当前为 ${advancedQuestions.length}`);
+  }
+  questions.forEach((question) => { delete question.difficultyRank; });
   return questions;
 }
 

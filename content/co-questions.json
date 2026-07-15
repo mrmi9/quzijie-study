@@ -43,7 +43,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co002",
@@ -89,7 +89,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co003",
@@ -125,7 +125,7 @@
       "C"
     ],
     "explanation": "定点数：小数点位置约定固定的数值表示。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "数据表示与运算",
       "定点数"
@@ -135,7 +135,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co004",
@@ -144,7 +144,7 @@
     "chapterName": "数据表示与运算",
     "chapterOrder": 1,
     "type": "multiple",
-    "stem": "围绕“浮点数”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“数据表示与运算”中围绕“浮点数”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -172,7 +172,7 @@
       "C"
     ],
     "explanation": "正确配对是“浮点数—用符号、阶码和尾数表示较大动态范围的数”和“溢出—运算结果超出当前数据类型可表示范围”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "数据表示与运算",
       "浮点数"
@@ -182,7 +182,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co005",
@@ -218,7 +218,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co006",
@@ -227,44 +227,45 @@
     "chapterName": "数据表示与运算",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "在“数据表示与运算”主题中，下列哪个术语与“对有符号数移位时按符号规则补位”相符？",
+    "stem": "某 8 位补码寄存器内容为 `11110000`。硬件对其执行算术右移 1 位后，位模式应为哪一个？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "IEEE 754"
+        "text": "01111000"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "ALU"
+        "text": "11111000"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "存储层次"
+        "text": "11100000"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "算术移位"
+        "text": "00011110"
       }
     ],
     "correctOptionIds": [
-      "D"
+      "B"
     ],
-    "explanation": "算术移位：对有符号数移位时按符号规则补位。",
+    "explanation": "算术右移保留符号，最高位用原符号位 1 填充，其他位右移，得到 11111000；对应数值由 -16 变为 -8。",
     "difficulty": 3,
     "tags": [
       "数据表示与运算",
-      "算术移位"
+      "算术移位",
+      "补码"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co007",
@@ -310,7 +311,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co008",
@@ -346,7 +347,7 @@
       "B"
     ],
     "explanation": "ALU：执行算术运算和逻辑运算的组合逻辑部件。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "数据表示与运算",
       "ALU"
@@ -356,7 +357,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co009",
@@ -365,45 +366,46 @@
     "chapterName": "数据表示与运算",
     "chapterOrder": 1,
     "type": "multiple",
-    "stem": "再次围绕“补码”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在 8 位补码运算中，下列哪些加法会发生有符号溢出？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "补码：用最高位权值为负的编码统一表示有符号整数和加减法"
+        "text": "127 + 1"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "原码：用符号位加绝对值表示有符号数"
+        "text": "-128 + (-1)"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "定点数：用符号、阶码和尾数表示较大动态范围的数"
+        "text": "60 + 60"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "浮点数：小数点位置约定固定的数值表示"
+        "text": "-50 + 20"
       }
     ],
     "correctOptionIds": [
       "A",
       "B"
     ],
-    "explanation": "正确配对是“补码—用最高位权值为负的编码统一表示有符号整数和加减法”和“原码—用符号位加绝对值表示有符号数”。",
+    "explanation": "8 位补码范围为 -128～127。127+1 和 -128-1 超出范围；60+60=120、-50+20=-30 均可表示。",
     "difficulty": 3,
     "tags": [
       "数据表示与运算",
-      "补码"
+      "补码",
+      "溢出"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co010",
@@ -412,7 +414,7 @@
     "chapterName": "数据表示与运算",
     "chapterOrder": 1,
     "type": "judge",
-    "stem": "再次判断：原码是指“小数点位置约定固定的数值表示”。",
+    "stem": "辨析判断：原码是指“小数点位置约定固定的数值表示”。",
     "options": [
       {
         "id": "A",
@@ -429,7 +431,7 @@
       "B"
     ],
     "explanation": "原码的准确含义是：用符号位加绝对值表示有符号数。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "数据表示与运算",
       "原码"
@@ -439,7 +441,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co011",
@@ -448,44 +450,45 @@
     "chapterName": "数据表示与运算",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“数据表示与运算”时，关于“定点数”，下列描述哪项正确？",
+    "stem": "某定点格式约定最低 4 位为小数部分。位模式表示的无符号整数值为 40 时，其实际数值是多少？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "运算结果超出当前数据类型可表示范围"
+        "text": "2.5"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "对有符号数移位时按符号规则补位"
+        "text": "4.0"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "小数点位置约定固定的数值表示"
+        "text": "10.0"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "用符号、阶码和尾数表示较大动态范围的数"
+        "text": "40.0"
       }
     ],
     "correctOptionIds": [
-      "C"
+      "A"
     ],
-    "explanation": "定点数：小数点位置约定固定的数值表示。",
+    "explanation": "最低 4 位表示小数意味着缩放因子为 2^4=16，实际值为 40/16=2.5。",
     "difficulty": 2,
     "tags": [
       "数据表示与运算",
-      "定点数"
+      "定点数",
+      "缩放因子"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co012",
@@ -494,44 +497,45 @@
     "chapterName": "数据表示与运算",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“数据表示与运算”时，下列哪个术语与“用符号、阶码和尾数表示较大动态范围的数”相符？",
+    "stem": "与同总位数定点数相比，浮点表示获得更大动态范围时通常付出的主要代价是什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "IEEE 754"
+        "text": "所有数都能精确表示"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "浮点数"
+        "text": "有效精度有限并存在舍入误差"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "溢出"
+        "text": "完全不需要阶码"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "算术移位"
+        "text": "加减法不再需要硬件"
       }
     ],
     "correctOptionIds": [
       "B"
     ],
-    "explanation": "浮点数：用符号、阶码和尾数表示较大动态范围的数。",
-    "difficulty": 1,
+    "explanation": "浮点数用部分位表示阶码以扩大范围，尾数位数有限，因此很多实数只能近似表示并在运算中产生舍入误差。",
+    "difficulty": 2,
     "tags": [
       "数据表示与运算",
-      "浮点数"
+      "浮点数",
+      "舍入误差"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co013",
@@ -540,44 +544,45 @@
     "chapterName": "数据表示与运算",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“数据表示与运算”时，关于“溢出”，下列描述哪项正确？",
+    "stem": "在 n 位补码加法中，两个同号操作数相加却得到异号结果，通常说明发生了什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "运算结果超出当前数据类型可表示范围"
+        "text": "无符号借位"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "对有符号数移位时按符号规则补位"
+        "text": "有符号溢出"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "规定常见二进制浮点格式和特殊值的标准"
+        "text": "Cache 未命中"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "执行算术运算和逻辑运算的组合逻辑部件"
+        "text": "奇偶校验正确"
       }
     ],
     "correctOptionIds": [
-      "A"
+      "B"
     ],
-    "explanation": "溢出：运算结果超出当前数据类型可表示范围。",
-    "difficulty": 1,
+    "explanation": "补码有符号加法中，同号数相加结果符号反转是溢出的典型判据；真实数学结果已超出 n 位可表示范围。",
+    "difficulty": 2,
     "tags": [
       "数据表示与运算",
-      "溢出"
+      "溢出",
+      "补码加法"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co014",
@@ -586,7 +591,7 @@
     "chapterName": "数据表示与运算",
     "chapterOrder": 1,
     "type": "multiple",
-    "stem": "再次围绕“算术移位”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“数据表示与运算”的适用条件角度辨析“算术移位”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -624,7 +629,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co015",
@@ -633,7 +638,7 @@
     "chapterName": "数据表示与运算",
     "chapterOrder": 1,
     "type": "judge",
-    "stem": "再次判断：IEEE 754是指“规定常见二进制浮点格式和特殊值的标准”。",
+    "stem": "辨析判断：IEEE 754是指“规定常见二进制浮点格式和特殊值的标准”。",
     "options": [
       {
         "id": "A",
@@ -650,7 +655,7 @@
       "A"
     ],
     "explanation": "IEEE 754的准确含义是：规定常见二进制浮点格式和特殊值的标准。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "数据表示与运算",
       "IEEE 754"
@@ -660,7 +665,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co016",
@@ -669,44 +674,45 @@
     "chapterName": "数据表示与运算",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“数据表示与运算”时，下列哪个术语与“执行算术运算和逻辑运算的组合逻辑部件”相符？",
+    "stem": "处理器执行 `A AND B` 并根据结果更新零标志。完成按位与和零值检测的核心组合逻辑部件是什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "局部性原理"
+        "text": "ALU"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "ALU"
+        "text": "页表"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "存储层次"
+        "text": "磁盘控制器"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "Cache"
+        "text": "DMA 通道"
       }
     ],
     "correctOptionIds": [
-      "B"
+      "A"
     ],
-    "explanation": "ALU：执行算术运算和逻辑运算的组合逻辑部件。",
+    "explanation": "ALU 执行算术和逻辑运算，并常配合标志生成逻辑产生零、进位、溢出等状态。",
     "difficulty": 2,
     "tags": [
       "数据表示与运算",
-      "ALU"
+      "ALU",
+      "状态标志"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co017",
@@ -715,44 +721,45 @@
     "chapterName": "存储系统",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "在“存储系统”主题中，下列哪个术语与“利用不同速度容量成本介质形成的多级存储结构”相符？",
+    "stem": "某 Cache 命中访问时间为 1 ns，未命中率为 5%，未命中额外代价为 50 ns。平均访问时间约为多少？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "存储层次"
+        "text": "1 ns"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "Cache"
+        "text": "2.5 ns"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "局部性原理"
+        "text": "3.5 ns"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "直接映射"
+        "text": "51 ns"
       }
     ],
     "correctOptionIds": [
-      "A"
+      "C"
     ],
-    "explanation": "存储层次：利用不同速度容量成本介质形成的多级存储结构。",
+    "explanation": "平均访问时间 AMAT = 命中时间 + 未命中率×未命中额外代价 = 1 + 0.05×50 = 3.5 ns。",
     "difficulty": 3,
     "tags": [
       "存储系统",
-      "存储层次"
+      "Cache",
+      "平均访问时间"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co018",
@@ -798,7 +805,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co019",
@@ -807,7 +814,7 @@
     "chapterName": "存储系统",
     "chapterOrder": 2,
     "type": "multiple",
-    "stem": "围绕“局部性原理”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“存储系统”中围绕“局部性原理”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -845,7 +852,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co020",
@@ -871,7 +878,7 @@
       "B"
     ],
     "explanation": "直接映射的准确含义是：每个主存块只能映射到一个固定 Cache 行。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "存储系统",
       "直接映射"
@@ -881,7 +888,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co021",
@@ -927,7 +934,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co022",
@@ -963,7 +970,7 @@
       "D"
     ],
     "explanation": "写回策略：修改 Cache 后暂不立即写主存而在替换时写回。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "存储系统",
       "写回策略"
@@ -973,7 +980,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co023",
@@ -1019,7 +1026,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co024",
@@ -1028,7 +1035,7 @@
     "chapterName": "存储系统",
     "chapterOrder": 2,
     "type": "multiple",
-    "stem": "围绕“页表”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“存储系统”中围绕“页表”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1066,7 +1073,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co025",
@@ -1075,7 +1082,7 @@
     "chapterName": "存储系统",
     "chapterOrder": 2,
     "type": "judge",
-    "stem": "判断：存储周期是指“存储器连续两次独立访问之间允许的最小时间”。",
+    "stem": "存储周期通常不小于存取时间，因为一次访问结束后，存储器可能还需要恢复或稳定时间才能开始下一次独立访问。",
     "options": [
       {
         "id": "A",
@@ -1091,18 +1098,19 @@
     "correctOptionIds": [
       "A"
     ],
-    "explanation": "存储周期的准确含义是：存储器连续两次独立访问之间允许的最小时间。",
+    "explanation": "存取时间描述一次读写取得结果所需时间；存储周期还包含连续两次访问之间的恢复等要求，通常更长或相等。",
     "difficulty": 3,
     "tags": [
       "存储系统",
-      "存储周期"
+      "存储周期",
+      "存取时间"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co026",
@@ -1111,44 +1119,45 @@
     "chapterName": "存储系统",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“存储系统”时，关于“存储层次”，下列描述哪项正确？",
+    "stem": "存储层次把小而快的存储放在靠近 CPU 的位置、把大而慢的存储放在更低层，主要利用什么性质获得接近高速层的平均性能？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "保存近期可能再次访问数据的高速小容量存储"
+        "text": "程序访问局部性"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "程序倾向重复访问近期位置及其邻近位置"
+        "text": "所有访问地址完全随机"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "每个主存块只能映射到一个固定 Cache 行"
+        "text": "指令长度恒定"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "利用不同速度容量成本介质形成的多级存储结构"
+        "text": "总线永不冲突"
       }
     ],
     "correctOptionIds": [
-      "D"
+      "A"
     ],
-    "explanation": "存储层次：利用不同速度容量成本介质形成的多级存储结构。",
-    "difficulty": 1,
+    "explanation": "时间与空间局部性使热点数据大概率命中较高层，从而用较低成本获得更好的平均访问性能。",
+    "difficulty": 2,
     "tags": [
       "存储系统",
-      "存储层次"
+      "存储层次",
+      "局部性"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co027",
@@ -1157,44 +1166,45 @@
     "chapterName": "存储系统",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“存储系统”时，下列哪个术语与“保存近期可能再次访问数据的高速小容量存储”相符？",
+    "stem": "CPU 再次访问刚使用过的数据时，若该数据仍保存在小容量高速存储中，可避免访问更慢的主存。这里的高速存储是什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "直接映射"
+        "text": "Cache"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "组相联映射"
+        "text": "磁带"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "Cache"
+        "text": "I/O 通道"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "局部性原理"
+        "text": "机械键盘缓冲区"
       }
     ],
     "correctOptionIds": [
-      "C"
+      "A"
     ],
-    "explanation": "Cache：保存近期可能再次访问数据的高速小容量存储。",
+    "explanation": "Cache 利用时间和空间局部性保存近期使用的数据或指令，命中时可显著降低平均访问时间。",
     "difficulty": 2,
     "tags": [
       "存储系统",
-      "Cache"
+      "Cache",
+      "时间局部性"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co028",
@@ -1203,44 +1213,45 @@
     "chapterName": "存储系统",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“存储系统”时，关于“局部性原理”，下列描述哪项正确？",
+    "stem": "32 KiB 直接映射 Cache 的块大小为 64 B。若按字节编址，地址中的 Cache 行索引需要多少位？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "修改 Cache 后暂不立即写主存而在替换时写回"
+        "text": "6 位"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "程序倾向重复访问近期位置及其邻近位置"
+        "text": "8 位"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "每个主存块只能映射到一个固定 Cache 行"
+        "text": "9 位"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "主存块可映射到指定组内任一 Cache 行"
+        "text": "15 位"
       }
     ],
     "correctOptionIds": [
-      "B"
+      "C"
     ],
-    "explanation": "局部性原理：程序倾向重复访问近期位置及其邻近位置。",
+    "explanation": "Cache 行数为 32 KiB/64 B=512=2^9，因此索引需要 9 位；块内偏移另需 log2(64)=6 位。",
     "difficulty": 3,
     "tags": [
       "存储系统",
-      "局部性原理"
+      "直接映射",
+      "Cache 索引"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co029",
@@ -1249,7 +1260,7 @@
     "chapterName": "存储系统",
     "chapterOrder": 2,
     "type": "multiple",
-    "stem": "再次围绕“直接映射”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“存储系统”的适用条件角度辨析“直接映射”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1277,7 +1288,7 @@
       "B"
     ],
     "explanation": "正确配对是“直接映射—每个主存块只能映射到一个固定 Cache 行”和“组相联映射—主存块可映射到指定组内任一 Cache 行”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "存储系统",
       "直接映射"
@@ -1287,7 +1298,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co030",
@@ -1296,7 +1307,7 @@
     "chapterName": "存储系统",
     "chapterOrder": 2,
     "type": "judge",
-    "stem": "再次判断：组相联映射是指“修改 Cache 后暂不立即写主存而在替换时写回”。",
+    "stem": "辨析判断：组相联映射是指“修改 Cache 后暂不立即写主存而在替换时写回”。",
     "options": [
       {
         "id": "A",
@@ -1323,7 +1334,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co031",
@@ -1332,7 +1343,54 @@
     "chapterName": "存储系统",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“存储系统”时，下列哪个术语与“修改 Cache 后暂不立即写主存而在替换时写回”相符？",
+    "stem": "采用写回 Cache 时，某行被 CPU 修改后通常先标记为什么状态，以便替换时决定是否写回主存？",
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "空闲"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "脏（dirty）"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "只读"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "无地址"
+      }
+    ],
+    "correctOptionIds": [
+      "B"
+    ],
+    "explanation": "写回策略不立即更新主存，而用脏位记录 Cache 行已被修改；脏行被替换前需要写回。",
+    "difficulty": 2,
+    "tags": [
+      "存储系统",
+      "写回策略",
+      "脏位"
+    ],
+    "images": [],
+    "examScopes": [
+      "408"
+    ],
+    "status": "active",
+    "version": 2
+  },
+  {
+    "id": "co032",
+    "subjectId": "co",
+    "chapterId": "co-memory",
+    "chapterName": "存储系统",
+    "chapterOrder": 2,
+    "type": "single",
+    "stem": "程序给出的虚拟页号需要通过哪类结构查到对应物理页框号，才能形成物理地址？",
     "options": [
       {
         "id": "A",
@@ -1342,80 +1400,35 @@
       {
         "id": "B",
         "label": "B",
-        "text": "存储周期"
+        "text": "指令寄存器"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "写回策略"
+        "text": "中断向量表中的设备项"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "虚拟地址"
+        "text": "文件目录项"
       }
     ],
     "correctOptionIds": [
-      "C"
+      "A"
     ],
-    "explanation": "写回策略：修改 Cache 后暂不立即写主存而在替换时写回。",
-    "difficulty": 1,
+    "explanation": "页表记录虚拟页到物理页框的映射；TLB 可缓存这种转换，但底层映射关系由页表体系维护。",
+    "difficulty": 2,
     "tags": [
       "存储系统",
-      "写回策略"
+      "虚拟地址",
+      "页表"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
-  },
-  {
-    "id": "co032",
-    "subjectId": "co",
-    "chapterId": "co-memory",
-    "chapterName": "存储系统",
-    "chapterOrder": 2,
-    "type": "single",
-    "stem": "再次辨析“存储系统”时，关于“虚拟地址”，下列描述哪项正确？",
-    "options": [
-      {
-        "id": "A",
-        "label": "A",
-        "text": "规定计算机完成某种操作的二进制编码"
-      },
-      {
-        "id": "B",
-        "label": "B",
-        "text": "程序使用并需经过地址转换的逻辑地址"
-      },
-      {
-        "id": "C",
-        "label": "C",
-        "text": "记录虚拟页到物理页框映射的数据结构"
-      },
-      {
-        "id": "D",
-        "label": "D",
-        "text": "存储器连续两次独立访问之间允许的最小时间"
-      }
-    ],
-    "correctOptionIds": [
-      "B"
-    ],
-    "explanation": "虚拟地址：程序使用并需经过地址转换的逻辑地址。",
-    "difficulty": 1,
-    "tags": [
-      "存储系统",
-      "虚拟地址"
-    ],
-    "images": [],
-    "examScopes": [
-      "408"
-    ],
-    "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co033",
@@ -1424,7 +1437,7 @@
     "chapterName": "存储系统",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“存储系统”时，下列哪个术语与“记录虚拟页到物理页框映射的数据结构”相符？",
+    "stem": "结合“存储系统”中的相关概念，下列哪个术语与“记录虚拟页到物理页框映射的数据结构”相符？",
     "options": [
       {
         "id": "A",
@@ -1451,7 +1464,7 @@
       "A"
     ],
     "explanation": "页表：记录虚拟页到物理页框映射的数据结构。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "存储系统",
       "页表"
@@ -1461,7 +1474,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co034",
@@ -1470,7 +1483,7 @@
     "chapterName": "存储系统",
     "chapterOrder": 2,
     "type": "multiple",
-    "stem": "再次围绕“存储周期”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“存储系统”的适用条件角度辨析“存储周期”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1498,7 +1511,7 @@
       "D"
     ],
     "explanation": "正确配对是“存储周期—存储器连续两次独立访问之间允许的最小时间”和“指令—规定计算机完成某种操作的二进制编码”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "存储系统",
       "存储周期"
@@ -1508,7 +1521,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co035",
@@ -1534,7 +1547,7 @@
       "A"
     ],
     "explanation": "指令的准确含义是：规定计算机完成某种操作的二进制编码。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "指令系统",
       "指令"
@@ -1544,7 +1557,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co036",
@@ -1553,44 +1566,45 @@
     "chapterName": "指令系统",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "在“指令系统”主题中，下列哪个术语与“指令中说明执行何种操作的字段”相符？",
+    "stem": "某定长指令的分支立即数字段表示“相对下一条指令地址的字偏移”。计算分支目标时通常应执行哪项操作？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "间接寻址"
+        "text": "把立即数符号扩展、按字长缩放后加到下一条指令地址"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "操作码"
+        "text": "把立即数直接作为物理内存数据"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "寻址方式"
+        "text": "用立即数替换操作码"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "立即寻址"
+        "text": "忽略 PC 并固定跳到地址 0"
       }
     ],
     "correctOptionIds": [
-      "B"
+      "A"
     ],
-    "explanation": "操作码：指令中说明执行何种操作的字段。",
+    "explanation": "PC 相对寻址以顺序下一条指令地址为基准；立即数先符号扩展，并按指令对齐单位缩放后与基址相加。",
     "difficulty": 3,
     "tags": [
       "指令系统",
-      "操作码"
+      "PC 相对寻址",
+      "分支指令"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co037",
@@ -1636,7 +1650,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co038",
@@ -1672,7 +1686,7 @@
       "D"
     ],
     "explanation": "立即寻址：操作数直接包含在指令字段中。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "指令系统",
       "立即寻址"
@@ -1682,7 +1696,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co039",
@@ -1691,7 +1705,7 @@
     "chapterName": "指令系统",
     "chapterOrder": 3,
     "type": "multiple",
-    "stem": "围绕“间接寻址”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“指令系统”中围绕“间接寻址”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1719,7 +1733,7 @@
       "D"
     ],
     "explanation": "正确配对是“间接寻址—指令地址字段指向保存有效地址的位置”和“RISC—强调简单规则指令和高效流水执行的体系思想”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "指令系统",
       "间接寻址"
@@ -1729,7 +1743,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co040",
@@ -1755,7 +1769,7 @@
       "B"
     ],
     "explanation": "RISC的准确含义是：强调简单规则指令和高效流水执行的体系思想。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "指令系统",
       "RISC"
@@ -1765,7 +1779,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co041",
@@ -1801,7 +1815,7 @@
       "A"
     ],
     "explanation": "CISC：提供较丰富复杂指令和寻址方式的体系思想。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "指令系统",
       "CISC"
@@ -1811,7 +1825,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co042",
@@ -1820,7 +1834,7 @@
     "chapterName": "指令系统",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“指令系统”时，下列哪个术语与“规定计算机完成某种操作的二进制编码”相符？",
+    "stem": "结合“指令系统”中的相关概念，下列哪个术语与“规定计算机完成某种操作的二进制编码”相符？",
     "options": [
       {
         "id": "A",
@@ -1857,7 +1871,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co043",
@@ -1866,7 +1880,7 @@
     "chapterName": "指令系统",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“指令系统”时，关于“操作码”，下列描述哪项正确？",
+    "stem": "结合“指令系统”中的相关概念，关于“操作码”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -1893,7 +1907,7 @@
       "C"
     ],
     "explanation": "操作码：指令中说明执行何种操作的字段。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "指令系统",
       "操作码"
@@ -1903,7 +1917,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co044",
@@ -1912,45 +1926,47 @@
     "chapterName": "指令系统",
     "chapterOrder": 3,
     "type": "multiple",
-    "stem": "再次围绕“寻址方式”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "关于常见寻址方式及访存开销，下列哪些描述正确？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "RISC：指令地址字段指向保存有效地址的位置"
+        "text": "立即寻址的操作数就在指令中"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "寻址方式：确定操作数或其有效地址的方法"
+        "text": "寄存器寻址通常无需为取得操作数再访问主存"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "立即寻址：操作数直接包含在指令字段中"
+        "text": "间接寻址可能需要先取有效地址再取操作数"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "间接寻址：强调简单规则指令和高效流水执行的体系思想"
+        "text": "所有寻址方式取得操作数都只需一次主存访问"
       }
     ],
     "correctOptionIds": [
+      "A",
       "B",
       "C"
     ],
-    "explanation": "正确配对是“寻址方式—确定操作数或其有效地址的方法”和“立即寻址—操作数直接包含在指令字段中”。",
+    "explanation": "立即数随指令取得，寄存器操作数位于寄存器；间接寻址需要额外取得有效地址，访存次数可能多于一次。",
     "difficulty": 3,
     "tags": [
       "指令系统",
-      "寻址方式"
+      "寻址方式",
+      "访存次数"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co045",
@@ -1959,7 +1975,7 @@
     "chapterName": "指令系统",
     "chapterOrder": 3,
     "type": "judge",
-    "stem": "再次判断：立即寻址是指“操作数直接包含在指令字段中”。",
+    "stem": "辨析判断：立即寻址是指“操作数直接包含在指令字段中”。",
     "options": [
       {
         "id": "A",
@@ -1986,7 +2002,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co046",
@@ -1995,7 +2011,7 @@
     "chapterName": "指令系统",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“指令系统”时，下列哪个术语与“指令地址字段指向保存有效地址的位置”相符？",
+    "stem": "结合“指令系统”中的相关概念，下列哪个术语与“指令地址字段指向保存有效地址的位置”相符？",
     "options": [
       {
         "id": "A",
@@ -2022,7 +2038,7 @@
       "D"
     ],
     "explanation": "间接寻址：指令地址字段指向保存有效地址的位置。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "指令系统",
       "间接寻址"
@@ -2032,7 +2048,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co047",
@@ -2041,7 +2057,7 @@
     "chapterName": "指令系统",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“指令系统”时，关于“RISC”，下列描述哪项正确？",
+    "stem": "结合“指令系统”中的相关概念，关于“RISC”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -2078,7 +2094,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co048",
@@ -2087,7 +2103,7 @@
     "chapterName": "指令系统",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“指令系统”时，下列哪个术语与“提供较丰富复杂指令和寻址方式的体系思想”相符？",
+    "stem": "结合“指令系统”中的相关概念，下列哪个术语与“提供较丰富复杂指令和寻址方式的体系思想”相符？",
     "options": [
       {
         "id": "A",
@@ -2124,7 +2140,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co049",
@@ -2133,7 +2149,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "multiple",
-    "stem": "围绕“控制器”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“CPU 与流水线”中围绕“控制器”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -2171,7 +2187,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co050",
@@ -2197,7 +2213,7 @@
       "B"
     ],
     "explanation": "数据通路的准确含义是：由寄存器、ALU 和互连组成的数据处理路径。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "CPU 与流水线",
       "数据通路"
@@ -2207,7 +2223,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co051",
@@ -2243,7 +2259,7 @@
       "C"
     ],
     "explanation": "程序计数器 PC：保存下一条待取指令地址的寄存器。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "CPU 与流水线",
       "程序计数器 PC"
@@ -2253,7 +2269,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co052",
@@ -2262,44 +2278,45 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "在“CPU 与流水线”主题中，关于“指令寄存器 IR”，下列描述哪项正确？",
+    "stem": "理想 5 级流水线每级 1 个时钟周期，不考虑停顿。完成 20 条指令共需多少个时钟周期？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "多条指令同时争用同一硬件资源造成的冲突"
+        "text": "20"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "保存当前正在译码或执行指令的寄存器"
+        "text": "24"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "从存储器读取下一条指令的处理阶段"
+        "text": "25"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "让多条指令的不同处理阶段重叠执行"
+        "text": "100"
       }
     ],
     "correctOptionIds": [
       "B"
     ],
-    "explanation": "指令寄存器 IR：保存当前正在译码或执行指令的寄存器。",
+    "explanation": "k 级理想流水线完成 n 条指令需 k+n-1 个周期，因此为 5+20-1=24 个周期。",
     "difficulty": 3,
     "tags": [
       "CPU 与流水线",
-      "指令寄存器 IR"
+      "指令流水线",
+      "吞吐率"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co053",
@@ -2345,7 +2362,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co054",
@@ -2354,7 +2371,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "multiple",
-    "stem": "围绕“指令流水线”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“CPU 与流水线”中围绕“指令流水线”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -2392,7 +2409,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co055",
@@ -2401,7 +2418,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "judge",
-    "stem": "判断：结构冒险是指“多条指令同时争用同一硬件资源造成的冲突”。",
+    "stem": "单端口存储器同时被取指阶段和数据访存阶段请求会产生结构冒险；使用相互独立的指令 Cache 和数据 Cache 可以缓解这种资源冲突。",
     "options": [
       {
         "id": "A",
@@ -2417,18 +2434,19 @@
     "correctOptionIds": [
       "A"
     ],
-    "explanation": "结构冒险的准确含义是：多条指令同时争用同一硬件资源造成的冲突。",
+    "explanation": "结构冒险来自硬件资源不足。把取指和数据访问分到独立端口或独立 Cache，可让两阶段并行访问。",
     "difficulty": 3,
     "tags": [
       "CPU 与流水线",
-      "结构冒险"
+      "结构冒险",
+      "Cache"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co056",
@@ -2474,7 +2492,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co057",
@@ -2510,7 +2528,7 @@
       "A"
     ],
     "explanation": "控制冒险：分支等改变取指方向造成的流水不确定。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "CPU 与流水线",
       "控制冒险"
@@ -2520,7 +2538,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co058",
@@ -2566,7 +2584,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co059",
@@ -2575,7 +2593,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "multiple",
-    "stem": "围绕“分支预测”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“CPU 与流水线”中围绕“分支预测”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -2603,7 +2621,7 @@
       "D"
     ],
     "explanation": "正确配对是“分支预测—提前猜测分支方向以减少控制停顿”和“总线—多个部件共享的一组信息传输线路”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "CPU 与流水线",
       "分支预测"
@@ -2613,7 +2631,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co060",
@@ -2622,7 +2640,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "judge",
-    "stem": "再次判断：控制器是指“由寄存器、ALU 和互连组成的数据处理路径”。",
+    "stem": "辨析判断：控制器是指“由寄存器、ALU 和互连组成的数据处理路径”。",
     "options": [
       {
         "id": "A",
@@ -2649,7 +2667,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co061",
@@ -2658,7 +2676,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“CPU 与流水线”时，下列哪个术语与“由寄存器、ALU 和互连组成的数据处理路径”相符？",
+    "stem": "结合“CPU 与流水线”中的相关概念，下列哪个术语与“由寄存器、ALU 和互连组成的数据处理路径”相符？",
     "options": [
       {
         "id": "A",
@@ -2695,7 +2713,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co062",
@@ -2704,7 +2722,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“CPU 与流水线”时，关于“程序计数器 PC”，下列描述哪项正确？",
+    "stem": "结合“CPU 与流水线”中的相关概念，关于“程序计数器 PC”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -2731,7 +2749,7 @@
       "D"
     ],
     "explanation": "程序计数器 PC：保存下一条待取指令地址的寄存器。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "CPU 与流水线",
       "程序计数器 PC"
@@ -2741,7 +2759,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co063",
@@ -2750,44 +2768,45 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“CPU 与流水线”时，下列哪个术语与“保存当前正在译码或执行指令的寄存器”相符？",
+    "stem": "五级流水线中，`ADD R1,R2,R3` 后紧跟 `SUB R4,R1,R5`。SUB 读取 ADD 尚未写回的 R1，这属于哪类冒险？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "指令流水线"
+        "text": "结构冒险"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "结构冒险"
+        "text": "读后写（RAW）数据冒险"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "指令寄存器 IR"
+        "text": "写后读（WAR）数据冒险"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "取指周期"
+        "text": "控制冒险"
       }
     ],
     "correctOptionIds": [
-      "C"
+      "B"
     ],
-    "explanation": "指令寄存器 IR：保存当前正在译码或执行指令的寄存器。",
+    "explanation": "后续 SUB 需要读取前序 ADD 产生但尚未写回的结果，属于 RAW 真相关；可用旁路转发或停顿处理。",
     "difficulty": 3,
     "tags": [
       "CPU 与流水线",
-      "指令寄存器 IR"
+      "数据冒险",
+      "RAW"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co064",
@@ -2796,7 +2815,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "multiple",
-    "stem": "再次围绕“取指周期”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“CPU 与流水线”的适用条件角度辨析“取指周期”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -2824,7 +2843,7 @@
       "C"
     ],
     "explanation": "正确配对是“取指周期—从存储器读取下一条指令的处理阶段”和“指令流水线—让多条指令的不同处理阶段重叠执行”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "CPU 与流水线",
       "取指周期"
@@ -2834,7 +2853,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co065",
@@ -2843,7 +2862,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "judge",
-    "stem": "再次判断：指令流水线是指“让多条指令的不同处理阶段重叠执行”。",
+    "stem": "辨析判断：指令流水线是指“让多条指令的不同处理阶段重叠执行”。",
     "options": [
       {
         "id": "A",
@@ -2860,7 +2879,7 @@
       "A"
     ],
     "explanation": "指令流水线的准确含义是：让多条指令的不同处理阶段重叠执行。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "CPU 与流水线",
       "指令流水线"
@@ -2870,7 +2889,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co066",
@@ -2879,7 +2898,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“CPU 与流水线”时，关于“结构冒险”，下列描述哪项正确？",
+    "stem": "结合“CPU 与流水线”中的相关概念，关于“结构冒险”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -2916,7 +2935,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co067",
@@ -2925,7 +2944,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“CPU 与流水线”时，下列哪个术语与“后续指令依赖前面指令尚未产生的结果”相符？",
+    "stem": "结合“CPU 与流水线”中的相关概念，下列哪个术语与“后续指令依赖前面指令尚未产生的结果”相符？",
     "options": [
       {
         "id": "A",
@@ -2962,7 +2981,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co068",
@@ -2971,7 +2990,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“CPU 与流水线”时，关于“控制冒险”，下列描述哪项正确？",
+    "stem": "结合“CPU 与流水线”中的相关概念，关于“控制冒险”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -2998,7 +3017,7 @@
       "B"
     ],
     "explanation": "控制冒险：分支等改变取指方向造成的流水不确定。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "CPU 与流水线",
       "控制冒险"
@@ -3008,7 +3027,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co069",
@@ -3017,7 +3036,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "multiple",
-    "stem": "再次围绕“旁路转发”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“CPU 与流水线”的适用条件角度辨析“旁路转发”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -3045,7 +3064,7 @@
       "B"
     ],
     "explanation": "正确配对是“旁路转发—把运算结果直接送给后续阶段以缓解数据冒险”和“分支预测—提前猜测分支方向以减少控制停顿”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "CPU 与流水线",
       "旁路转发"
@@ -3055,7 +3074,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co070",
@@ -3064,7 +3083,7 @@
     "chapterName": "CPU 与流水线",
     "chapterOrder": 4,
     "type": "judge",
-    "stem": "再次判断：分支预测是指“多个部件共享的一组信息传输线路”。",
+    "stem": "辨析判断：分支预测是指“多个部件共享的一组信息传输线路”。",
     "options": [
       {
         "id": "A",
@@ -3091,7 +3110,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co071",
@@ -3100,44 +3119,45 @@
     "chapterName": "总线",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "在“总线”主题中，关于“总线”，下列描述哪项正确？",
+    "stem": "一条同步总线数据宽度为 64 bit，时钟频率为 200 MHz，每周期最多传输一次完整数据。理论峰值带宽是多少？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "传送指令或数据内容的线路集合"
+        "text": "200 MB/s"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "在多个主设备请求中决定总线使用权的机制"
+        "text": "800 MB/s"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "多个部件共享的一组信息传输线路"
+        "text": "1.6 GB/s"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "传送访问目标地址信息的线路集合"
+        "text": "12.8 GB/s"
       }
     ],
     "correctOptionIds": [
       "C"
     ],
-    "explanation": "总线：多个部件共享的一组信息传输线路。",
+    "explanation": "64 bit=8 B，每秒 200M 次传输，峰值为 8×200M=1.6×10^9 B/s，即 1.6 GB/s。",
     "difficulty": 3,
     "tags": [
       "总线",
-      "总线"
+      "数据总线",
+      "带宽"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co072",
@@ -3183,7 +3203,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co073",
@@ -3219,7 +3239,7 @@
       "A"
     ],
     "explanation": "数据总线：传送指令或数据内容的线路集合。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "总线",
       "数据总线"
@@ -3229,7 +3249,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co074",
@@ -3238,7 +3258,7 @@
     "chapterName": "总线",
     "chapterOrder": 5,
     "type": "multiple",
-    "stem": "围绕“总线仲裁”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“总线”中围绕“总线仲裁”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -3266,7 +3286,7 @@
       "D"
     ],
     "explanation": "正确配对是“总线仲裁—在多个主设备请求中决定总线使用权的机制”和“I/O 接口—连接 CPU 总线与外部设备并完成控制转换的部件”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "总线",
       "总线仲裁"
@@ -3276,7 +3296,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co075",
@@ -3285,7 +3305,7 @@
     "chapterName": "总线",
     "chapterOrder": 5,
     "type": "judge",
-    "stem": "再次判断：总线是指“多个部件共享的一组信息传输线路”。",
+    "stem": "辨析判断：总线是指“多个部件共享的一组信息传输线路”。",
     "options": [
       {
         "id": "A",
@@ -3312,7 +3332,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co076",
@@ -3321,7 +3341,7 @@
     "chapterName": "总线",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“总线”时，下列哪个术语与“传送访问目标地址信息的线路集合”相符？",
+    "stem": "结合“总线”中的相关概念，下列哪个术语与“传送访问目标地址信息的线路集合”相符？",
     "options": [
       {
         "id": "A",
@@ -3348,7 +3368,7 @@
       "B"
     ],
     "explanation": "地址总线：传送访问目标地址信息的线路集合。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "总线",
       "地址总线"
@@ -3358,7 +3378,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co077",
@@ -3367,7 +3387,7 @@
     "chapterName": "总线",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“总线”时，关于“数据总线”，下列描述哪项正确？",
+    "stem": "结合“总线”中的相关概念，关于“数据总线”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -3404,7 +3424,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co078",
@@ -3413,7 +3433,7 @@
     "chapterName": "总线",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“总线”时，下列哪个术语与“在多个主设备请求中决定总线使用权的机制”相符？",
+    "stem": "结合“总线”中的相关概念，下列哪个术语与“在多个主设备请求中决定总线使用权的机制”相符？",
     "options": [
       {
         "id": "A",
@@ -3450,7 +3470,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co079",
@@ -3459,45 +3479,47 @@
     "chapterName": "I/O 系统",
     "chapterOrder": 6,
     "type": "multiple",
-    "stem": "围绕“I/O 接口”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "关于中断驱动 I/O 与 DMA，下列哪些描述正确？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "中断驱动 I/O：控制器成块传输设备和主存数据并减少 CPU 干预"
+        "text": "中断驱动 I/O 仍可能需要 CPU 参与每次或每批数据搬运"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "DMA：设备就绪后用中断通知 CPU 处理"
+        "text": "DMA 适合在设备与主存间成块传输"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "I/O 接口：连接 CPU 总线与外部设备并完成控制转换的部件"
+        "text": "DMA 完成后通常可用中断通知 CPU"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "程序查询方式：CPU 反复读取设备状态等待操作完成"
+        "text": "DMA 表示 CPU 必须逐字节执行搬运指令"
       }
     ],
     "correctOptionIds": [
-      "C",
-      "D"
+      "A",
+      "B",
+      "C"
     ],
-    "explanation": "正确配对是“I/O 接口—连接 CPU 总线与外部设备并完成控制转换的部件”和“程序查询方式—CPU 反复读取设备状态等待操作完成”。",
+    "explanation": "DMA 控制器承担成块搬运，CPU 负责设置和完成处理；中断驱动方式通常比程序查询减少忙等，但 CPU 参与程度更高。",
     "difficulty": 3,
     "tags": [
       "I/O 系统",
-      "I/O 接口"
+      "DMA",
+      "中断驱动 I/O"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co080",
@@ -3523,7 +3545,7 @@
       "B"
     ],
     "explanation": "程序查询方式的准确含义是：CPU 反复读取设备状态等待操作完成。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "I/O 系统",
       "程序查询方式"
@@ -3533,7 +3555,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co081",
@@ -3569,7 +3591,7 @@
       "A"
     ],
     "explanation": "中断驱动 I/O：设备就绪后用中断通知 CPU 处理。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "I/O 系统",
       "中断驱动 I/O"
@@ -3579,7 +3601,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co082",
@@ -3588,44 +3610,45 @@
     "chapterName": "I/O 系统",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "在“I/O 系统”主题中，关于“DMA”，下列描述哪项正确？",
+    "stem": "DMA 传输一个大块数据时，CPU 的典型职责是什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "能执行通道程序并管理一组外设的专用处理部件"
+        "text": "逐字节执行 load/store 完成全部搬运"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "接收命令并控制具体设备操作的硬件"
+        "text": "设置传输参数，DMA 完成后处理通知"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "用于定位相应中断服务程序入口的信息"
+        "text": "关闭主存直到传输结束"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "控制器成块传输设备和主存数据并减少 CPU 干预"
+        "text": "替设备生成每一个电信号"
       }
     ],
     "correctOptionIds": [
-      "D"
+      "B"
     ],
-    "explanation": "DMA：控制器成块传输设备和主存数据并减少 CPU 干预。",
+    "explanation": "CPU 通常配置源、目标、长度和方向，DMA 控制器执行成块传输，结束或异常时再通知 CPU。",
     "difficulty": 3,
     "tags": [
       "I/O 系统",
-      "DMA"
+      "DMA",
+      "CPU 干预"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co083",
@@ -3671,7 +3694,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co084",
@@ -3680,7 +3703,7 @@
     "chapterName": "I/O 系统",
     "chapterOrder": 6,
     "type": "multiple",
-    "stem": "围绕“设备控制器”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“I/O 系统”中围绕“设备控制器”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -3718,7 +3741,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co085",
@@ -3754,7 +3777,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co086",
@@ -3763,7 +3786,7 @@
     "chapterName": "I/O 系统",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "再次辨析“I/O 系统”时，关于“I/O 接口”，下列描述哪项正确？",
+    "stem": "结合“I/O 系统”中的相关概念，关于“I/O 接口”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -3800,7 +3823,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co087",
@@ -3809,7 +3832,7 @@
     "chapterName": "I/O 系统",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "再次辨析“I/O 系统”时，下列哪个术语与“CPU 反复读取设备状态等待操作完成”相符？",
+    "stem": "结合“I/O 系统”中的相关概念，下列哪个术语与“CPU 反复读取设备状态等待操作完成”相符？",
     "options": [
       {
         "id": "A",
@@ -3836,7 +3859,7 @@
       "C"
     ],
     "explanation": "程序查询方式：CPU 反复读取设备状态等待操作完成。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "I/O 系统",
       "程序查询方式"
@@ -3846,7 +3869,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co088",
@@ -3855,7 +3878,7 @@
     "chapterName": "I/O 系统",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "再次辨析“I/O 系统”时，关于“中断驱动 I/O”，下列描述哪项正确？",
+    "stem": "结合“I/O 系统”中的相关概念，关于“中断驱动 I/O”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -3892,7 +3915,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co089",
@@ -3901,7 +3924,7 @@
     "chapterName": "I/O 系统",
     "chapterOrder": 6,
     "type": "multiple",
-    "stem": "再次围绕“DMA”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“I/O 系统”的适用条件角度辨析“DMA”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -3939,7 +3962,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co090",
@@ -3948,7 +3971,7 @@
     "chapterName": "I/O 系统",
     "chapterOrder": 6,
     "type": "judge",
-    "stem": "再次判断：通道是指“接收命令并控制具体设备操作的硬件”。",
+    "stem": "通道能够执行通道程序并管理一组外设，功能层次通常高于只负责控制具体设备操作的设备控制器。",
     "options": [
       {
         "id": "A",
@@ -3962,20 +3985,21 @@
       }
     ],
     "correctOptionIds": [
-      "B"
+      "A"
     ],
-    "explanation": "通道的准确含义是：能执行通道程序并管理一组外设的专用处理部件。",
+    "explanation": "设备控制器直接管理设备；通道是更独立的 I/O 处理部件，可解释通道指令并组织多个设备的数据传输。",
     "difficulty": 3,
     "tags": [
       "I/O 系统",
-      "通道"
+      "通道",
+      "设备控制器"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co091",
@@ -3984,7 +4008,7 @@
     "chapterName": "I/O 系统",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "再次辨析“I/O 系统”时，下列哪个术语与“接收命令并控制具体设备操作的硬件”相符？",
+    "stem": "结合“I/O 系统”中的相关概念，下列哪个术语与“接收命令并控制具体设备操作的硬件”相符？",
     "options": [
       {
         "id": "A",
@@ -4021,7 +4045,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co092",
@@ -4030,7 +4054,7 @@
     "chapterName": "I/O 系统",
     "chapterOrder": 6,
     "type": "single",
-    "stem": "再次辨析“I/O 系统”时，关于“中断向量”，下列描述哪项正确？",
+    "stem": "结合“I/O 系统”中的相关概念，关于“中断向量”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -4057,7 +4081,7 @@
       "B"
     ],
     "explanation": "中断向量：用于定位相应中断服务程序入口的信息。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "I/O 系统",
       "中断向量"
@@ -4067,7 +4091,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co093",
@@ -4113,7 +4137,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co094",
@@ -4122,7 +4146,7 @@
     "chapterName": "汇编与性能",
     "chapterOrder": 7,
     "type": "multiple",
-    "stem": "围绕“时钟周期”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“汇编与性能”中围绕“时钟周期”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -4150,7 +4174,7 @@
       "D"
     ],
     "explanation": "正确配对是“时钟周期—处理器时钟相邻有效边沿之间的时间”和“CPU 执行时间—可由指令数、CPI 与时钟周期的乘积估算”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "汇编与性能",
       "时钟周期"
@@ -4160,7 +4184,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co095",
@@ -4186,7 +4210,7 @@
       "A"
     ],
     "explanation": "CPU 执行时间的准确含义是：可由指令数、CPI 与时钟周期的乘积估算。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "汇编与性能",
       "CPU 执行时间"
@@ -4196,7 +4220,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co096",
@@ -4242,7 +4266,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co097",
@@ -4251,7 +4275,7 @@
     "chapterName": "汇编与性能",
     "chapterOrder": 7,
     "type": "single",
-    "stem": "再次辨析“汇编与性能”时，关于“CPI”，下列描述哪项正确？",
+    "stem": "结合“汇编与性能”中的相关概念，关于“CPI”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -4278,7 +4302,7 @@
       "A"
     ],
     "explanation": "CPI：执行一条指令平均需要的时钟周期数。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "汇编与性能",
       "CPI"
@@ -4288,7 +4312,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co098",
@@ -4297,44 +4321,45 @@
     "chapterName": "汇编与性能",
     "chapterOrder": 7,
     "type": "single",
-    "stem": "再次辨析“汇编与性能”时，下列哪个术语与“处理器时钟相邻有效边沿之间的时间”相符？",
+    "stem": "程序执行 10^9 条指令，平均 CPI 为 2，处理器频率为 2 GHz。忽略其他因素，CPU 执行时间约为多少？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "CPU 执行时间"
+        "text": "0.5 s"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "加速比"
+        "text": "1 s"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "补码"
+        "text": "2 s"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "时钟周期"
+        "text": "4 s"
       }
     ],
     "correctOptionIds": [
-      "D"
+      "B"
     ],
-    "explanation": "时钟周期：处理器时钟相邻有效边沿之间的时间。",
+    "explanation": "CPU 时间=指令数×CPI/时钟频率=(10^9×2)/(2×10^9)=1 s。",
     "difficulty": 3,
     "tags": [
       "汇编与性能",
-      "时钟周期"
+      "CPU 执行时间",
+      "CPI"
     ],
     "images": [],
     "examScopes": [
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co099",
@@ -4343,7 +4368,7 @@
     "chapterName": "汇编与性能",
     "chapterOrder": 7,
     "type": "multiple",
-    "stem": "再次围绕“CPU 执行时间”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“汇编与性能”的适用条件角度辨析“CPU 执行时间”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -4371,7 +4396,7 @@
       "D"
     ],
     "explanation": "正确配对是“CPU 执行时间—可由指令数、CPI 与时钟周期的乘积估算”和“加速比—改进前执行时间与改进后执行时间之比”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "汇编与性能",
       "CPU 执行时间"
@@ -4381,7 +4406,7 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "co100",
@@ -4390,7 +4415,7 @@
     "chapterName": "汇编与性能",
     "chapterOrder": 7,
     "type": "judge",
-    "stem": "再次判断：加速比是指“用最高位权值为负的编码统一表示有符号整数和加减法”。",
+    "stem": "辨析判断：加速比是指“用最高位权值为负的编码统一表示有符号整数和加减法”。",
     "options": [
       {
         "id": "A",
@@ -4417,6 +4442,6 @@
       "408"
     ],
     "status": "active",
-    "version": 1
+    "version": 2
   }
 ]

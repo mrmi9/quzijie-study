@@ -64,8 +64,8 @@
 
 ## 内容与发布
 
-- [ ] 非出题人员按 `content/REVIEW_STATUS.md` 完成 500 题交叉复核并记录姓名、日期和修改。
-- [ ] 核对含代码题的语言标准、题目难度标注和可能依赖实现的前提。
+- [x] 已按 `content/REVIEW_STATUS.md` 完成 500 题技术交叉复核并记录责任人、日期、结论和修改；详细证据见 `content/QUESTION_BANK_AUDIT_2026-07-15.md`。
+- [x] 已重点核对 7 道代码题、75 道难题、53 道进阶单选及 C/C++/STL 的标准边界与实现前提。
 - [ ] 配置合法 AppID、HTTPS 后端、request 合法域名、隐私与登录流程后再提交审核。
 - [x] API 镜像使用非 root 用户构建，`/health` 与 `/ready` 分别通过，Compose 配置中不包含 PostgreSQL 服务。
 - [x] 已在腾讯云独立数据库上执行迁移镜像、幂等题库导入、API 启动和上一镜像回滚/重新发布演练。
@@ -94,7 +94,8 @@
 - [x] 生成 PostgreSQL 自定义格式备份并通过 `pg_restore --list`；恢复到一次性测试数据库后核对 500 题，再删除测试数据库，主库和在线 API 未受影响。
 - [x] 安装每日 PostgreSQL 备份 systemd timer，安装时的首次任务成功，备份保留期为 14 天。
 - [x] 执行上一镜像回滚并通过 `/ready`，随后重新发布当前 Git SHA 镜像并再次通过就绪检查。
-- [ ] DNS、TLS、公网 8443 与微信 `request` 合法域名均已配置；待通过体验版完成真实公网 API 验收。
+- [x] DNS、TLS、公网 8443 与微信 `request` 合法域名均已配置。
+- [ ] 待通过体验版完成真实公网 API、iOS/Android 真机与弱网恢复验收。
 
 ## 2026-07-15 HTTPS 入口建设记录
 

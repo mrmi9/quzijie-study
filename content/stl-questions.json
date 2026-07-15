@@ -41,7 +41,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl002",
@@ -77,7 +77,7 @@
       "D"
     ],
     "explanation": "迭代器：提供统一方式遍历和访问容器元素的对象。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "泛型与迭代器",
       "迭代器"
@@ -85,7 +85,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl003",
@@ -104,7 +104,7 @@
       {
         "id": "B",
         "label": "B",
-        "text": "支持两端高效插入删除的分段连续容器"
+        "text": "支持随机访问以及在首尾常数时间插入删除的顺序容器"
       },
       {
         "id": "C",
@@ -129,7 +129,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl004",
@@ -138,12 +138,12 @@
     "chapterName": "泛型与迭代器",
     "chapterOrder": 1,
     "type": "multiple",
-    "stem": "围绕“范围”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“泛型与迭代器”中围绕“范围”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "list：支持两端高效插入删除的分段连续容器"
+        "text": "list：支持随机访问以及在首尾常数时间插入删除的顺序容器"
       },
       {
         "id": "B",
@@ -158,7 +158,7 @@
       {
         "id": "D",
         "label": "D",
-        "text": "deque：通常实现为支持双向遍历的双链表容器"
+        "text": "deque：支持双向遍历以及在已知位置常数时间插入删除的顺序容器"
       }
     ],
     "correctOptionIds": [
@@ -166,7 +166,7 @@
       "C"
     ],
     "explanation": "正确配对是“范围—通常由半开区间 [first,last) 表示的一组元素”和“vector—使用连续存储并支持尾部高效扩展的动态数组”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "泛型与迭代器",
       "范围"
@@ -174,7 +174,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl005",
@@ -183,7 +183,7 @@
     "chapterName": "泛型与迭代器",
     "chapterOrder": 1,
     "type": "judge",
-    "stem": "再次判断：泛型编程是指“把算法写成可适配多种类型的模板形式”。",
+    "stem": "在 C++17 的 `if constexpr` 中，未被选择的分支会在模板实例化时丢弃，因此可用于避免为当前模板实参实例化该分支中的不适用代码。",
     "options": [
       {
         "id": "A",
@@ -199,16 +199,17 @@
     "correctOptionIds": [
       "A"
     ],
-    "explanation": "泛型编程的准确含义是：把算法写成可适配多种类型的模板形式。",
+    "explanation": "`if constexpr` 的丢弃分支不会按普通运行时 if 那样被当前特化实例化，但非依赖名称等语法仍需满足相应语言规则。",
     "difficulty": 3,
     "tags": [
       "泛型与迭代器",
-      "泛型编程"
+      "if constexpr",
+      "模板实例化"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl006",
@@ -217,42 +218,43 @@
     "chapterName": "泛型与迭代器",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“泛型与迭代器”时，下列哪个术语与“提供统一方式遍历和访问容器元素的对象”相符？",
+    "stem": "算法只通过 `first` 和 `last` 遍历容器，而不依赖容器具体类型。这种统一访问能力主要由什么提供？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "随机访问迭代器"
+        "text": "迭代器"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "范围"
+        "text": "预处理宏"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "vector"
+        "text": "异常对象"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "迭代器"
+        "text": "命名空间别名"
       }
     ],
     "correctOptionIds": [
-      "D"
+      "A"
     ],
-    "explanation": "迭代器：提供统一方式遍历和访问容器元素的对象。",
+    "explanation": "迭代器抽象元素访问和移动操作，使算法可在满足相应迭代器要求的不同容器上复用。",
     "difficulty": 2,
     "tags": [
       "泛型与迭代器",
-      "迭代器"
+      "迭代器",
+      "算法泛化"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl007",
@@ -261,42 +263,43 @@
     "chapterName": "泛型与迭代器",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“泛型与迭代器”时，关于“随机访问迭代器”，下列描述哪项正确？",
+    "stem": "下列哪项操作是随机访问迭代器必须支持、而普通双向迭代器不要求支持的？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "使用连续存储并支持尾部高效扩展的动态数组"
+        "text": "`++it`"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "支持两端高效插入删除的分段连续容器"
+        "text": "`--it`"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "支持常数时间跳转和下标式运算的迭代器"
+        "text": "`it += n`"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "通常由半开区间 [first,last) 表示的一组元素"
+        "text": "`*it`"
       }
     ],
     "correctOptionIds": [
       "C"
     ],
-    "explanation": "随机访问迭代器：支持常数时间跳转和下标式运算的迭代器。",
-    "difficulty": 1,
+    "explanation": "随机访问迭代器支持常数时间跳转、差值和下标式运算；双向迭代器只保证逐步前进和后退。",
+    "difficulty": 2,
     "tags": [
       "泛型与迭代器",
-      "随机访问迭代器"
+      "随机访问迭代器",
+      "迭代器类别"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl008",
@@ -305,42 +308,43 @@
     "chapterName": "泛型与迭代器",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“泛型与迭代器”时，下列哪个术语与“通常由半开区间 [first,last) 表示的一组元素”相符？",
+    "stem": "半开区间 `[first,last)` 为空时，应满足什么条件？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "list"
+        "text": "first 指向最后一个元素"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "范围"
+        "text": "first==last"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "vector"
+        "text": "last 必须是 nullptr"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "deque"
+        "text": "first 必须小于 0"
       }
     ],
     "correctOptionIds": [
       "B"
     ],
-    "explanation": "范围：通常由半开区间 [first,last) 表示的一组元素。",
-    "difficulty": 1,
+    "explanation": "半开区间包含 first 而不包含 last；当两者相等时没有任何元素，这也便于统一表示空范围。",
+    "difficulty": 2,
     "tags": [
       "泛型与迭代器",
-      "范围"
+      "范围",
+      "半开区间"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl009",
@@ -349,43 +353,45 @@
     "chapterName": "顺序容器",
     "chapterOrder": 2,
     "type": "multiple",
-    "stem": "围绕“vector”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "`std::vector<int> v` 执行 `push_back`。关于已有迭代器、指针和引用的失效，下列哪些说法正确？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "vector：使用连续存储并支持尾部高效扩展的动态数组"
+        "text": "若发生重新分配，指向所有元素的迭代器、指针和引用都会失效"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "deque：支持两端高效插入删除的分段连续容器"
+        "text": "若未发生重新分配，原有元素的引用和指针仍有效"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "list：只支持单向遍历的链表容器"
+        "text": "即使未重新分配，原先的 end() 迭代器也会失效"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "forward_list：通常实现为支持双向遍历的双链表容器"
+        "text": "无论是否重新分配，所有已有引用都一定有效"
       }
     ],
     "correctOptionIds": [
       "A",
-      "B"
+      "B",
+      "C"
     ],
-    "explanation": "正确配对是“vector—使用连续存储并支持尾部高效扩展的动态数组”和“deque—支持两端高效插入删除的分段连续容器”。",
+    "explanation": "重新分配会搬迁整个存储区；未重新分配时原元素地址保持，但尾后位置改变，所以旧 end() 不再有效。",
     "difficulty": 3,
     "tags": [
       "顺序容器",
-      "vector"
+      "vector",
+      "迭代器失效"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl010",
@@ -394,7 +400,7 @@
     "chapterName": "顺序容器",
     "chapterOrder": 2,
     "type": "judge",
-    "stem": "判断：deque是指“通常实现为支持双向遍历的双链表容器”。",
+    "stem": "判断：deque是指“支持双向遍历以及在已知位置常数时间插入删除的顺序容器”。",
     "options": [
       {
         "id": "A",
@@ -410,7 +416,7 @@
     "correctOptionIds": [
       "B"
     ],
-    "explanation": "deque的准确含义是：支持两端高效插入删除的分段连续容器。",
+    "explanation": "deque的准确含义是：支持随机访问以及在首尾常数时间插入删除的顺序容器。",
     "difficulty": 2,
     "tags": [
       "顺序容器",
@@ -419,7 +425,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl011",
@@ -428,7 +434,7 @@
     "chapterName": "顺序容器",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "在“顺序容器”主题中，下列哪个术语与“通常实现为支持双向遍历的双链表容器”相符？",
+    "stem": "在“顺序容器”主题中，下列哪个术语与“支持双向遍历以及在已知位置常数时间插入删除的顺序容器”相符？",
     "options": [
       {
         "id": "A",
@@ -454,7 +460,7 @@
     "correctOptionIds": [
       "C"
     ],
-    "explanation": "list：通常实现为支持双向遍历的双链表容器。",
+    "explanation": "list：支持双向遍历以及在已知位置常数时间插入删除的顺序容器。",
     "difficulty": 1,
     "tags": [
       "顺序容器",
@@ -463,7 +469,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl012",
@@ -507,7 +513,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl013",
@@ -516,42 +522,43 @@
     "chapterName": "顺序容器",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "在“顺序容器”主题中，下列哪个术语与“封装固定长度连续数组的容器”相符？",
+    "stem": "关于 `std::array<int, 4>` 与内置数组 `int[4]`，下列说法正确的是哪一个？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "array"
+        "text": "两者都支持整体赋值"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "迭代器失效"
+        "text": "`std::array` 支持同类型整体赋值，内置数组不支持"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "set"
+        "text": "内置数组保存长度成员 size()"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "multiset"
+        "text": "`std::array` 的元素一定分配在堆上"
       }
     ],
     "correctOptionIds": [
-      "A"
+      "B"
     ],
-    "explanation": "array：封装固定长度连续数组的容器。",
+    "explanation": "`std::array` 是封装固定长度数组的容器，支持同类型赋值和 size()；内置数组不能作为整体使用赋值运算符。存储位置取决于对象本身。",
     "difficulty": 3,
     "tags": [
       "顺序容器",
-      "array"
+      "array",
+      "内置数组"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl014",
@@ -560,7 +567,7 @@
     "chapterName": "顺序容器",
     "chapterOrder": 2,
     "type": "multiple",
-    "stem": "围绕“迭代器失效”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“顺序容器”中围绕“迭代器失效”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -596,7 +603,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl015",
@@ -605,7 +612,7 @@
     "chapterName": "顺序容器",
     "chapterOrder": 2,
     "type": "judge",
-    "stem": "再次判断：vector是指“使用连续存储并支持尾部高效扩展的动态数组”。",
+    "stem": "辨析判断：vector是指“使用连续存储并支持尾部高效扩展的动态数组”。",
     "options": [
       {
         "id": "A",
@@ -622,7 +629,7 @@
       "A"
     ],
     "explanation": "vector的准确含义是：使用连续存储并支持尾部高效扩展的动态数组。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "顺序容器",
       "vector"
@@ -630,7 +637,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl016",
@@ -639,7 +646,7 @@
     "chapterName": "顺序容器",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“顺序容器”时，关于“deque”，下列描述哪项正确？",
+    "stem": "结合“顺序容器”中的相关概念，关于“deque”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -649,12 +656,12 @@
       {
         "id": "B",
         "label": "B",
-        "text": "支持两端高效插入删除的分段连续容器"
+        "text": "支持随机访问以及在首尾常数时间插入删除的顺序容器"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "通常实现为支持双向遍历的双链表容器"
+        "text": "支持双向遍历以及在已知位置常数时间插入删除的顺序容器"
       },
       {
         "id": "D",
@@ -665,7 +672,7 @@
     "correctOptionIds": [
       "B"
     ],
-    "explanation": "deque：支持两端高效插入删除的分段连续容器。",
+    "explanation": "deque：支持随机访问以及在首尾常数时间插入删除的顺序容器。",
     "difficulty": 1,
     "tags": [
       "顺序容器",
@@ -674,7 +681,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl017",
@@ -683,42 +690,43 @@
     "chapterName": "顺序容器",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“顺序容器”时，下列哪个术语与“通常实现为支持双向遍历的双链表容器”相符？",
+    "stem": "把一个 `std::list` 中的结点通过 `splice` 转移到另一个兼容的 `std::list` 后，对被转移元素的既有迭代器通常会怎样？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "list"
+        "text": "全部失效"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "forward_list"
+        "text": "仍有效，并改为引用目标 list 中的同一元素"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "array"
+        "text": "自动变为 vector 迭代器"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "迭代器失效"
+        "text": "只能用于原 list"
       }
     ],
     "correctOptionIds": [
-      "A"
+      "B"
     ],
-    "explanation": "list：通常实现为支持双向遍历的双链表容器。",
+    "explanation": "list::splice 通过重新链接结点完成转移，不移动元素对象；被转移元素的迭代器和引用保持有效，但元素归属目标容器。",
     "difficulty": 3,
     "tags": [
       "顺序容器",
-      "list"
+      "list",
+      "splice"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl018",
@@ -727,7 +735,7 @@
     "chapterName": "顺序容器",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“顺序容器”时，关于“forward_list”，下列描述哪项正确？",
+    "stem": "结合“顺序容器”中的相关概念，关于“forward_list”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -754,7 +762,7 @@
       "D"
     ],
     "explanation": "forward_list：只支持单向遍历的链表容器。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "顺序容器",
       "forward_list"
@@ -762,7 +770,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl019",
@@ -771,7 +779,7 @@
     "chapterName": "顺序容器",
     "chapterOrder": 2,
     "type": "multiple",
-    "stem": "再次围绕“array”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“顺序容器”的适用条件角度辨析“array”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -799,7 +807,7 @@
       "D"
     ],
     "explanation": "正确配对是“array—封装固定长度连续数组的容器”和“迭代器失效—容器修改后原迭代器不再保证可安全使用的状态”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "顺序容器",
       "array"
@@ -807,7 +815,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl020",
@@ -816,7 +824,7 @@
     "chapterName": "顺序容器",
     "chapterOrder": 2,
     "type": "judge",
-    "stem": "再次判断：迭代器失效是指“保存唯一键并按比较规则有序排列的关联容器”。",
+    "stem": "辨析判断：迭代器失效是指“保存唯一键并按比较规则有序排列的关联容器”。",
     "options": [
       {
         "id": "A",
@@ -833,7 +841,7 @@
       "B"
     ],
     "explanation": "迭代器失效的准确含义是：容器修改后原迭代器不再保证可安全使用的状态。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "顺序容器",
       "迭代器失效"
@@ -841,7 +849,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl021",
@@ -877,7 +885,7 @@
       "A"
     ],
     "explanation": "set：保存唯一键并按比较规则有序排列的关联容器。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "关联容器",
       "set"
@@ -885,7 +893,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl022",
@@ -921,7 +929,7 @@
       "D"
     ],
     "explanation": "multiset：允许保存重复键的有序关联容器。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "关联容器",
       "multiset"
@@ -929,7 +937,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl023",
@@ -973,7 +981,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl024",
@@ -982,7 +990,7 @@
     "chapterName": "关联容器",
     "chapterOrder": 3,
     "type": "multiple",
-    "stem": "围绕“unordered_map”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“关联容器”中围绕“unordered_map”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1010,7 +1018,7 @@
       "C"
     ],
     "explanation": "正确配对是“unordered_map—基于散列组织键值对的无序关联容器”和“哈希负载因子—无序容器元素数量与桶数量之比”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "关联容器",
       "unordered_map"
@@ -1018,7 +1026,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl025",
@@ -1044,7 +1052,7 @@
       "A"
     ],
     "explanation": "哈希负载因子的准确含义是：无序容器元素数量与桶数量之比。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "关联容器",
       "哈希负载因子"
@@ -1052,7 +1060,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl026",
@@ -1061,7 +1069,7 @@
     "chapterName": "关联容器",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“关联容器”时，下列哪个术语与“保存唯一键并按比较规则有序排列的关联容器”相符？",
+    "stem": "结合“关联容器”中的相关概念，下列哪个术语与“保存唯一键并按比较规则有序排列的关联容器”相符？",
     "options": [
       {
         "id": "A",
@@ -1088,7 +1096,7 @@
       "D"
     ],
     "explanation": "set：保存唯一键并按比较规则有序排列的关联容器。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "关联容器",
       "set"
@@ -1096,7 +1104,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl027",
@@ -1105,7 +1113,7 @@
     "chapterName": "关联容器",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“关联容器”时，关于“multiset”，下列描述哪项正确？",
+    "stem": "结合“关联容器”中的相关概念，关于“multiset”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -1140,7 +1148,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl028",
@@ -1149,42 +1157,43 @@
     "chapterName": "关联容器",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“关联容器”时，下列哪个术语与“保存唯一键到值映射的有序关联容器”相符？",
+    "stem": "只想判断 `std::map<std::string,int> m` 是否包含键 `\"x\"`，且不希望缺失时插入新元素。下列写法最合适的是哪一个？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "std::sort"
+        "text": "`m[\"x\"] == 0`"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "map"
+        "text": "`m.find(\"x\") != m.end()`"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "unordered_map"
+        "text": "`m[\"x\"]++`"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "哈希负载因子"
+        "text": "`m.clear()`"
       }
     ],
     "correctOptionIds": [
       "B"
     ],
-    "explanation": "map：保存唯一键到值映射的有序关联容器。",
+    "explanation": "非 const map 的 operator[] 在键缺失时会插入默认构造的映射值；find 只查找，不产生插入副作用。",
     "difficulty": 3,
     "tags": [
       "关联容器",
-      "map"
+      "map",
+      "find"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl029",
@@ -1193,7 +1202,7 @@
     "chapterName": "关联容器",
     "chapterOrder": 3,
     "type": "multiple",
-    "stem": "再次围绕“unordered_map”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“关联容器”的适用条件角度辨析“unordered_map”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1229,7 +1238,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl030",
@@ -1238,7 +1247,7 @@
     "chapterName": "关联容器",
     "chapterOrder": 3,
     "type": "judge",
-    "stem": "再次判断：哈希负载因子是指“对随机访问范围进行升序或自定义顺序排序”。",
+    "stem": "辨析判断：哈希负载因子是指“对随机访问范围进行升序或自定义顺序排序”。",
     "options": [
       {
         "id": "A",
@@ -1255,7 +1264,7 @@
       "B"
     ],
     "explanation": "哈希负载因子的准确含义是：无序容器元素数量与桶数量之比。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "关联容器",
       "哈希负载因子"
@@ -1263,7 +1272,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl031",
@@ -1307,7 +1316,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl032",
@@ -1316,42 +1325,43 @@
     "chapterName": "标准算法",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "在“标准算法”主题中，关于“std::find”，下列描述哪项正确？",
+    "stem": "对含 n 个元素的普通前向范围调用 `std::find(first,last,value)`，最坏情况下需要多少次量级的比较？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "按顺序累积范围元素得到结果"
+        "text": "Θ(1)"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "在线性范围中查找第一个等于目标值的元素"
+        "text": "Θ(log n)"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "在有序范围中查找不小于目标值的首位置"
+        "text": "Θ(n)"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "对输入范围应用操作并写入输出范围"
+        "text": "Θ(n log n)"
       }
     ],
     "correctOptionIds": [
-      "B"
+      "C"
     ],
-    "explanation": "std::find：在线性范围中查找第一个等于目标值的元素。",
+    "explanation": "std::find 线性扫描范围，目标不存在或位于末尾时需要检查 n 个元素，因此最坏比较次数为 Θ(n)。",
     "difficulty": 3,
     "tags": [
       "标准算法",
-      "std::find"
+      "std::find",
+      "复杂度"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl033",
@@ -1387,7 +1397,7 @@
       "A"
     ],
     "explanation": "std::lower_bound：在有序范围中查找不小于目标值的首位置。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "标准算法",
       "std::lower_bound"
@@ -1395,7 +1405,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl034",
@@ -1404,7 +1414,7 @@
     "chapterName": "标准算法",
     "chapterOrder": 4,
     "type": "multiple",
-    "stem": "围绕“std::transform”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“标准算法”中围绕“std::transform”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1432,7 +1442,7 @@
       "D"
     ],
     "explanation": "正确配对是“std::transform—对输入范围应用操作并写入输出范围”和“std::accumulate—按顺序累积范围元素得到结果”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "标准算法",
       "std::transform"
@@ -1440,7 +1450,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl035",
@@ -1474,7 +1484,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl036",
@@ -1483,42 +1493,43 @@
     "chapterName": "标准算法",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“标准算法”时，关于“std::sort”，下列描述哪项正确？",
+    "stem": "为什么不能直接调用 `std::sort(lst.begin(), lst.end())` 对 `std::list` 排序？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "对输入范围应用操作并写入输出范围"
+        "text": "std::sort 只接受整数"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "对随机访问范围进行升序或自定义顺序排序"
+        "text": "std::sort 要求随机访问迭代器，而 list 只提供双向迭代器"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "在线性范围中查找第一个等于目标值的元素"
+        "text": "list 元素不能比较"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "在有序范围中查找不小于目标值的首位置"
+        "text": "std::sort 只能处理数组"
       }
     ],
     "correctOptionIds": [
       "B"
     ],
-    "explanation": "std::sort：对随机访问范围进行升序或自定义顺序排序。",
+    "explanation": "std::sort 的接口和复杂度依赖随机访问迭代器；std::list 不满足该要求，应使用其成员函数 list::sort。",
     "difficulty": 3,
     "tags": [
       "标准算法",
-      "std::sort"
+      "std::sort",
+      "迭代器类别"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl037",
@@ -1527,7 +1538,7 @@
     "chapterName": "标准算法",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“标准算法”时，下列哪个术语与“在线性范围中查找第一个等于目标值的元素”相符？",
+    "stem": "结合“标准算法”中的相关概念，下列哪个术语与“在线性范围中查找第一个等于目标值的元素”相符？",
     "options": [
       {
         "id": "A",
@@ -1554,7 +1565,7 @@
       "A"
     ],
     "explanation": "std::find：在线性范围中查找第一个等于目标值的元素。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "标准算法",
       "std::find"
@@ -1562,7 +1573,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl038",
@@ -1571,7 +1582,7 @@
     "chapterName": "标准算法",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“标准算法”时，关于“std::lower_bound”，下列描述哪项正确？",
+    "stem": "结合“标准算法”中的相关概念，关于“std::lower_bound”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -1606,7 +1617,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl039",
@@ -1615,7 +1626,7 @@
     "chapterName": "标准算法",
     "chapterOrder": 4,
     "type": "multiple",
-    "stem": "再次围绕“std::transform”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“标准算法”的适用条件角度辨析“std::transform”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1643,7 +1654,7 @@
       "D"
     ],
     "explanation": "正确配对是“std::transform—对输入范围应用操作并写入输出范围”和“std::accumulate—按顺序累积范围元素得到结果”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "标准算法",
       "std::transform"
@@ -1651,7 +1662,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl040",
@@ -1660,7 +1671,7 @@
     "chapterName": "标准算法",
     "chapterOrder": 4,
     "type": "judge",
-    "stem": "再次判断：std::accumulate是指“在底层容器上提供后进先出接口”。",
+    "stem": "`std::accumulate` 按迭代顺序逐步应用运算，初始值的类型还会影响中间累积结果的类型；因此对非结合运算或窄类型初值需要特别谨慎。",
     "options": [
       {
         "id": "A",
@@ -1674,18 +1685,19 @@
       }
     ],
     "correctOptionIds": [
-      "B"
+      "A"
     ],
-    "explanation": "std::accumulate的准确含义是：按顺序累积范围元素得到结果。",
+    "explanation": "accumulate 是顺序左折叠，运算顺序可能影响减法、浮点等结果；累加器类型由初始值参与推导，错误初值类型可能造成截断。",
     "difficulty": 3,
     "tags": [
       "标准算法",
-      "std::accumulate"
+      "std::accumulate",
+      "初始值类型"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl041",
@@ -1721,7 +1733,7 @@
       "A"
     ],
     "explanation": "stack 适配器：在底层容器上提供后进先出接口。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "适配器、函数对象与 Lambda",
       "stack 适配器"
@@ -1729,7 +1741,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl042",
@@ -1773,7 +1785,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl043",
@@ -1817,7 +1829,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl044",
@@ -1826,7 +1838,7 @@
     "chapterName": "适配器、函数对象与 Lambda",
     "chapterOrder": 5,
     "type": "multiple",
-    "stem": "围绕“函数对象”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“适配器、函数对象与 Lambda”中围绕“函数对象”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1862,7 +1874,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl045",
@@ -1888,7 +1900,7 @@
       "A"
     ],
     "explanation": "Lambda 捕获的准确含义是：指定闭包从外部作用域取得哪些变量及取得方式。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "适配器、函数对象与 Lambda",
       "Lambda 捕获"
@@ -1896,7 +1908,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl046",
@@ -1905,7 +1917,7 @@
     "chapterName": "适配器、函数对象与 Lambda",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“适配器、函数对象与 Lambda”时，下列哪个术语与“在底层容器上提供后进先出接口”相符？",
+    "stem": "结合“适配器、函数对象与 Lambda”中的相关概念，下列哪个术语与“在底层容器上提供后进先出接口”相符？",
     "options": [
       {
         "id": "A",
@@ -1940,7 +1952,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl047",
@@ -1949,7 +1961,7 @@
     "chapterName": "适配器、函数对象与 Lambda",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“适配器、函数对象与 Lambda”时，关于“queue 适配器”，下列描述哪项正确？",
+    "stem": "结合“适配器、函数对象与 Lambda”中的相关概念，关于“queue 适配器”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -1984,7 +1996,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl048",
@@ -1993,7 +2005,7 @@
     "chapterName": "适配器、函数对象与 Lambda",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“适配器、函数对象与 Lambda”时，下列哪个术语与“总能访问当前最高优先级元素的容器适配器”相符？",
+    "stem": "结合“适配器、函数对象与 Lambda”中的相关概念，下列哪个术语与“总能访问当前最高优先级元素的容器适配器”相符？",
     "options": [
       {
         "id": "A",
@@ -2020,7 +2032,7 @@
       "B"
     ],
     "explanation": "priority_queue：总能访问当前最高优先级元素的容器适配器。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "适配器、函数对象与 Lambda",
       "priority_queue"
@@ -2028,7 +2040,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl049",
@@ -2037,7 +2049,7 @@
     "chapterName": "适配器、函数对象与 Lambda",
     "chapterOrder": 5,
     "type": "multiple",
-    "stem": "再次围绕“函数对象”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“适配器、函数对象与 Lambda”的适用条件角度辨析“函数对象”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -2073,7 +2085,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "stl050",
@@ -2082,7 +2094,7 @@
     "chapterName": "适配器、函数对象与 Lambda",
     "chapterOrder": 5,
     "type": "judge",
-    "stem": "再次判断：Lambda 捕获是指“把算法写成可适配多种类型的模板形式”。",
+    "stem": "辨析判断：Lambda 捕获是指“把算法写成可适配多种类型的模板形式”。",
     "options": [
       {
         "id": "A",
@@ -2099,7 +2111,7 @@
       "B"
     ],
     "explanation": "Lambda 捕获的准确含义是：指定闭包从外部作用域取得哪些变量及取得方式。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "适配器、函数对象与 Lambda",
       "Lambda 捕获"
@@ -2107,6 +2119,6 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   }
 ]

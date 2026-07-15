@@ -1322,7 +1322,7 @@
       {
         "id": "C",
         "label": "C",
-        "text": "源和目标内存不能以未定义方式重叠"
+        "text": "源字符数组与目标字符数组不得重叠"
       },
       {
         "id": "D",
@@ -1335,14 +1335,14 @@
       "B",
       "C"
     ],
-    "explanation": "strcpy 依赖源字符串终止符，目标空间必须充足，源和目标不应重叠；目标当然必须可写。",
+    "explanation": "strcpy 依赖源字符串终止符，目标空间必须充足且可写；若源字符数组与目标字符数组重叠，行为未定义。",
     "difficulty": 2,
     "tags": [
       "strcpy",
       "缓冲区"
     ],
     "status": "active",
-    "version": 1,
+    "version": 2,
     "subjectId": "cpp",
     "images": [],
     "examScopes": []
@@ -2045,7 +2045,7 @@
     "chapterName": "结构体、文件与预处理",
     "chapterOrder": 5,
     "type": "judge",
-    "stem": "联合体 union 的各成员共享同一段存储空间，通常只有最近写入成员对应的值可按规则读取。",
+    "stem": "在 C++ 中，union 各成员共享存储；写入某个成员后，不能把任意其他非活动成员一概当作已正常构造的对象读取，标准只规定了有限例外。",
     "options": [
       {
         "id": "A",
@@ -2061,14 +2061,14 @@
     "correctOptionIds": [
       "A"
     ],
-    "explanation": "联合体成员从同一地址开始并共享存储，写入一个成员会改变共享存储中的表示。",
+    "explanation": "union 成员共享存储，写入成员会切换活动成员。读取非活动成员受对象生命周期、公共初始序列等规则限制，不能视为普遍安全的类型重解释手段。",
     "difficulty": 2,
     "tags": [
       "union",
       "内存"
     ],
     "status": "active",
-    "version": 1,
+    "version": 2,
     "subjectId": "cpp",
     "images": [],
     "examScopes": []
@@ -2079,7 +2079,7 @@
     "chapterName": "结构体、文件与预处理",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "若定义 enum Color { Red, Green, Blue }; 且未显式赋值，Green 通常对应哪个整数值？",
+    "stem": "若定义 enum Color { Red, Green, Blue }; 且未显式赋值，Green 对应的整数值是多少？",
     "options": [
       {
         "id": "A",
@@ -2112,7 +2112,7 @@
       "枚举"
     ],
     "status": "active",
-    "version": 1,
+    "version": 2,
     "subjectId": "cpp",
     "images": [],
     "examScopes": []
@@ -3107,7 +3107,7 @@
     "chapterName": "类与对象",
     "chapterOrder": 7,
     "type": "multiple",
-    "stem": "哪些成员必须通过构造函数初始化列表完成初始化，而不能先默认构造后在函数体内赋值？",
+    "stem": "未提供类内默认成员初始化器时，哪些成员必须在构造函数的成员初始化列表中完成初始化，而不能先默认构造后在函数体内赋值？",
     "options": [
       {
         "id": "A",
@@ -3135,14 +3135,14 @@
       "B",
       "D"
     ],
-    "explanation": "const 和引用成员必须在初始化阶段建立值或绑定；没有默认构造函数的成员也必须在初始化列表中选择可用构造函数。",
+    "explanation": "在题设排除类内默认成员初始化器后，const 和引用成员必须在初始化阶段建立值或绑定；没有默认构造函数的成员也必须在初始化列表中选择可用构造函数。",
     "difficulty": 3,
     "tags": [
       "初始化列表",
       "成员"
     ],
     "status": "active",
-    "version": 1,
+    "version": 2,
     "subjectId": "cpp",
     "images": [],
     "examScopes": []

@@ -41,7 +41,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx002",
@@ -77,7 +77,7 @@
       "D"
     ],
     "explanation": "cd：改变当前 Shell 的工作目录。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "命令与 Shell",
       "cd"
@@ -85,7 +85,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx003",
@@ -129,7 +129,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx004",
@@ -138,7 +138,7 @@
     "chapterName": "命令与 Shell",
     "chapterOrder": 1,
     "type": "multiple",
-    "stem": "围绕“man”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“命令与 Shell”中围绕“man”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -166,7 +166,7 @@
       "C"
     ],
     "explanation": "正确配对是“man—查看命令的系统手册页”和“管道符 |—把前一个命令的标准输出连接到后一个命令的标准输入”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "命令与 Shell",
       "man"
@@ -174,7 +174,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx005",
@@ -183,7 +183,7 @@
     "chapterName": "命令与 Shell",
     "chapterOrder": 1,
     "type": "judge",
-    "stem": "判断：管道符 |是指“把前一个命令的标准输出连接到后一个命令的标准输入”。",
+    "stem": "执行 `producer | consumer` 时，默认只把 producer 的标准输出接入管道；producer 的标准错误不会自动进入该管道。",
     "options": [
       {
         "id": "A",
@@ -199,16 +199,17 @@
     "correctOptionIds": [
       "A"
     ],
-    "explanation": "管道符 |的准确含义是：把前一个命令的标准输出连接到后一个命令的标准输入。",
+    "explanation": "普通管道连接前一命令的标准输出和后一命令的标准输入。若还要传递标准错误，需要额外使用 `2>&1`、`|&` 等重定向写法。",
     "difficulty": 3,
     "tags": [
       "命令与 Shell",
-      "管道符 |"
+      "管道",
+      "标准流"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx006",
@@ -217,42 +218,43 @@
     "chapterName": "命令与 Shell",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“命令与 Shell”时，下列哪个术语与“输出当前工作目录的绝对路径”相符？",
+    "stem": "当前目录为 `/home/student/project`，执行 `cd ../data` 成功后再运行 `pwd`，最可能输出什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "cd"
+        "text": "/home/student/project/data"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "ls -a"
+        "text": "/home/student/data"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "man"
+        "text": "/home/data"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "pwd"
+        "text": "../data"
       }
     ],
     "correctOptionIds": [
-      "D"
+      "B"
     ],
-    "explanation": "pwd：输出当前工作目录的绝对路径。",
+    "explanation": "`..` 表示当前目录的父目录，因此先到 `/home/student`，再进入其 data 子目录；pwd 输出解析后的当前工作目录路径。",
     "difficulty": 2,
     "tags": [
       "命令与 Shell",
-      "pwd"
+      "pwd",
+      "相对路径"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx007",
@@ -261,42 +263,43 @@
     "chapterName": "命令与 Shell",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“命令与 Shell”时，关于“cd”，下列描述哪项正确？",
+    "stem": "Shell 先位于 `/srv/app`，随后执行 `cd /tmp`。此时执行 `cd -` 的典型效果是什么？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "查看命令的系统手册页"
+        "text": "返回 `/srv/app`"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "把前一个命令的标准输出连接到后一个命令的标准输入"
+        "text": "进入用户主目录"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "改变当前 Shell 的工作目录"
+        "text": "进入根目录"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "列出目录内容并包含隐藏项"
+        "text": "删除 `/tmp`"
       }
     ],
     "correctOptionIds": [
-      "C"
+      "A"
     ],
-    "explanation": "cd：改变当前 Shell 的工作目录。",
-    "difficulty": 1,
+    "explanation": "`cd -` 使用 Shell 记录的上一个工作目录 OLDPWD，因此会返回 `/srv/app`，并通常输出该目录。",
+    "difficulty": 2,
     "tags": [
       "命令与 Shell",
-      "cd"
+      "cd",
+      "OLDPWD"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx008",
@@ -305,12 +308,12 @@
     "chapterName": "命令与 Shell",
     "chapterOrder": 1,
     "type": "single",
-    "stem": "再次辨析“命令与 Shell”时，下列哪个术语与“列出目录内容并包含隐藏项”相符？",
+    "stem": "需要查看当前目录中的 `.env` 等隐藏项，但不递归进入子目录。下列命令最直接的是哪一个？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "inode"
+        "text": "ls"
       },
       {
         "id": "B",
@@ -320,27 +323,28 @@
       {
         "id": "C",
         "label": "C",
-        "text": "man"
+        "text": "find / -type f"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "管道符 |"
+        "text": "pwd -P"
       }
     ],
     "correctOptionIds": [
       "B"
     ],
-    "explanation": "ls -a：列出目录内容并包含隐藏项。",
-    "difficulty": 1,
+    "explanation": "ls 默认隐藏以点开头的名称；`-a` 显示全部目录项。它不等同于递归查找整个文件系统。",
+    "difficulty": 2,
     "tags": [
       "命令与 Shell",
-      "ls -a"
+      "ls -a",
+      "隐藏文件"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx009",
@@ -349,43 +353,46 @@
     "chapterName": "命令与 Shell",
     "chapterOrder": 1,
     "type": "multiple",
-    "stem": "再次围绕“man”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "执行 `build 2>error.log | tee output.log` 时，下列哪些描述正确？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "man：查看命令的系统手册页"
+        "text": "build 的标准输出会进入 tee"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "管道符 |：把前一个命令的标准输出连接到后一个命令的标准输入"
+        "text": "build 的标准错误会写入 error.log"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "inode：修改文件或目录的权限位"
+        "text": "tee 会把收到的内容写入 output.log，同时继续输出到终端"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "chmod：保存文件元数据并由目录项通过编号引用"
+        "text": "build 的标准错误也会自动进入 tee"
       }
     ],
     "correctOptionIds": [
       "A",
-      "B"
+      "B",
+      "C"
     ],
-    "explanation": "正确配对是“man—查看命令的系统手册页”和“管道符 |—把前一个命令的标准输出连接到后一个命令的标准输入”。",
+    "explanation": "`2>error.log` 单独重定向标准错误，管道只承接标准输出；tee 默认同时写文件和自己的标准输出。",
     "difficulty": 3,
     "tags": [
       "命令与 Shell",
-      "man"
+      "管道",
+      "重定向",
+      "tee"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx010",
@@ -394,7 +401,7 @@
     "chapterName": "命令与 Shell",
     "chapterOrder": 1,
     "type": "judge",
-    "stem": "再次判断：管道符 |是指“保存文件元数据并由目录项通过编号引用”。",
+    "stem": "辨析判断：管道符 |是指“保存文件元数据并由目录项通过编号引用”。",
     "options": [
       {
         "id": "A",
@@ -419,7 +426,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx011",
@@ -463,7 +470,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx012",
@@ -507,7 +514,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx013",
@@ -516,42 +523,43 @@
     "chapterName": "文件与权限",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "在“文件与权限”主题中，下列哪个术语与“屏蔽新建文件或目录的默认权限位”相符？",
+    "stem": "进程请求以权限 0666 创建普通文件，当前 umask 为 0027。若不考虑额外 ACL，文件最终权限通常是多少？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "umask"
+        "text": "0666"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "硬链接"
+        "text": "0640"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "符号链接"
+        "text": "0650"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "find"
+        "text": "0600"
       }
     ],
     "correctOptionIds": [
-      "A"
+      "B"
     ],
-    "explanation": "umask：屏蔽新建文件或目录的默认权限位。",
+    "explanation": "新文件权限按请求权限清除 umask 中对应的位：0666 & ~0027 = 0640。普通文件不会因为 umask 自动增加执行位。",
     "difficulty": 3,
     "tags": [
       "文件与权限",
-      "umask"
+      "umask",
+      "文件权限"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx014",
@@ -560,7 +568,7 @@
     "chapterName": "文件与权限",
     "chapterOrder": 2,
     "type": "multiple",
-    "stem": "围绕“硬链接”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“文件与权限”中围绕“硬链接”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -596,7 +604,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx015",
@@ -630,7 +638,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx016",
@@ -674,7 +682,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx017",
@@ -683,42 +691,43 @@
     "chapterName": "文件与权限",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“文件与权限”时，下列哪个术语与“保存文件元数据并由目录项通过编号引用”相符？",
+    "stem": "文件 data 有两个硬链接名 a 和 b。删除 a 后，只要 b 仍存在且没有进程占用方面的特殊情况，文件数据通常会怎样？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "inode"
+        "text": "立即被清空"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "chmod"
+        "text": "仍可通过 b 访问，对应 inode 的链接计数减一"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "umask"
+        "text": "自动转换为符号链接"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "硬链接"
+        "text": "移动到回收站"
       }
     ],
     "correctOptionIds": [
-      "A"
+      "B"
     ],
-    "explanation": "inode：保存文件元数据并由目录项通过编号引用。",
+    "explanation": "硬链接是指向同一 inode 的目录项。删除一个名称只减少链接计数，仍有其他硬链接时数据不会因此消失。",
     "difficulty": 2,
     "tags": [
       "文件与权限",
-      "inode"
+      "inode",
+      "硬链接"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx018",
@@ -727,42 +736,43 @@
     "chapterName": "文件与权限",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“文件与权限”时，关于“chmod”，下列描述哪项正确？",
+    "stem": "要把文件权限精确设置为“所有者读写、组只读、其他用户无权限”，应使用哪个八进制模式？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "屏蔽新建文件或目录的默认权限位"
+        "text": "chmod 600 file"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "创建指向同一 inode 的另一个目录项"
+        "text": "chmod 640 file"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "保存另一路径并可跨文件系统引用目标"
+        "text": "chmod 644 file"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "修改文件或目录的权限位"
+        "text": "chmod 750 file"
       }
     ],
     "correctOptionIds": [
-      "D"
+      "B"
     ],
-    "explanation": "chmod：修改文件或目录的权限位。",
+    "explanation": "所有者 rw 为 6，组 r 为 4，其他无权限为 0，因此模式是 0640。",
     "difficulty": 2,
     "tags": [
       "文件与权限",
-      "chmod"
+      "chmod",
+      "八进制权限"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx019",
@@ -771,7 +781,7 @@
     "chapterName": "文件与权限",
     "chapterOrder": 2,
     "type": "multiple",
-    "stem": "再次围绕“umask”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“文件与权限”的适用条件角度辨析“umask”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -799,7 +809,7 @@
       "D"
     ],
     "explanation": "正确配对是“umask—屏蔽新建文件或目录的默认权限位”和“硬链接—创建指向同一 inode 的另一个目录项”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "文件与权限",
       "umask"
@@ -807,7 +817,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx020",
@@ -816,7 +826,7 @@
     "chapterName": "文件与权限",
     "chapterOrder": 2,
     "type": "judge",
-    "stem": "再次判断：硬链接是指“保存另一路径并可跨文件系统引用目标”。",
+    "stem": "辨析判断：硬链接是指“保存另一路径并可跨文件系统引用目标”。",
     "options": [
       {
         "id": "A",
@@ -833,7 +843,7 @@
       "B"
     ],
     "explanation": "硬链接的准确含义是：创建指向同一 inode 的另一个目录项。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "文件与权限",
       "硬链接"
@@ -841,7 +851,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx021",
@@ -850,7 +860,7 @@
     "chapterName": "文件与权限",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“文件与权限”时，下列哪个术语与“保存另一路径并可跨文件系统引用目标”相符？",
+    "stem": "结合“文件与权限”中的相关概念，下列哪个术语与“保存另一路径并可跨文件系统引用目标”相符？",
     "options": [
       {
         "id": "A",
@@ -877,7 +887,7 @@
       "A"
     ],
     "explanation": "符号链接：保存另一路径并可跨文件系统引用目标。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "文件与权限",
       "符号链接"
@@ -885,7 +895,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx022",
@@ -894,7 +904,7 @@
     "chapterName": "文件与权限",
     "chapterOrder": 2,
     "type": "single",
-    "stem": "再次辨析“文件与权限”时，关于“find”，下列描述哪项正确？",
+    "stem": "结合“文件与权限”中的相关概念，关于“find”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -921,7 +931,7 @@
       "D"
     ],
     "explanation": "find：按路径、名称、类型或属性递归查找文件。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "文件与权限",
       "find"
@@ -929,7 +939,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx023",
@@ -973,7 +983,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx024",
@@ -982,7 +992,7 @@
     "chapterName": "进程、任务与服务",
     "chapterOrder": 3,
     "type": "multiple",
-    "stem": "围绕“top”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“进程、任务与服务”中围绕“top”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1010,7 +1020,7 @@
       "C"
     ],
     "explanation": "正确配对是“top—动态展示进程和系统资源使用情况”和“SIGTERM—请求进程正常终止且可被进程捕获处理”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "进程、任务与服务",
       "top"
@@ -1018,7 +1028,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx025",
@@ -1044,7 +1054,7 @@
       "A"
     ],
     "explanation": "SIGTERM的准确含义是：请求进程正常终止且可被进程捕获处理。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "进程、任务与服务",
       "SIGTERM"
@@ -1052,7 +1062,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx026",
@@ -1088,7 +1098,7 @@
       "D"
     ],
     "explanation": "jobs：列出当前 Shell 管理的后台或挂起任务。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "进程、任务与服务",
       "jobs"
@@ -1096,7 +1106,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx027",
@@ -1140,7 +1150,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx028",
@@ -1149,42 +1159,43 @@
     "chapterName": "进程、任务与服务",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“进程、任务与服务”时，下列哪个术语与“显示选定进程的状态快照”相符？",
+    "stem": "排查一个进程的 CPU 使用率是否持续波动，需要在终端中连续刷新观察进程和系统资源。下列工具最合适的是哪一个？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "jobs"
+        "text": "ps"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "ps"
+        "text": "top"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "top"
+        "text": "jobs"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "SIGTERM"
+        "text": "pwd"
       }
     ],
     "correctOptionIds": [
       "B"
     ],
-    "explanation": "ps：显示选定进程的状态快照。",
+    "explanation": "ps 提供选定时刻的状态快照；top 会持续刷新进程和资源指标，更适合观察随时间变化的 CPU 使用情况。",
     "difficulty": 3,
     "tags": [
       "进程、任务与服务",
-      "ps"
+      "top",
+      "进程监控"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx029",
@@ -1193,7 +1204,7 @@
     "chapterName": "进程、任务与服务",
     "chapterOrder": 3,
     "type": "multiple",
-    "stem": "再次围绕“top”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“进程、任务与服务”的适用条件角度辨析“top”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1229,7 +1240,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx030",
@@ -1238,7 +1249,7 @@
     "chapterName": "进程、任务与服务",
     "chapterOrder": 3,
     "type": "judge",
-    "stem": "再次判断：SIGTERM是指“列出当前 Shell 管理的后台或挂起任务”。",
+    "stem": "辨析判断：SIGTERM是指“列出当前 Shell 管理的后台或挂起任务”。",
     "options": [
       {
         "id": "A",
@@ -1255,7 +1266,7 @@
       "B"
     ],
     "explanation": "SIGTERM的准确含义是：请求进程正常终止且可被进程捕获处理。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "进程、任务与服务",
       "SIGTERM"
@@ -1263,7 +1274,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx031",
@@ -1272,7 +1283,7 @@
     "chapterName": "进程、任务与服务",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“进程、任务与服务”时，关于“jobs”，下列描述哪项正确？",
+    "stem": "结合“进程、任务与服务”中的相关概念，关于“jobs”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -1307,7 +1318,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx032",
@@ -1316,42 +1327,43 @@
     "chapterName": "进程、任务与服务",
     "chapterOrder": 3,
     "type": "single",
-    "stem": "再次辨析“进程、任务与服务”时，下列哪个术语与“管理 systemd 单元及其启停状态”相符？",
+    "stem": "某 systemd 服务需要“立即启动，并设置为以后开机自动启动”。下列命令最直接的是哪一个？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "apt"
+        "text": "systemctl start demo.service"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "systemctl"
+        "text": "systemctl enable demo.service"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "/etc/passwd"
+        "text": "systemctl enable --now demo.service"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "sudo"
+        "text": "systemctl status demo.service"
       }
     ],
     "correctOptionIds": [
-      "B"
+      "C"
     ],
-    "explanation": "systemctl：管理 systemd 单元及其启停状态。",
+    "explanation": "`enable` 建立开机启动关系，`--now` 同时立即启动单元；只使用 start 或 enable 都只完成其中一部分。",
     "difficulty": 3,
     "tags": [
       "进程、任务与服务",
-      "systemctl"
+      "systemctl",
+      "服务管理"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx033",
@@ -1387,7 +1399,7 @@
       "A"
     ],
     "explanation": "/etc/passwd：保存本地用户账户的基础信息而非明文密码。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "用户、软件包与日志",
       "/etc/passwd"
@@ -1395,7 +1407,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx034",
@@ -1404,7 +1416,7 @@
     "chapterName": "用户、软件包与日志",
     "chapterOrder": 4,
     "type": "multiple",
-    "stem": "围绕“sudo”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“用户、软件包与日志”中围绕“sudo”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1432,7 +1444,7 @@
       "D"
     ],
     "explanation": "正确配对是“sudo—按策略以其他用户身份执行命令”和“apt—Debian 系发行版常用的软件包管理前端”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "用户、软件包与日志",
       "sudo"
@@ -1440,7 +1452,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx035",
@@ -1474,7 +1486,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx036",
@@ -1483,42 +1495,43 @@
     "chapterName": "用户、软件包与日志",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "在“用户、软件包与日志”主题中，关于“journalctl”，下列描述哪项正确？",
+    "stem": "只查看本次启动以来 ssh.service 单元的日志，下列命令最合适的是哪一个？",
     "options": [
       {
         "id": "A",
         "label": "A",
-        "text": "查看套接字及 TCP/UDP 连接状态"
+        "text": "journalctl -u ssh.service -b"
       },
       {
         "id": "B",
         "label": "B",
-        "text": "查询 systemd 日志系统中的记录"
+        "text": "journalctl -f /etc/passwd"
       },
       {
         "id": "C",
         "label": "C",
-        "text": "查看或配置网络接口地址"
+        "text": "systemctl cat ssh.service"
       },
       {
         "id": "D",
         "label": "D",
-        "text": "使用 ICMP 回显测试基本网络可达性"
+        "text": "dmesg -w ssh.service"
       }
     ],
     "correctOptionIds": [
-      "B"
+      "A"
     ],
-    "explanation": "journalctl：查询 systemd 日志系统中的记录。",
+    "explanation": "`-u` 按 systemd 单元过滤，`-b` 限定当前启动；两者组合可查看本次启动以来该服务的日志。",
     "difficulty": 3,
     "tags": [
       "用户、软件包与日志",
-      "journalctl"
+      "journalctl",
+      "systemd 日志"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx037",
@@ -1527,7 +1540,7 @@
     "chapterName": "用户、软件包与日志",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“用户、软件包与日志”时，下列哪个术语与“保存本地用户账户的基础信息而非明文密码”相符？",
+    "stem": "结合“用户、软件包与日志”中的相关概念，下列哪个术语与“保存本地用户账户的基础信息而非明文密码”相符？",
     "options": [
       {
         "id": "A",
@@ -1554,7 +1567,7 @@
       "A"
     ],
     "explanation": "/etc/passwd：保存本地用户账户的基础信息而非明文密码。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "用户、软件包与日志",
       "/etc/passwd"
@@ -1562,7 +1575,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx038",
@@ -1571,7 +1584,7 @@
     "chapterName": "用户、软件包与日志",
     "chapterOrder": 4,
     "type": "single",
-    "stem": "再次辨析“用户、软件包与日志”时，关于“sudo”，下列描述哪项正确？",
+    "stem": "结合“用户、软件包与日志”中的相关概念，关于“sudo”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -1606,7 +1619,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx039",
@@ -1615,7 +1628,7 @@
     "chapterName": "用户、软件包与日志",
     "chapterOrder": 4,
     "type": "multiple",
-    "stem": "再次围绕“apt”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“用户、软件包与日志”的适用条件角度辨析“apt”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1643,7 +1656,7 @@
       "D"
     ],
     "explanation": "正确配对是“apt—Debian 系发行版常用的软件包管理前端”和“journalctl—查询 systemd 日志系统中的记录”。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "用户、软件包与日志",
       "apt"
@@ -1651,7 +1664,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx040",
@@ -1660,7 +1673,7 @@
     "chapterName": "用户、软件包与日志",
     "chapterOrder": 4,
     "type": "judge",
-    "stem": "再次判断：journalctl是指“查看或配置网络接口地址”。",
+    "stem": "`journalctl -f` 会持续等待并显示新进入日志系统的记录，但不会因此修改或删除这些日志。",
     "options": [
       {
         "id": "A",
@@ -1674,18 +1687,19 @@
       }
     ],
     "correctOptionIds": [
-      "B"
+      "A"
     ],
-    "explanation": "journalctl的准确含义是：查询 systemd 日志系统中的记录。",
+    "explanation": "`-f` 表示跟随新日志，作用类似持续查看追加内容；它是读取操作，不负责修改或清理日志。",
     "difficulty": 3,
     "tags": [
       "用户、软件包与日志",
-      "journalctl"
+      "journalctl",
+      "日志跟随"
     ],
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx041",
@@ -1721,7 +1735,7 @@
       "A"
     ],
     "explanation": "ip addr：查看或配置网络接口地址。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "网络命令与排障",
       "ip addr"
@@ -1729,7 +1743,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx042",
@@ -1773,7 +1787,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx043",
@@ -1817,7 +1831,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx044",
@@ -1826,7 +1840,7 @@
     "chapterName": "网络命令与排障",
     "chapterOrder": 5,
     "type": "multiple",
-    "stem": "围绕“curl”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "在“网络命令与排障”中围绕“curl”及相关概念，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -1862,7 +1876,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx045",
@@ -1888,7 +1902,7 @@
       "A"
     ],
     "explanation": "traceroute的准确含义是：探测数据包到目标路径上的逐跳节点。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "网络命令与排障",
       "traceroute"
@@ -1896,7 +1910,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx046",
@@ -1905,7 +1919,7 @@
     "chapterName": "网络命令与排障",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“网络命令与排障”时，下列哪个术语与“查看或配置网络接口地址”相符？",
+    "stem": "结合“网络命令与排障”中的相关概念，下列哪个术语与“查看或配置网络接口地址”相符？",
     "options": [
       {
         "id": "A",
@@ -1940,7 +1954,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx047",
@@ -1949,7 +1963,7 @@
     "chapterName": "网络命令与排障",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“网络命令与排障”时，关于“ping”，下列描述哪项正确？",
+    "stem": "结合“网络命令与排障”中的相关概念，关于“ping”，下列描述哪项正确？",
     "options": [
       {
         "id": "A",
@@ -1984,7 +1998,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx048",
@@ -1993,7 +2007,7 @@
     "chapterName": "网络命令与排障",
     "chapterOrder": 5,
     "type": "single",
-    "stem": "再次辨析“网络命令与排障”时，下列哪个术语与“查看套接字及 TCP/UDP 连接状态”相符？",
+    "stem": "结合“网络命令与排障”中的相关概念，下列哪个术语与“查看套接字及 TCP/UDP 连接状态”相符？",
     "options": [
       {
         "id": "A",
@@ -2020,7 +2034,7 @@
       "B"
     ],
     "explanation": "ss：查看套接字及 TCP/UDP 连接状态。",
-    "difficulty": 2,
+    "difficulty": 1,
     "tags": [
       "网络命令与排障",
       "ss"
@@ -2028,7 +2042,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx049",
@@ -2037,7 +2051,7 @@
     "chapterName": "网络命令与排障",
     "chapterOrder": 5,
     "type": "multiple",
-    "stem": "再次围绕“curl”及相关概念，下列“术语—说明”配对中哪些正确？",
+    "stem": "从“网络命令与排障”的适用条件角度辨析“curl”，下列“术语—说明”配对中哪些正确？",
     "options": [
       {
         "id": "A",
@@ -2073,7 +2087,7 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   },
   {
     "id": "lnx050",
@@ -2082,7 +2096,7 @@
     "chapterName": "网络命令与排障",
     "chapterOrder": 5,
     "type": "judge",
-    "stem": "再次判断：traceroute是指“输出当前工作目录的绝对路径”。",
+    "stem": "辨析判断：traceroute是指“输出当前工作目录的绝对路径”。",
     "options": [
       {
         "id": "A",
@@ -2099,7 +2113,7 @@
       "B"
     ],
     "explanation": "traceroute的准确含义是：探测数据包到目标路径上的逐跳节点。",
-    "difficulty": 1,
+    "difficulty": 2,
     "tags": [
       "网络命令与排障",
       "traceroute"
@@ -2107,6 +2121,6 @@
     "images": [],
     "examScopes": [],
     "status": "active",
-    "version": 1
+    "version": 2
   }
 ]
