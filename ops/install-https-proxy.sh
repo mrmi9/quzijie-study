@@ -5,7 +5,7 @@ project_dir="${QUIZIJIE_PROJECT_DIR:-/opt/quzijie-study}"
 domain="api.qushuati.cloud"
 certificate_dir="/etc/letsencrypt/live/${domain}"
 
-if [[ ! -f "${certificate_dir}/fullchain.pem" || ! -f "${certificate_dir}/privkey.pem" ]]; then
+if ! sudo test -f "${certificate_dir}/fullchain.pem" || ! sudo test -f "${certificate_dir}/privkey.pem"; then
   echo "Missing Let's Encrypt certificate for ${domain}; issue it before installing the final proxy." >&2
   exit 1
 fi

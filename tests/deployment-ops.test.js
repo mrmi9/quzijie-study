@@ -64,6 +64,8 @@ assert.match(backupService, /ReadWritePaths=\/opt\/quzijie-study\/backups/);
 assert.match(backupTimer, /OnCalendar=\*-\*-\* 03:20:00 Asia\/Shanghai/);
 assert.match(httpsInstaller, /nginx -t/);
 assert.match(httpsInstaller, /api\.qushuati\.cloud/);
+assert.match(httpsInstaller, /sudo test -f .*fullchain\.pem/);
+assert.match(httpsInstaller, /sudo test -f .*privkey\.pem/);
 assert.match(httpsInstaller, /rm -f .*quzijie-acme-bootstrap\.conf/);
 assert.match(nginxSite, /listen 8443 ssl http2/);
 assert.match(nginxSite, /proxy_pass http:\/\/127\.0\.0\.1:3000/);
