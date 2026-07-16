@@ -30,10 +30,11 @@ export function registerAuthRoutes(
   }
 ): void {
   const { prisma, config, authenticate } = deps;
+  const loginRateLimit = { max: config.nodeEnv === "test" ? 100 : 10, timeWindow: "1 minute" };
 
   if (config.wechatAuthMode === "cloud") {
     app.post("/api/v1/auth/wechat/cloud-login", {
-      config: { rateLimit: { max: 10, timeWindow: "1 minute" } }
+      config: { rateLimit: loginRateLimit }
     }, async (request) => {
       const identity = readCloudWechatIdentity(request);
       const now = new Date();
@@ -50,7 +51,7 @@ export function registerAuthRoutes(
     if (!wechatProvider) throw new Error("缺少微信登录适配器");
     app.post<{ Body: { code: string } }>("/api/v1/auth/wechat/login", {
       schema: { body: codeBodySchema },
-      config: { rateLimit: { max: 10, timeWindow: "1 minute" } }
+      config: { rateLimit: loginRateLimit }
     }, async (request) => {
       const identity = await wechatProvider.exchangeCode(request.body.code);
       const now = new Date();
