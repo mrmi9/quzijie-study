@@ -17,6 +17,15 @@ button::after {
   border: 0;
 }
 
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: 1.2;
+}
+
 .page-shell {
   min-height: 100vh;
   padding: 32rpx;
@@ -35,7 +44,6 @@ button::after {
   border-radius: 18rpx;
   font-size: 30rpx;
   font-weight: 600;
-  line-height: 88rpx;
 }
 
 .primary-button {

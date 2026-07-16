@@ -27,7 +27,7 @@
 .bottom-progress { color:#64748b; font-size:23rpx; }
 .early-submit { padding:4rpx 0 4rpx 24rpx; color:#be123c; font-size:24rpx; font-weight:700; }
 .navigation-row { display:flex; gap:14rpx; }
-.nav-button,.card-button,.next-button { flex:1; width:0; min-width:0; height:76rpx; margin:0; padding:0; border-radius:16rpx; font-size:26rpx; line-height:76rpx; }
+.nav-button,.card-button,.next-button { display:flex; flex:1; align-items:center; justify-content:center; width:0; min-width:0; height:76rpx; margin:0; padding:0; border-radius:16rpx; font-size:26rpx; line-height:1.2; }
 .card-button { color:#9d174d; background:#fce7f3; border-radius:16rpx; }
 .next-button { flex:1.25; color:#fff; background:#be185d; font-weight:800; }
 .finish-button { background:#9d174d; }

@@ -20,12 +20,15 @@
 }
 
 .remove-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 0;
   padding: 0 18rpx;
   color: #b42318;
   background: #feeceb;
   font-size: 22rpx;
-  line-height: 54rpx;
+  line-height: 1.2;
 }
 
 .favorite-stem,

@@ -68,6 +68,9 @@
 }
 
 .retry-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: auto;
   min-width: 112rpx;
   height: 56rpx;
@@ -76,7 +79,7 @@
   color: #2563eb;
   background: #eaf1ff;
   font-size: 24rpx;
-  line-height: 56rpx;
+  line-height: 1.2;
   border-radius: 14rpx;
 }
 
@@ -218,10 +221,10 @@
 .rank-label { margin-top: 4rpx; color: #64748b; font-size: 20rpx; }
 .nickname-form { gap: 12rpx; margin-top: 22rpx; }
 .nickname-input { flex: 1; height: 74rpx; padding: 0 20rpx; background: white; border: 2rpx solid #cbd5e1; border-radius: 15rpx; }
-.nickname-button { width: 140rpx; height: 74rpx; margin: 0; color: white; background: #2563eb; font-size: 23rpx; line-height: 74rpx; border-radius: 15rpx; }
+.nickname-button { display: flex; align-items: center; justify-content: center; width: 140rpx; height: 74rpx; margin: 0; padding-top: 0; padding-bottom: 0; color: white; background: #2563eb; font-size: 23rpx; line-height: 1.2; border-radius: 15rpx; }
 .rename-note { margin-top: 10rpx; color: #94a3b8; font-size: 21rpx; }
 .gamification-actions { gap: 14rpx; margin-top: 22rpx; }
-.gamification-actions button { flex: 1; height: 72rpx; margin: 0; font-size: 23rpx; line-height: 72rpx; border-radius: 15rpx; }
+.gamification-actions button { display: flex; flex: 1; align-items: center; justify-content: center; height: 72rpx; margin: 0; padding-top: 0; padding-bottom: 0; font-size: 23rpx; line-height: 1.2; border-radius: 15rpx; }
 .leaderboard-button { color: white; background: linear-gradient(135deg, #f59e0b, #d97706); }
 .achievement-button { color: white; background: linear-gradient(135deg, #7c3aed, #4f46e5); }
 

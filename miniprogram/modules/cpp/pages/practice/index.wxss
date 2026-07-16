@@ -225,12 +225,15 @@
 }
 
 .favorite-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 0;
   padding: 0 20rpx;
   color: #c06a00;
   background: #fff6dc;
   font-size: 24rpx;
-  line-height: 60rpx;
+  line-height: 1.2;
 }
 
 .answer-line,
