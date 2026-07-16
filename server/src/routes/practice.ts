@@ -45,18 +45,19 @@ export function registerPracticeRoutes(
     schema: { params: subjectParams }
   }, async (request) => ({ data: await service.getChapters(request.userId, request.params.subjectId) }));
 
-  app.post<{ Body: { subject: string; mode: string; chapterId?: string; count: number } }>("/api/v1/practice-sessions", {
+  app.post<{ Body: { scope?: string; subject?: string; mode: string; chapterId?: string; count: number | "all" } }>("/api/v1/practice-sessions", {
     preHandler: authenticate,
     schema: {
       body: {
         type: "object",
         additionalProperties: false,
-        required: ["subject", "mode", "count"],
+        required: ["mode", "count"],
         properties: {
+          scope: { enum: ["subject", "all"] },
           subject: { type: "string", minLength: 1, maxLength: 32 },
           mode: { enum: ["chapter", "random", "wrong", "favorite"] },
           chapterId: { type: "string", minLength: 1, maxLength: 64 },
-          count: { enum: [5, 10, 20] }
+          count: { enum: [5, 10, 20, "all"] }
         }
       }
     }

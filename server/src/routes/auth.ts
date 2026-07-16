@@ -26,6 +26,7 @@ export function registerAuthRoutes(
     config: AppConfig;
     wechatProvider?: WechatAuthProvider;
     authenticate: AuthenticateHandler;
+    onAuthenticated?: (userId: string) => Promise<unknown>;
   }
 ): void {
   const { prisma, config, authenticate } = deps;
@@ -41,6 +42,7 @@ export function registerAuthRoutes(
         update: { unionId: identity.unionId, lastLoginAt: now, status: "ACTIVE" },
         create: { wechatOpenId: identity.openId, unionId: identity.unionId, lastLoginAt: now }
       });
+      await deps.onAuthenticated?.(user.id);
       return { data: { authenticated: true, user: { id: user.id, createdAt: user.createdAt.toISOString() } } };
     });
   } else {
@@ -57,6 +59,7 @@ export function registerAuthRoutes(
         update: { unionId: identity.unionId, lastLoginAt: now },
         create: { wechatOpenId: identity.openId, unionId: identity.unionId, lastLoginAt: now }
       });
+      await deps.onAuthenticated?.(user.id);
       const tokens = await issueTokenPair(app, prisma, config, user.id);
       return { data: Object.assign(tokens, { user: { id: user.id, createdAt: user.createdAt.toISOString() } }) };
     });

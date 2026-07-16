@@ -1,0 +1,44 @@
+.leaderboard-page { padding-top: 26rpx; }
+.period-tabs { display: flex; padding: 8rpx; background: #e2e8f0; border-radius: 20rpx; }
+.period-tab { flex: 1; padding: 18rpx 0; color: #64748b; text-align: center; font-weight: 700; border-radius: 15rpx; }
+.period-active { color: #1d4ed8; background: #ffffff; box-shadow: 0 6rpx 18rpx rgba(37, 99, 235, 0.12); }
+.board-state { margin-top: 24rpx; padding: 34rpx; color: #64748b; text-align: center; }
+.board-error { color: #b42318; }
+.retry-button { width: 180rpx; margin-top: 20rpx; color: #2563eb; background: #eaf1ff; }
+.podium-stage { display: flex; align-items: flex-end; justify-content: center; gap: 12rpx; min-height: 490rpx; margin-top: 24rpx; padding: 30rpx 10rpx 0; overflow: hidden; background: radial-gradient(circle at 50% 28%, #fff7c2, #e0ecff 52%, #f4f7fb 73%); border-radius: 32rpx; }
+.podium-user { position: relative; display: flex; flex: 1; min-width: 0; flex-direction: column; align-items: center; animation: podium-rise 560ms ease-out both; }
+.podium-rank-1 { order: 2; animation-delay: 80ms; }
+.podium-rank-2 { order: 1; animation-delay: 160ms; }
+.podium-rank-3 { order: 3; animation-delay: 240ms; }
+.podium-crown { height: 54rpx; color: #f59e0b; font-size: 54rpx; line-height: 54rpx; filter: drop-shadow(0 8rpx 10rpx rgba(245, 158, 11, 0.35)); animation: crown-glow 1.8s ease-in-out infinite; }
+.podium-rank-2 .podium-crown { color: #94a3b8; font-size: 34rpx; }
+.podium-rank-3 .podium-crown { color: #b87333; font-size: 34rpx; }
+.medal { display: flex; align-items: center; justify-content: center; width: 76rpx; height: 76rpx; margin-top: 8rpx; color: white; font-size: 34rpx; font-weight: 900; border: 7rpx solid rgba(255,255,255,.8); border-radius: 50%; box-shadow: 0 12rpx 28rpx rgba(15,23,42,.22); }
+.medal-1 { width: 92rpx; height: 92rpx; background: linear-gradient(135deg, #fde68a, #f59e0b); }
+.medal-2 { background: linear-gradient(135deg, #e2e8f0, #94a3b8); }
+.medal-3 { background: linear-gradient(135deg, #fdba74, #b45309); }
+.podium-name { max-width: 190rpx; margin-top: 14rpx; overflow: hidden; color: #0f172a; font-size: 23rpx; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+.podium-title { margin-top: 5rpx; color: #7c3aed; font-size: 20rpx; }
+.podium-points { margin: 8rpx 0 14rpx; color: #1d4ed8; font-size: 28rpx; font-weight: 900; }
+.podium-base { width: 100%; padding: 30rpx 0; color: white; text-align: center; font-weight: 900; background: linear-gradient(180deg, #60a5fa, #2563eb); border-radius: 18rpx 18rpx 0 0; }
+.podium-rank-1 .podium-base { padding: 58rpx 0; background: linear-gradient(180deg, #fbbf24, #d97706); }
+.podium-rank-2 .podium-base { padding: 40rpx 0; background: linear-gradient(180deg, #cbd5e1, #64748b); }
+.podium-rank-3 .podium-base { padding: 30rpx 0; background: linear-gradient(180deg, #d97706, #92400e); }
+.current-rank { display: flex; align-items: center; justify-content: space-between; margin-top: 24rpx; padding: 26rpx; border: 2rpx solid #93c5fd; background: linear-gradient(135deg, #eff6ff, #ffffff); }
+.current-label, .current-name, .current-position { display: block; }
+.current-label { color: #64748b; font-size: 22rpx; }
+.current-name { margin-top: 6rpx; font-weight: 800; }
+.current-score { color: #2563eb; text-align: right; font-size: 23rpx; font-weight: 700; }
+.current-position { margin-bottom: 4rpx; font-size: 28rpx; }
+.rank-list { margin-top: 24rpx; }
+.rank-row { display: flex; align-items: center; margin-bottom: 14rpx; padding: 22rpx 24rpx; }
+.rank-current { border: 2rpx solid #93c5fd; background: #eff6ff; }
+.rank-number { width: 70rpx; color: #64748b; font-size: 28rpx; font-weight: 800; }
+.rank-identity { flex: 1; min-width: 0; }
+.rank-name, .rank-title { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank-name { font-weight: 700; }
+.rank-title { margin-top: 4rpx; color: #7c3aed; font-size: 21rpx; }
+.rank-points { color: #1d4ed8; font-weight: 800; }
+.privacy-note { display: block; margin: 28rpx 20rpx; color: #94a3b8; font-size: 22rpx; text-align: center; }
+@keyframes podium-rise { from { opacity: 0; transform: translateY(70rpx); } to { opacity: 1; transform: translateY(0); } }
+@keyframes crown-glow { 50% { transform: translateY(-6rpx) scale(1.08); filter: drop-shadow(0 10rpx 18rpx rgba(245,158,11,.55)); } }

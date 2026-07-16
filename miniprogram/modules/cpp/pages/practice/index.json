@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "答题",
-  "disableScroll": false
+  "disableScroll": false,
+  "usingComponents": {
+    "achievement-unlock": "/components/achievement-unlock/index"
+  }
 }

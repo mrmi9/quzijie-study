@@ -1,19 +1,76 @@
 <view class="page-shell account-page safe-bottom">
   <view class="card account-card">
-    <text class="account-title">学习账户</text>
-    <text wx:if="{{loading}}" class="account-meta">正在加载...</text>
+    <text class="account-kicker">我的</text>
+    <text class="account-title">微信学习账户</text>
+    <text wx:if="{{accountLoading}}" class="account-meta">正在加载账户信息...</text>
     <text wx:elif="{{createdAt}}" class="account-meta">{{isMock ? createdAt : '创建于 ' + createdAt}}</text>
-    <text wx:if="{{error}}" class="account-error">{{error}}</text>
-  </view>
-
-  <view class="card menu-card" bindtap="openPrivacy">
-    <view>
-      <text class="menu-title">隐私说明</text>
-      <text class="menu-subtitle">查看收集的数据、使用目的和删除方式</text>
+    <view wx:if="{{accountError}}" class="inline-error">
+      <text class="account-error">{{accountError}}</text>
+      <button class="retry-link" bindtap="loadAccount">重试</button>
     </view>
-    <text class="menu-arrow">›</text>
   </view>
 
+  <text class="section-title mine-section-title">积分与称号</text>
+  <view wx:if="{{gamificationLoading}}" class="card section-state">正在加载积分档案...</view>
+  <view wx:elif="{{gamificationError && !gamification}}" class="card section-state section-error">
+    <text>{{gamificationError}}</text>
+    <button class="retry-link" bindtap="loadGamification">重试</button>
+  </view>
+  <view wx:elif="{{gamification}}" class="card gamification-card">
+    <view class="gamification-head">
+      <view>
+        <text class="gamification-name">{{gamification.identity.displayLabel}}</text>
+        <text class="gamification-title">{{gamification.equippedTitle ? gamification.equippedTitle.title : '暂未佩戴称号'}}</text>
+      </view>
+      <view class="points-orb">
+        <text class="points-value">{{gamification.points.total}}</text>
+        <text class="points-label">总积分</text>
+      </view>
+    </view>
+    <view class="rank-strip">
+      <view><text class="rank-value">{{gamification.ranks.daily ? '第 ' + gamification.ranks.daily + ' 名' : '未上榜'}}</text><text class="rank-label">日榜</text></view>
+      <view><text class="rank-value">{{gamification.ranks.weekly ? '第 ' + gamification.ranks.weekly + ' 名' : '未上榜'}}</text><text class="rank-label">周榜</text></view>
+      <view><text class="rank-value">{{gamification.ranks.all ? '第 ' + gamification.ranks.all + ' 名' : '未上榜'}}</text><text class="rank-label">总榜</text></view>
+    </view>
+    <view class="nickname-form">
+      <input class="nickname-input" value="{{nicknameInput}}" maxlength="12" placeholder="设置 2–12 位公开昵称" bindinput="onNicknameInput"></input>
+      <button class="nickname-button" disabled="{{!canRename || !nicknameInput}}" loading="{{savingNickname}}" bindtap="saveNickname">保存</button>
+    </view>
+    <text wx:if="{{!canRename}}" class="rename-note">昵称设置后每 30 天可修改一次</text>
+    <text wx:if="{{gamificationError}}" class="action-error">{{gamificationError}}</text>
+    <view class="gamification-actions">
+      <button class="leaderboard-button" bindtap="openLeaderboard">积分排行</button>
+      <button class="achievement-button" bindtap="openAchievements">我的成就 {{gamification.unlockedCount}}/{{gamification.totalAchievements}}</button>
+    </view>
+  </view>
+
+  <text class="section-title mine-section-title">学习概览</text>
+  <view wx:if="{{overviewLoading}}" class="card section-state">正在加载学习数据...</view>
+  <view wx:elif="{{overviewError}}" class="card section-state section-error">
+    <text>{{overviewError}}</text>
+    <button class="retry-link" bindtap="loadOverview">重试</button>
+  </view>
+  <view wx:else class="mine-stats-grid">
+    <view class="card mine-stat-card" wx:for="{{stats}}" wx:key="id">
+      <text class="mine-stat-value">{{item.displayValue}}</text>
+      <text class="mine-stat-label">{{item.label}}</text>
+    </view>
+  </view>
+
+  <text class="section-title mine-section-title">常用功能</text>
+  <view class="shortcut-grid">
+    <view class="card shortcut-card" wx:for="{{shortcuts}}" wx:key="id" data-id="{{item.id}}" bindtap="openShortcut">
+      <view class="shortcut-head">
+        <text class="shortcut-title">{{item.title}}</text>
+        <text class="shortcut-arrow">›</text>
+      </view>
+      <text class="shortcut-subtitle">{{item.subtitle}}</text>
+      <text class="shortcut-meta">{{item.metaText}}</text>
+    </view>
+  </view>
+
+  <text class="section-title mine-section-title">账户管理</text>
+  <text wx:if="{{actionError}}" class="action-error">{{actionError}}</text>
   <button class="secondary-button action-button" bindtap="logout">退出登录</button>
 
   <view class="danger-zone card">

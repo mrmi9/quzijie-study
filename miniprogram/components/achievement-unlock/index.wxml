@@ -1,0 +1,11 @@
+<view wx:if="{{visible}}" class="unlock-mask" bindtap="close">
+  <view class="unlock-card rarity-{{current.rarity}}" catchtap="stopBubble">
+    <view class="unlock-rays"></view>
+    <text class="unlock-kicker">新成就解锁</text>
+    <image class="unlock-badge" src="{{current.iconPath}}" mode="aspectFit"></image>
+    <text class="unlock-title">{{current.title}}</text>
+    <text class="unlock-rarity">{{current.rarityName}}称号</text>
+    <text class="unlock-description">{{current.description}}</text>
+    <button class="unlock-button" bindtap="next">{{remaining ? '继续查看（' + remaining + '）' : '收下成就'}}</button>
+  </view>
+</view>

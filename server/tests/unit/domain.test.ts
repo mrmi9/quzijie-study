@@ -3,6 +3,8 @@ import { describe, it } from "node:test";
 import { loadConfig } from "../../src/config.js";
 import { publicQuestion, sameAnswer, validateSelection, type QuestionSnapshot } from "../../src/domain/questions.js";
 import { createWechatAuthProvider } from "../../src/auth/wechat.js";
+import { ACHIEVEMENTS } from "../../src/domain/achievements.js";
+import { normalizeDisplayName, publicCodeFor, shanghaiDayKey, shanghaiPeriod } from "../../src/domain/gamification.js";
 
 const snapshot: QuestionSnapshot = {
   id: "cpp001",
@@ -92,5 +94,40 @@ describe("配置与微信适配器", () => {
     });
     assert.equal(config.databaseUrl, "mysql://root:p%40ss%2Fword@10.0.0.8:3306/quzijie");
     assert.equal(config.jwtAccessSecret, "");
+  });
+});
+
+describe("积分与成就领域规则", () => {
+  it("公开编号稳定且固定为四位非易混淆字符", () => {
+    assert.equal(publicCodeFor("user-1"), publicCodeFor("user-1"));
+    assert.match(publicCodeFor("user-1"), /^[23456789A-HJ-NP-Z]{4}$/);
+    assert.notEqual(publicCodeFor("user-1"), publicCodeFor("user-1", 1));
+  });
+
+  it("昵称执行 NFKC、字符集、保留词与联系方式校验", () => {
+    assert.equal(normalizeDisplayName("  ＡＢ_12  "), "AB_12");
+    assert.throws(() => normalizeDisplayName("管"), (error: unknown) => Boolean(error && typeof error === "object" && "code" in error && error.code === "INVALID_DISPLAY_NAME"));
+    assert.throws(() => normalizeDisplayName("管理员小米"), (error: unknown) => Boolean(error && typeof error === "object" && "code" in error && error.code === "RESERVED_DISPLAY_NAME"));
+    assert.throws(() => normalizeDisplayName("联系我12345678"), (error: unknown) => Boolean(error && typeof error === "object" && "code" in error && error.code === "UNSAFE_DISPLAY_NAME"));
+  });
+
+  it("日榜和周榜严格使用北京时间边界", () => {
+    const now = new Date("2026-07-15T12:30:00.000Z");
+    assert.equal(shanghaiDayKey(now), "2026-07-15");
+    assert.deepEqual(shanghaiPeriod("daily", now), {
+      start: new Date("2026-07-14T16:00:00.000Z"),
+      end: new Date("2026-07-15T16:00:00.000Z")
+    });
+    assert.deepEqual(shanghaiPeriod("weekly", now), {
+      start: new Date("2026-07-12T16:00:00.000Z"),
+      end: new Date("2026-07-19T16:00:00.000Z")
+    });
+  });
+
+  it("成就目录固定为十二个唯一称号和图标", () => {
+    assert.equal(ACHIEVEMENTS.length, 12);
+    assert.equal(new Set(ACHIEVEMENTS.map((item) => item.key)).size, 12);
+    assert.equal(new Set(ACHIEVEMENTS.map((item) => item.title)).size, 12);
+    assert.equal(new Set(ACHIEVEMENTS.map((item) => item.iconKey)).size, 12);
   });
 });

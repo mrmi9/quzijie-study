@@ -6,6 +6,8 @@ import { fileURLToPath } from "node:url";
 import { resolveDatabaseUrl, parseMysqlDatabaseUrl } from "../database-url.js";
 import { createPrismaClient } from "../db.js";
 import { importQuestions } from "./import-questions.js";
+import { backfillGamification } from "./backfill-gamification.js";
+import { markDatabaseBootstrapPending, markDatabaseBootstrapReady } from "../bootstrap-state.js";
 
 const INITIAL_MIGRATION = "20260715090000_mysql_cloud_init";
 const INITIAL_TABLES = [
@@ -162,6 +164,7 @@ async function main(): Promise<void> {
   // CloudRun starts probing the configured port immediately. Listen before the
   // one-time database bootstrap so a slow migration is not mistaken for a
   // crashed container.
+  markDatabaseBootstrapPending();
   await import("../server.js");
   console.log("HTTP server started; preparing the cloud database.");
 
@@ -169,6 +172,14 @@ async function main(): Promise<void> {
   await recoverInterruptedInitialMigration(databaseUrl);
   await run("npm", ["run", "db:deploy"]);
   await seedEmptyDatabase(databaseUrl);
+  const prisma = createPrismaClient(databaseUrl);
+  try {
+    const backfill = await backfillGamification(prisma);
+    console.log(`Gamification backfill completed for ${backfill.usersProcessed} users.`);
+  } finally {
+    await prisma.$disconnect();
+  }
+  markDatabaseBootstrapReady();
   console.log("Cloud database bootstrap completed.");
 }
 

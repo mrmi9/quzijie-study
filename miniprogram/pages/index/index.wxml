@@ -1,7 +1,7 @@
 <view class="page-shell home-page safe-bottom">
   <view class="hero">
     <text class="hero-badge">趣学编程 · 每日进步</text>
-    <text class="hero-title">趣字节刷题</text>
+    <text class="hero-title">趣刷题喽</text>
     <text class="hero-subtitle">按知识模块练习，用解析真正弄懂每一道题</text>
   </view>
 
@@ -46,12 +46,5 @@
     </view>
   </view>
 
-  <view class="account-entry card" bindtap="openAccount">
-    <view>
-      <text class="account-entry-title">账户与数据</text>
-      <text class="account-entry-subtitle">隐私说明、退出登录与删除账户</text>
-    </view>
-    <text class="account-entry-arrow">›</text>
-  </view>
   </block>
 </view>

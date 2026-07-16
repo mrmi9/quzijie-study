@@ -41,9 +41,5 @@ Page({
   continueExam() {
     const active = this.data.overview && this.data.overview.activeExam;
     if (active) wx.navigateTo({ url: `/modules/cpp/pages/exam/index?examId=${active.id}` });
-  },
-
-  openAccount() {
-    wx.navigateTo({ url: '/pages/account/index' });
   }
 });

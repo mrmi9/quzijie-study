@@ -1,0 +1,98 @@
+.unlock-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 52rpx;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.unlock-card {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 48rpx 34rpx 36rpx;
+  text-align: center;
+  background: linear-gradient(155deg, #ffffff, #eff6ff);
+  border: 3rpx solid #93c5fd;
+  border-radius: 36rpx;
+  box-shadow: 0 26rpx 80rpx rgba(15, 23, 42, 0.35);
+  animation: unlock-enter 260ms ease-out;
+}
+
+.unlock-rays {
+  position: absolute;
+  top: -180rpx;
+  left: 50%;
+  width: 500rpx;
+  height: 500rpx;
+  margin-left: -250rpx;
+  background: repeating-conic-gradient(from 0deg, rgba(59, 130, 246, 0.13) 0 12deg, transparent 12deg 28deg);
+  border-radius: 50%;
+  animation: rays-spin 12s linear infinite;
+}
+
+.unlock-kicker,
+.unlock-title,
+.unlock-rarity,
+.unlock-description {
+  position: relative;
+  display: block;
+}
+
+.unlock-kicker {
+  color: #2563eb;
+  font-size: 26rpx;
+  font-weight: 800;
+  letter-spacing: 6rpx;
+}
+
+.unlock-badge {
+  position: relative;
+  width: 220rpx;
+  height: 220rpx;
+  margin: 22rpx auto 6rpx;
+  filter: drop-shadow(0 16rpx 20rpx rgba(37, 99, 235, 0.25));
+}
+
+.unlock-title {
+  color: #0f172a;
+  font-size: 46rpx;
+  font-weight: 900;
+}
+
+.unlock-rarity {
+  margin-top: 10rpx;
+  color: #7c3aed;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.unlock-description {
+  margin-top: 18rpx;
+  color: #64748b;
+  font-size: 26rpx;
+}
+
+.unlock-button {
+  position: relative;
+  margin-top: 32rpx;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  border-radius: 18rpx;
+}
+
+.rarity-legendary { border-color: #f59e0b; background: linear-gradient(155deg, #fffbeb, #fff7ed); }
+.rarity-epic { border-color: #a78bfa; background: linear-gradient(155deg, #faf5ff, #eef2ff); }
+.rarity-rare { border-color: #38bdf8; }
+
+@keyframes unlock-enter {
+  from { opacity: 0; transform: translateY(28rpx) scale(0.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes rays-spin {
+  to { transform: rotate(360deg); }
+}

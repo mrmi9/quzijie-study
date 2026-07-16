@@ -1,0 +1,46 @@
+<view class="page-shell leaderboard-page safe-bottom">
+  <view class="period-tabs">
+    <view class="period-tab {{period === item.id ? 'period-active' : ''}}" wx:for="{{periods}}" wx:key="id" data-period="{{item.id}}" bindtap="selectPeriod">{{item.label}}</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="card board-state">正在加载积分排行...</view>
+  <view wx:elif="{{error}}" class="card board-state board-error">
+    <text>{{error}}</text>
+    <button class="retry-button" bindtap="loadLeaderboard">重试</button>
+  </view>
+  <block wx:else>
+    <view class="podium-stage">
+      <view class="podium-user podium-rank-{{item.rank}}" wx:for="{{podium}}" wx:key="publicCode">
+        <text class="podium-crown">{{item.rank === 1 ? '♛' : '◆'}}</text>
+        <view class="medal medal-{{item.rank}}">{{item.rank}}</view>
+        <text class="podium-name">{{item.displayLabel}}</text>
+        <text wx:if="{{item.title}}" class="podium-title">{{item.title.title}}</text>
+        <text class="podium-points">{{item.points}} 分</text>
+        <view class="podium-base">TOP {{item.rank}}</view>
+      </view>
+    </view>
+
+    <view class="card current-rank">
+      <view>
+        <text class="current-label">我的{{period === 'daily' ? '日榜' : period === 'weekly' ? '周榜' : '总榜'}}排名</text>
+        <text class="current-name">{{currentUser.displayLabel}}</text>
+      </view>
+      <view class="current-score">
+        <text class="current-position">{{currentUser.rank ? '第 ' + currentUser.rank + ' 名' : '暂未上榜'}}</text>
+        <text>{{currentUser.points}} 分</text>
+      </view>
+    </view>
+
+    <view class="rank-list">
+      <view class="card rank-row {{item.isCurrentUser ? 'rank-current' : ''}}" wx:for="{{rankings}}" wx:key="publicCode">
+        <text class="rank-number">{{item.rank}}</text>
+        <view class="rank-identity">
+          <text class="rank-name">{{item.displayLabel}}</text>
+          <text wx:if="{{item.title}}" class="rank-title">{{item.title.title}}</text>
+        </view>
+        <text class="rank-points">{{item.points}} 分</text>
+      </view>
+    </view>
+    <text class="privacy-note">排行榜仅公开自定义昵称、公开编号、积分和已佩戴称号。</text>
+  </block>
+</view>

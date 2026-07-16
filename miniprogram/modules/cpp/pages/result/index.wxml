@@ -29,10 +29,23 @@
       </view>
     </view>
 
+    <block wx:if="{{isGlobal}}">
+      <view class="section-title">学科表现</view>
+      <view class="chapter-result card" wx:for="{{result.subjects}}" wx:key="subjectId">
+        <view class="row-between">
+          <text class="chapter-name">{{item.subjectName}}</text>
+          <text class="chapter-score">{{item.correctCount}} / {{item.totalCount}} · {{item.accuracy}}%</text>
+        </view>
+        <view class="chapter-track">
+          <view class="chapter-value subject-value" style="width: {{item.accuracy}}%;"></view>
+        </view>
+      </view>
+    </block>
+
     <view class="section-title">章节表现</view>
-    <view class="chapter-result card" wx:for="{{result.chapters}}" wx:key="chapterId">
+    <view class="chapter-result card" wx:for="{{result.chapters}}" wx:key="resultKey">
       <view class="row-between">
-        <text class="chapter-name">{{item.chapterName}}</text>
+        <text class="chapter-name">{{item.displayName}}</text>
         <text class="chapter-score">{{item.correctCount}} / {{item.totalCount}} · {{item.accuracy}}%</text>
       </view>
       <view class="chapter-track">
@@ -44,6 +57,6 @@
       <button class="secondary-button" bindtap="practiceAgain">再练一组</button>
       <button class="secondary-button" bindtap="openWrong">查看错题</button>
     </view>
-    <button class="primary-button home-button" bindtap="goHome">返回 {{subjectName}} 首页</button>
+    <button class="primary-button home-button" bindtap="goHome">{{homeButtonText}}</button>
   </block>
 </view>

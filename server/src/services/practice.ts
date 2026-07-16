@@ -10,6 +10,7 @@ import {
   type QuestionSnapshot
 } from "../domain/questions.js";
 import type { ExamService } from "./exam.js";
+import { GamificationService, unlockedKeys } from "./gamification.js";
 
 const MODE_TO_DATABASE = {
   chapter: "CHAPTER",
@@ -39,6 +40,8 @@ function answerResult(answer: {
   isCorrect: boolean;
   explanation: string;
   submittedAt: Date;
+  pointsAwarded: number;
+  unlockedAchievements: Prisma.JsonValue;
 }) {
   return {
     questionId: answer.questionId,
@@ -46,13 +49,15 @@ function answerResult(answer: {
     correctOptionIds: jsonStrings(answer.correctOptionIds),
     isCorrect: answer.isCorrect,
     explanation: answer.explanation,
-    submittedAt: answer.submittedAt.toISOString()
+    submittedAt: answer.submittedAt.toISOString(),
+    pointsAwarded: answer.pointsAwarded,
+    unlockedAchievementKeys: unlockedKeys(answer.unlockedAchievements)
   };
 }
 
 function sessionSummary(session: {
   id: string;
-  subjectId: string;
+  subjectId: string | null;
   mode: string;
   updatedAt: Date;
   _count?: { questions: number; answers: number };
@@ -60,6 +65,8 @@ function sessionSummary(session: {
   return {
     id: session.id,
     subjectId: session.subjectId,
+    subject: session.subjectId,
+    scope: session.subjectId === null ? "all" : "subject",
     mode: modeFromDatabase(session.mode),
     answeredCount: session._count?.answers || 0,
     totalCount: session._count?.questions || 0,
@@ -120,7 +127,11 @@ function snapshotFromCandidate(candidate: {
 }
 
 export class PracticeService {
-  constructor(private readonly prisma: DatabaseClient, private readonly examService?: ExamService) {}
+  constructor(
+    private readonly prisma: DatabaseClient,
+    private readonly gamification: GamificationService,
+    private readonly examService?: ExamService
+  ) {}
 
   private async requireSubject(subjectId: string) {
     if (!isSubjectId(subjectId)) throw new AppError("学科不存在", "SUBJECT_NOT_FOUND", 404);
@@ -250,17 +261,48 @@ export class PracticeService {
     });
   }
 
-  async createSession(userId: string, payload: { subject: string; mode: string; chapterId?: string; count: number }) {
-    await this.requireSubject(payload.subject);
-    if (!(payload.mode in MODE_TO_DATABASE)) throw new AppError("不支持的练习模式", "INVALID_MODE", 400);
-    if (![5, 10, 20].includes(Number(payload.count))) throw new AppError("题量只能选择 5、10 或 20", "INVALID_COUNT", 400);
-    const mode = payload.mode as PublicMode;
-    if (mode === "chapter" && !payload.chapterId) throw new AppError("章节练习缺少 chapterId", "CHAPTER_REQUIRED", 400);
-    if (payload.chapterId) {
-      const chapter = await this.prisma.chapter.findFirst({ where: { id: payload.chapterId, subjectId: payload.subject, active: true } });
-      if (!chapter) throw new AppError("章节不存在", "CHAPTER_NOT_FOUND", 404);
+  async createSession(userId: string, payload: {
+    scope?: string;
+    subject?: string;
+    mode: string;
+    chapterId?: string;
+    count: number | "all";
+  }) {
+    const scope = payload.scope || "subject";
+    if (scope !== "subject" && scope !== "all") {
+      throw new AppError("练习范围只能是 subject 或 all", "INVALID_SCOPE", 400);
     }
-    const where: Prisma.QuestionWhereInput = { subjectId: payload.subject, status: "ACTIVE", currentVersionId: { not: null } };
+    if (!(payload.mode in MODE_TO_DATABASE)) throw new AppError("不支持的练习模式", "INVALID_MODE", 400);
+    const mode = payload.mode as PublicMode;
+
+    if (scope === "all") {
+      if (mode !== "favorite" || payload.subject !== undefined || payload.chapterId !== undefined) {
+        throw new AppError("全局范围仅支持不指定学科和章节的收藏重练", "INVALID_GLOBAL_SESSION", 400);
+      }
+      if (payload.count !== "all" && ![5, 10, 20].includes(Number(payload.count))) {
+        throw new AppError("全局收藏题量只能选择 5、10、20 或全部", "INVALID_COUNT", 400);
+      }
+    } else {
+      if (!payload.subject) throw new AppError("单学科练习缺少 subject", "SUBJECT_REQUIRED", 400);
+      await this.requireSubject(payload.subject);
+      if (payload.count === "all" || ![5, 10, 20].includes(Number(payload.count))) {
+        throw new AppError("题量只能选择 5、10 或 20", "INVALID_COUNT", 400);
+      }
+      if (mode === "chapter" && !payload.chapterId) throw new AppError("章节练习缺少 chapterId", "CHAPTER_REQUIRED", 400);
+      if (mode !== "chapter" && payload.chapterId !== undefined) {
+        throw new AppError("仅章节练习可以指定 chapterId", "CHAPTER_NOT_ALLOWED", 400);
+      }
+      if (payload.chapterId) {
+        const chapter = await this.prisma.chapter.findFirst({ where: { id: payload.chapterId, subjectId: payload.subject, active: true } });
+        if (!chapter) throw new AppError("章节不存在", "CHAPTER_NOT_FOUND", 404);
+      }
+    }
+
+    const where: Prisma.QuestionWhereInput = {
+      ...(scope === "subject" ? { subjectId: payload.subject } : {}),
+      status: "ACTIVE",
+      currentVersionId: { not: null }
+    };
     if (mode === "chapter") where.chapterId = payload.chapterId;
     if (mode === "wrong") where.wrongRecords = { some: { userId, mastered: false } };
     if (mode === "favorite") where.favorites = { some: { userId } };
@@ -269,7 +311,8 @@ export class PracticeService {
       include: { chapter: true, currentVersion: { include: { options: true } } }
     });
     if (!candidates.length) throw new AppError("当前没有可练习的题目", "EMPTY_QUESTION_POOL", 400);
-    const selected = shuffle(candidates).slice(0, Math.min(payload.count, candidates.length));
+    const requestedCount = payload.count === "all" ? candidates.length : payload.count;
+    const selected = shuffle(candidates).slice(0, Math.min(requestedCount, candidates.length));
     const now = new Date();
     const sessionId = await this.prisma.$transaction(async (tx) => {
       await tx.practiceSession.updateMany({
@@ -279,10 +322,10 @@ export class PracticeService {
       const session = await tx.practiceSession.create({
         data: {
           userId,
-          subjectId: payload.subject,
+          subjectId: scope === "all" ? null : payload.subject!,
           mode: MODE_TO_DATABASE[mode],
           chapterId: payload.chapterId || null,
-          requestedCount: payload.count,
+          requestedCount,
           questions: {
             create: selected.map((question, position) => ({
               questionId: question.id,
@@ -363,7 +406,8 @@ export class PracticeService {
           selectedOptionIds: selected,
           correctOptionIds: snapshot.correctOptionIds,
           explanation: snapshot.explanation,
-          isCorrect
+          isCorrect,
+          unlockedAchievements: []
         }
       });
       if (!isCorrect) {
@@ -378,7 +422,20 @@ export class PracticeService {
           data: { mastered: true, masteredAt: answer.submittedAt }
         });
       }
-      return answer;
+      const reward = await this.gamification.awardAnswers(tx, userId, [{
+        questionId: payload.questionId,
+        isCorrect,
+        occurredAt: answer.submittedAt,
+        sourceType: "practice",
+        sourceId: answer.id
+      }]);
+      return tx.practiceAnswer.update({
+        where: { id: answer.id },
+        data: {
+          pointsAwarded: reward.pointsAwarded,
+          unlockedAchievements: reward.unlockedAchievements.map((achievement) => achievement.key)
+        }
+      });
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
     return answerResult(result);
   }
@@ -390,10 +447,13 @@ export class PracticeService {
     });
     if (!session) throw new AppError("练习不存在或无权访问", "SESSION_NOT_FOUND", 404);
     const answerMap = new Map(session.answers.map((answer) => [answer.questionId, answer]));
-    const chapters = new Map<string, { chapterId: string; chapterName: string; totalCount: number; correctCount: number }>();
+    const chapters = new Map<string, { subjectId: string; chapterId: string; chapterName: string; totalCount: number; correctCount: number }>();
+    const subjects = new Map<string, { subjectId: string; totalCount: number; correctCount: number }>();
     session.questions.forEach((item) => {
       const snapshot = item.snapshot as unknown as QuestionSnapshot;
-      const chapter = chapters.get(snapshot.chapterId) || {
+      const chapterKey = `${snapshot.subjectId}:${snapshot.chapterId}`;
+      const chapter = chapters.get(chapterKey) || {
+        subjectId: snapshot.subjectId,
         chapterId: snapshot.chapterId,
         chapterName: snapshot.chapterName,
         totalCount: 0,
@@ -401,19 +461,38 @@ export class PracticeService {
       };
       chapter.totalCount += 1;
       chapter.correctCount += answerMap.get(item.questionId)?.isCorrect ? 1 : 0;
-      chapters.set(snapshot.chapterId, chapter);
+      chapters.set(chapterKey, chapter);
+      const subject = subjects.get(snapshot.subjectId) || {
+        subjectId: snapshot.subjectId,
+        totalCount: 0,
+        correctCount: 0
+      };
+      subject.totalCount += 1;
+      subject.correctCount += answerMap.get(item.questionId)?.isCorrect ? 1 : 0;
+      subjects.set(snapshot.subjectId, subject);
     });
     const correctCount = session.answers.filter((answer) => answer.isCorrect).length;
     return {
       sessionId: session.id,
       subjectId: session.subjectId,
+      subject: session.subjectId,
+      scope: session.subjectId === null ? "all" : "subject",
       mode: modeFromDatabase(session.mode),
       status: statusFromDatabase(session.status),
       totalCount: session.questions.length,
       correctCount,
       wrongCount: session.questions.length - correctCount,
       accuracy: accuracy(correctCount, session.questions.length),
+      subjects: Object.values(SUBJECTS)
+        .sort((left, right) => left.order - right.order)
+        .map((registered) => subjects.get(registered.id))
+        .filter((subject): subject is { subjectId: string; totalCount: number; correctCount: number } => Boolean(subject))
+        .map((subject) => Object.assign(subject, {
+          wrongCount: subject.totalCount - subject.correctCount,
+          accuracy: accuracy(subject.correctCount, subject.totalCount)
+        })),
       chapters: Array.from(chapters.values()).map((chapter) => Object.assign(chapter, {
+        wrongCount: chapter.totalCount - chapter.correctCount,
         accuracy: accuracy(chapter.correctCount, chapter.totalCount)
       }))
     };
@@ -496,6 +575,7 @@ export class PracticeService {
     } else {
       await this.prisma.favorite.deleteMany({ where: { userId, questionId } });
     }
+    await this.gamification.reconcileUser(userId);
     return { questionId, isFavorite: favorite };
   }
 }

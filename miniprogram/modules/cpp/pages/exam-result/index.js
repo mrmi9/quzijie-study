@@ -19,7 +19,23 @@ Page({
       const subjects = result.subjects.map((item) => Object.assign({}, item, { subjectName: (registry.getSubject(item.subjectId) || {}).shortName || item.subjectId }));
       const wrongReviews = result.reviews.filter((item) => !item.isCorrect).map((item, index) => this.decorateReview(item, index));
       this.setData({ result: Object.assign({}, result, { subjects }), wrongReviews, loading: false });
+      this.showGamificationReward(result);
     }).catch((error) => this.setData({ loading: false, error: error.message || '考试报告加载失败' }));
+  },
+
+  showGamificationReward(result) {
+    const marker = `gamification_reward_exam_${this.examId}`;
+    if (wx.getStorageSync(marker)) return;
+    wx.setStorageSync(marker, true);
+    const points = Number(result.pointsAwarded || 0);
+    const keys = result.unlockedAchievementKeys || [];
+    if (points > 0) wx.showToast({ title: `积分 +${points}`, icon: 'none', duration: 1400 });
+    if (keys.length) {
+      setTimeout(() => {
+        const modal = this.selectComponent('#achievementUnlock');
+        if (modal) modal.show(keys);
+      }, points > 0 ? 900 : 0);
+    }
   },
 
   decorateReview(review, index) {

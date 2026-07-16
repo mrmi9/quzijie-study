@@ -1,12 +1,12 @@
 <view class="page-shell cpp-page safe-bottom setup-page">
   <view class="setup-hero card">
     <text class="mode-label">{{modeName}}</text>
-    <text class="mode-title">{{chapterName || subjectName + ' 核心知识'}}</text>
-    <text class="mode-tip">系统将在同一组练习中自动排除重复题目；题库不足时使用全部可用题。</text>
+    <text class="mode-title">{{isGlobal ? '全部学科收藏' : chapterName || subjectName + ' 核心知识'}}</text>
+    <text class="mode-tip">{{isGlobal ? '系统将从所有学科的收藏题中随机混排；固定题量不足时使用全部收藏。' : '系统将在同一组练习中自动排除重复题目；题库不足时使用全部可用题。'}}</text>
   </view>
 
   <view class="section-title">选择题量</view>
-  <view class="count-grid">
+  <view class="count-grid {{isGlobal ? 'global-count-grid' : ''}}">
     <view
       wx:for="{{counts}}"
       wx:key="*this"
@@ -14,9 +14,9 @@
       data-count="{{item}}"
       bindtap="chooseCount"
     >
-      <text class="count-number">{{item}}</text>
-      <text class="count-unit">题</text>
-      <text wx:if="{{item === 10}}" class="recommend">推荐</text>
+      <text class="count-number">{{item === 'all' ? '全部' : item}}</text>
+      <text wx:if="{{item !== 'all'}}" class="count-unit">题</text>
+      <text wx:if="{{isGlobal ? item === 'all' : item === 10}}" class="recommend">推荐</text>
     </view>
   </view>
 
@@ -28,6 +28,6 @@
   </view>
 
   <view class="bottom-action">
-    <button class="primary-button" loading="{{creating}}" bindtap="startPractice">开始 {{selectedCount}} 题练习</button>
+    <button class="primary-button" loading="{{creating}}" bindtap="startPractice">开始 {{selectedCountLabel}}练习</button>
   </view>
 </view>

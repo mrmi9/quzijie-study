@@ -2,6 +2,7 @@ import { Prisma } from "../generated/prisma/client.js";
 import type { DatabaseClient } from "../db.js";
 import { AppError } from "../errors.js";
 import { publicQuestion, sameAnswer, shuffle, type QuestionSnapshot } from "../domain/questions.js";
+import { GamificationService, unlockedKeys } from "./gamification.js";
 
 export const EXAM_TYPE = "postgraduate-408-objective";
 export const EXAM_DURATION_MS = 60 * 60 * 1000;
@@ -72,7 +73,11 @@ export class ExamService {
   private readonly scanIntervalMs: number;
   private timer: ReturnType<typeof setInterval> | null = null;
 
-  constructor(private readonly prisma: DatabaseClient, options: ExamServiceOptions = {}) {
+  constructor(
+    private readonly prisma: DatabaseClient,
+    options: ExamServiceOptions = {},
+    private readonly gamification?: GamificationService
+  ) {
     this.now = options.now || (() => new Date());
     this.random = options.random || Math.random;
     this.scanIntervalMs = options.scanIntervalMs || 15_000;
@@ -158,7 +163,7 @@ export class ExamService {
       const stat = subjectStats.get(subjectId) || { subjectId, totalCount: 0, correctCount: 0 };
       return { ...stat, accuracy: percentage(stat.correctCount, stat.totalCount) };
     });
-    await tx.examResult.create({
+    const result = await tx.examResult.create({
       data: {
         examId,
         totalCount: exam.questions.length,
@@ -170,13 +175,39 @@ export class ExamService {
         accuracy: percentage(correctCount, exam.questions.length),
         subjectStats: orderedStats as unknown as Prisma.InputJsonValue,
         submitReason: reason,
-        submittedAt
+        submittedAt,
+        unlockedAchievements: []
       }
     });
     await tx.exam.update({
       where: { id: examId },
       data: { status: "COMPLETED", submittedAt, submitReason: reason }
     });
+    if (this.gamification) {
+      const reward = await this.gamification.awardAnswers(
+        tx,
+        userId,
+        exam.questions
+          .filter((item) => item.draft)
+          .map((item) => ({
+            questionId: item.questionId,
+            isCorrect: sameAnswer(
+              [item.draft!.selectedOptionId],
+              (item.snapshot as unknown as QuestionSnapshot).correctOptionIds
+            ),
+            occurredAt: submittedAt,
+            sourceType: "exam" as const,
+            sourceId: `${examId}:${item.questionId}`
+          }))
+      );
+      await tx.examResult.update({
+        where: { examId: result.examId },
+        data: {
+          pointsAwarded: reward.pointsAwarded,
+          unlockedAchievements: reward.unlockedAchievements.map((achievement) => achievement.key)
+        }
+      });
+    }
   }
 
   private async selectQuestions(): Promise<Candidate[]> {
@@ -369,6 +400,8 @@ export class ExamService {
       score: exam.result.score,
       maxScore: exam.result.maxScore,
       accuracy: exam.result.accuracy,
+      pointsAwarded: exam.result.pointsAwarded,
+      unlockedAchievementKeys: unlockedKeys(exam.result.unlockedAchievements),
       subjects: Array.isArray(exam.result.subjectStats) ? exam.result.subjectStats : [],
       reviews: exam.questions.map((item) => ({
         question: item.snapshot as unknown as QuestionSnapshot,

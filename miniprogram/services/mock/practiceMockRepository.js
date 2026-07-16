@@ -36,5 +36,10 @@ module.exports = {
   submitExam: (examId) => delayed(() => core.submitExam(examId)),
   getExamResult: (examId) => delayed(() => core.getExamResult(examId)),
   listExams: () => delayed(() => core.listExams()),
+  getGamificationMe: () => delayed(() => core.getGamificationMe()),
+  updateGamificationProfile: (displayName) => delayed(() => core.updateGamificationProfile(displayName)),
+  getLeaderboard: (period, limit) => delayed(() => core.getLeaderboard(period, limit)),
+  getAchievements: () => delayed(() => core.getAchievements()),
+  equipAchievementTitle: (achievementKey) => delayed(() => core.equipAchievementTitle(achievementKey)),
   reset: () => delayed(() => core.reset())
 };

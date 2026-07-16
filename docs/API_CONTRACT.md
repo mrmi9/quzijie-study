@@ -60,16 +60,22 @@
   "correctOptionIds": ["A"],
   "isCorrect": true,
   "explanation": "解析",
+  "pointsAwarded": 10,
+  "unlockedAchievementKeys": ["first-step"],
   "submittedAt": "2026-07-13T08:00:00.000Z"
 }
 ```
+
+`pointsAwarded` 和 `unlockedAchievementKeys` 与首次成功提交一起持久化；同一幂等键重试必须返回完全相同的奖励，不得重复写积分。
 
 ### PracticeSession
 
 ```json
 {
   "id": "practice-id",
+  "scope": "subject",
   "subjectId": "ds",
+  "subject": "ds",
   "mode": "chapter",
   "chapterId": "ds-tree",
   "status": "active",
@@ -81,7 +87,7 @@
 }
 ```
 
-模式为 `chapter|random|wrong|favorite`，状态为 `active|completed|abandoned`。
+`scope` 为 `subject|all`；旧会话缺少该字段时按 `subject` 处理。全局收藏会话的 `scope="all"`，且 `subjectId` 与兼容字段 `subject` 均为 `null`。模式为 `chapter|random|wrong|favorite`，状态为 `active|completed|abandoned`。
 
 ### ExamView
 
@@ -122,6 +128,7 @@
 
 ```json
 {
+  "scope": "subject",
   "subject": "ds",
   "mode": "chapter",
   "chapterId": "ds-tree",
@@ -129,7 +136,19 @@
 }
 ```
 
-`count` 只能为 5、10、20。章节模式必须有 `chapterId`。创建成功后，同用户旧 active 普通会话改为 abandoned。候选不足时返回全部可用题；候选为空返回 `EMPTY_QUESTION_POOL`。
+`scope` 可省略，默认 `subject`。单学科练习必须传 `subject`，`count` 只能为 5、10、20；章节模式必须传 `chapterId`，其他模式不能传 `chapterId`。创建成功后，同用户旧 active 普通会话改为 abandoned。候选不足时返回全部可用题；候选为空返回 `EMPTY_QUESTION_POOL`。
+
+跨学科收藏重练使用：
+
+```json
+{
+  "scope": "all",
+  "mode": "favorite",
+  "count": "all"
+}
+```
+
+全局范围只允许 `mode="favorite"`，且不得传 `subject` 或 `chapterId`；`count` 可为 5、10、20 或 `"all"`。服务端从当前用户全部有效收藏中随机、不重复地建卷并保存题目快照。数字题量取指定值与收藏总数的较小值，`"all"` 取建卷时的全部收藏。
 
 ### GET /practice-sessions/{id}
 
@@ -149,7 +168,7 @@
 
 ### POST /practice-sessions/{id}/finish
 
-只有全部题目均已提交时才能完成；重复完成返回同一汇总。返回 `totalCount`、`correctCount`、`wrongCount`、`accuracy` 和 `chapters` 表现。
+只有全部题目均已提交时才能完成；重复完成返回同一汇总。返回 `scope`、可空 `subjectId`/`subject`、`totalCount`、`correctCount`、`wrongCount`、`accuracy`、`subjects` 和 `chapters` 表现。`subjects` 始终返回，按学科注册顺序排列；每项包含 `subjectId`、`totalCount`、`correctCount`、`wrongCount` 和 `accuracy`。章节项额外包含 `subjectId`，以避免跨学科章节标识冲突。
 
 ### GET /practice-sessions/{id}/result
 
@@ -206,14 +225,47 @@
 
 ### GET /exams/{id}/result
 
-返回 `score`、`maxScore=80`、总题数、作答数、正确数、错误数、正确率、`submitReason=manual|expired`、四科 `subjects` 和逐题 `reviews`。每个 review 来自建卷时冻结的完整题目版本快照，包含用户选择、正确答案、解析和正误；后续修改题库不会改变历史报告。
+返回 `score`、`maxScore=80`、总题数、作答数、正确数、错误数、正确率、`pointsAwarded`、`unlockedAchievementKeys`、`submitReason=manual|expired`、四科 `subjects` 和逐题 `reviews`。每个 review 来自建卷时冻结的完整题目版本快照，包含用户选择、正确答案、解析和正误；后续修改题库不会改变历史报告。重复交卷及重复读取只返回持久化奖励。
 
 ### GET /exams?type=postgraduate-408-objective
 
 按创建时间倒序返回当前用户历史摘要，包括状态、作答数、到期时间和已完成分数。
 
-## 7. 关键业务错误码
+## 7. 积分、排行与成就接口
 
-- 普通练习：`SUBJECT_NOT_FOUND`、`INVALID_MODE`、`INVALID_COUNT`、`CHAPTER_REQUIRED`、`EMPTY_QUESTION_POOL`、`SESSION_NOT_FOUND`、`SESSION_FINISHED`、`SESSION_INCOMPLETE`、`ANSWER_REQUIRED`、`INVALID_OPTION`、`ANSWER_ALREADY_SUBMITTED`。
+### GET /gamification/me
+
+返回公开身份、总积分、今日/本周积分、日/周/总榜当前排名、不同题作答/答对数、佩戴称号及成就解锁数量。默认身份格式为 `刷题者#A7K9`；公开编号稳定且不暴露内部用户 ID。
+
+### PUT /gamification/profile
+
+```json
+{ "displayName": "每日一练" }
+```
+
+昵称先执行 NFKC 规范化，只接受 2–12 位中文、字母、数字和下划线，并过滤联系方式、系统保留词和内置敏感词。首次设置立即生效，此后 30 天内再次修改返回 `NICKNAME_COOLDOWN`。
+
+### GET /gamification/leaderboard?period=daily|weekly|all&limit=100
+
+日榜按北京时间自然日，周榜按北京时间周一 00:00 起算，总榜统计全部积分流水。同分依次按达到当前积分的时间和公开编号排序。响应包含 `podium`（前三名）、`rankings`（第 4–100 名）及不受 `limit` 影响的 `currentUser`；排行项只包含排名、积分、昵称、公开编号和佩戴称号。
+
+### GET /gamification/achievements
+
+返回固定 12 个成就的条件、当前进度、稀有度、解锁时间和佩戴状态。成就一旦解锁不回收。
+
+### PUT /gamification/equipped-title
+
+```json
+{ "achievementKey": "first-step" }
+```
+
+只能佩戴已解锁称号；传 `null` 取消佩戴。
+
+积分规则：首次作答同一题 `+2`，首次答对同一题额外 `+8`；已经答对过的题目再次答对，每道题每天最多 `+1` 复习分，且每天最多 20 道不同题。普通练习与 408 共用题目掌握状态和积分账户。
+
+## 8. 关键业务错误码
+
+- 普通练习：`SUBJECT_NOT_FOUND`、`SUBJECT_REQUIRED`、`INVALID_SCOPE`、`INVALID_GLOBAL_SESSION`、`INVALID_MODE`、`INVALID_COUNT`、`CHAPTER_REQUIRED`、`CHAPTER_NOT_ALLOWED`、`EMPTY_QUESTION_POOL`、`SESSION_NOT_FOUND`、`SESSION_FINISHED`、`SESSION_INCOMPLETE`、`ANSWER_REQUIRED`、`INVALID_OPTION`、`ANSWER_ALREADY_SUBMITTED`。
 - 记录：`QUESTION_NOT_FOUND`。
 - 考试：`INVALID_EXAM_TYPE`、`ACTIVE_EXAM_EXISTS`、`EXAM_POOL_INSUFFICIENT`、`EXAM_NOT_FOUND`、`EXAM_FINISHED`、`EXAM_INCOMPLETE`、`QUESTION_NOT_IN_EXAM`、`INVALID_OPTION`。
+- 积分与成就：`INVALID_LEADERBOARD_PERIOD`、`INVALID_DISPLAY_NAME`、`RESERVED_DISPLAY_NAME`、`UNSAFE_DISPLAY_NAME`、`NICKNAME_COOLDOWN`、`ACHIEVEMENT_NOT_FOUND`、`ACHIEVEMENT_LOCKED`。

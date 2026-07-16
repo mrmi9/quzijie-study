@@ -16,7 +16,10 @@
 
     <view class="question-card card">
       <view class="question-meta">
-        <text class="pill">{{question.typeName}}</text>
+        <view class="question-labels">
+          <text wx:if="{{isGlobal}}" class="pill subject-pill">{{question.subjectName}}</text>
+          <text class="pill">{{question.typeName}}</text>
+        </view>
         <text class="difficulty">难度：{{question.difficultyName}}</text>
       </view>
       <text class="question-stem">{{question.stem}}</text>
@@ -45,8 +48,9 @@
       >
         <view class="option-label">{{item.label}}</view>
         <text class="option-text">{{item.text}}</text>
-        <text wx:if="{{reviewed && item.correct}}" class="option-mark correct-mark">✓</text>
-        <text wx:elif="{{reviewed && item.selected && !item.correct}}" class="option-mark wrong-mark">×</text>
+        <text wx:if="{{reviewed && item.feedbackState === 'correct'}}" class="option-mark correct-mark">✓</text>
+        <text wx:elif="{{reviewed && item.feedbackState === 'wrong'}}" class="option-mark wrong-mark">×</text>
+        <text wx:elif="{{reviewed && item.feedbackState === 'missed'}}" class="option-mark missed-mark">漏选</text>
       </view>
     </view>
 
@@ -58,11 +62,17 @@
         </button>
       </view>
       <text class="answer-line">正确答案：{{correctAnswerText}}</text>
+      <text wx:if="{{missedAnswerText}}" class="answer-line missed-answer-line">漏选选项：{{missedAnswerText}}</text>
       <text class="explanation-title">答案解析</text>
       <text class="explanation-text">{{result.explanation}}</text>
     </view>
 
-    <view class="bottom-action">
+    <view class="bottom-action practice-actions">
+      <button
+        class="secondary-button previous-button"
+        disabled="{{isFirst || submitting}}"
+        bindtap="previousQuestion"
+      >上一题</button>
       <button
         wx:if="{{!reviewed}}"
         class="primary-button"
@@ -76,3 +86,4 @@
     </view>
   </block>
 </view>
+<achievement-unlock id="achievementUnlock"></achievement-unlock>

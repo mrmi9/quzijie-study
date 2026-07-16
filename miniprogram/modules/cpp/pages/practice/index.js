@@ -1,6 +1,8 @@
 const auth = require('../../../../utils/auth');
 const repository = require('../../../../services/practiceRepository');
 const registry = require('../../../../config/subjectRegistry');
+const { buildPracticeOptionFeedback } = require('../../../../utils/practiceOptionFeedback');
+const { buildPracticeNavigationState } = require('../../../../utils/practiceNavigation');
 
 const TYPE_NAMES = { single: '单选题', multiple: '多选题', judge: '判断题' };
 const DIFFICULTY_NAMES = { 1: '基础', 2: '进阶', 3: '难题' };
@@ -17,9 +19,12 @@ Page({
     result: null,
     submitting: false,
     favoriteLoading: false,
+    isGlobal: false,
+    isFirst: true,
     isLast: false,
     progressPercent: 0,
-    correctAnswerText: ''
+    correctAnswerText: '',
+    missedAnswerText: ''
   },
 
   onLoad(options) {
@@ -43,10 +48,12 @@ Page({
           this.setData({ loading: false, error: '这组练习已被新的练习替代，请返回首页重新开始。' });
           return;
         }
+        const isGlobal = session.scope === 'all';
         const subject = registry.getSubject(session.subjectId || session.subject);
-        if (subject) wx.setNavigationBarTitle({ title: `${subject.name} 答题` });
+        if (isGlobal) wx.setNavigationBarTitle({ title: '全学科收藏重练' });
+        else if (subject) wx.setNavigationBarTitle({ title: `${subject.name} 答题` });
         const currentIndex = Math.min(session.currentIndex === undefined ? session.answeredCount : session.currentIndex, session.totalCount - 1);
-        this.setData({ session, currentIndex, loading: false });
+        this.setData({ session, currentIndex, isGlobal, loading: false });
         this.showCurrentQuestion();
       })
       .catch((error) => this.handleError(error));
@@ -76,22 +83,27 @@ Page({
   renderQuestion(question, selectedIds, result) {
     const reviewed = Boolean(result);
     const rawOptions = question.options.map((option) => ({ id: option.id, label: option.label, text: option.text }));
-    const options = rawOptions.map((option) => {
-      const selected = selectedIds.includes(option.id);
-      const correct = reviewed && result.correctOptionIds.includes(option.id);
-      let stateClass = selected ? 'option-selected' : '';
-      if (reviewed && correct) stateClass = 'option-correct';
-      if (reviewed && selected && !correct) stateClass = 'option-wrong';
-      return Object.assign({}, option, { selected, correct, stateClass });
+    const optionFeedback = buildPracticeOptionFeedback({
+      options: rawOptions,
+      questionType: question.type,
+      selectedOptionIds: selectedIds,
+      correctOptionIds: reviewed ? result.correctOptionIds : [],
+      reviewed
     });
+    const questionSubject = registry.getSubject(question.subjectId);
     const decoratedQuestion = Object.assign({}, question, {
+      subjectName: questionSubject ? questionSubject.shortName : question.subjectId,
       typeName: TYPE_NAMES[question.type],
       difficultyName: DIFFICULTY_NAMES[question.difficulty] || question.difficulty,
-      options
+      options: optionFeedback.options
     });
     const correctAnswerText = reviewed
       ? result.correctOptionIds.map((id) => rawOptions.find((option) => option.id === id)).filter(Boolean).map((option) => option.label).join('、')
       : '';
+    const navigation = buildPracticeNavigationState({
+      currentIndex: this.data.currentIndex,
+      totalCount: this.data.session.totalCount
+    });
     const completedOffset = this.data.currentIndex + (reviewed ? 1 : 0);
     this.setData({
       question: decoratedQuestion,
@@ -99,9 +111,11 @@ Page({
       reviewed,
       result,
       submitting: false,
-      isLast: this.data.currentIndex === this.data.session.totalCount - 1,
+      isFirst: navigation.isFirst,
+      isLast: navigation.isLast,
       progressPercent: Math.round((completedOffset / this.data.session.totalCount) * 100),
-      correctAnswerText
+      correctAnswerText,
+      missedAnswerText: optionFeedback.missedAnswerText
     });
   },
 
@@ -141,23 +155,41 @@ Page({
       session.answeredCount = Object.keys(session.answers).length;
       this.setData({ session });
       this.renderQuestion(question, this.data.selectedOptionIds, result);
+      this.showGamificationReward(result);
     }).catch((error) => {
       this.setData({ submitting: false });
       wx.showModal({ title: '提交失败', content: `${error.message || '请检查网络后重试'}\n你的选择已保留。`, showCancel: false });
     });
   },
 
+  showGamificationReward(result) {
+    const points = Number(result.pointsAwarded || 0);
+    const keys = result.unlockedAchievementKeys || [];
+    if (points > 0) wx.showToast({ title: `积分 +${points}`, icon: 'none', duration: 1400 });
+    if (keys.length) {
+      setTimeout(() => {
+        const modal = this.selectComponent('#achievementUnlock');
+        if (modal) modal.show(keys);
+      }, points > 0 ? 900 : 0);
+    }
+  },
+
   toggleFavorite() {
     if (!this.data.reviewed || this.data.favoriteLoading) return;
+    const questionId = this.data.question.id;
     const favorite = !this.data.question.isFavorite;
     const subjectId = this.data.question.subjectId;
     this.setData({ favoriteLoading: true });
-    repository.setFavorite(subjectId, this.data.question.id, favorite)
+    repository.setFavorite(subjectId, questionId, favorite)
       .then(() => {
         const session = this.data.session;
-        session.questions[this.data.currentIndex].isFavorite = favorite;
+        const questionIndex = session.questions.findIndex((question) => question.id === questionId);
+        if (questionIndex >= 0) session.questions[questionIndex].isFavorite = favorite;
+        const stillViewingQuestion = Boolean(this.data.question && this.data.question.id === questionId);
         this.setData({ session, favoriteLoading: false });
-        this.renderQuestion(session.questions[this.data.currentIndex], this.data.selectedOptionIds, this.data.result);
+        if (stillViewingQuestion && questionIndex >= 0) {
+          this.renderQuestion(session.questions[questionIndex], this.data.selectedOptionIds, this.data.result);
+        }
         wx.showToast({ title: favorite ? '已收藏' : '已取消收藏', icon: 'success' });
       })
       .catch((error) => {
@@ -166,13 +198,29 @@ Page({
       });
   },
 
+  previousQuestion() {
+    if (this.data.submitting) return;
+    const navigation = buildPracticeNavigationState({
+      currentIndex: this.data.currentIndex,
+      totalCount: this.data.session.totalCount
+    });
+    if (navigation.isFirst) return;
+    this.setData({ currentIndex: navigation.previousIndex });
+    this.showCurrentQuestion();
+    wx.pageScrollTo({ scrollTop: 0, duration: 0 });
+  },
+
   nextQuestion() {
     if (!this.data.reviewed || this.data.submitting) return;
-    if (this.data.isLast) {
+    const navigation = buildPracticeNavigationState({
+      currentIndex: this.data.currentIndex,
+      totalCount: this.data.session.totalCount
+    });
+    if (navigation.isLast) {
       this.finishPractice();
       return;
     }
-    this.setData({ currentIndex: this.data.currentIndex + 1 });
+    this.setData({ currentIndex: navigation.nextIndex });
     this.showCurrentQuestion();
     wx.pageScrollTo({ scrollTop: 0, duration: 0 });
   },

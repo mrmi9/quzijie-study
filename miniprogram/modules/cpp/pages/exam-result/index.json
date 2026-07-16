@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "408 模拟报告"
+  "navigationBarTitleText": "408 模拟报告",
+  "usingComponents": {
+    "achievement-unlock": "/components/achievement-unlock/index"
+  }
 }

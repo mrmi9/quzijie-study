@@ -1,0 +1,29 @@
+<view class="page-shell achievements-page safe-bottom">
+  <view class="card achievement-summary">
+    <text class="summary-kicker">成就收藏册</text>
+    <text class="summary-count">已解锁 {{unlockedCount}} / {{totalCount}}</text>
+    <view class="summary-track"><view class="summary-progress" style="width: {{totalCount ? unlockedCount / totalCount * 100 : 0}}%"></view></view>
+    <text class="summary-note">解锁后成就不会回收，可随时切换或取消佩戴称号。</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="card achievement-state">正在加载成就...</view>
+  <view wx:elif="{{error}}" class="card achievement-state achievement-error">
+    <text>{{error}}</text>
+    <button class="retry-button" bindtap="loadAchievements">重试</button>
+  </view>
+  <view wx:else class="achievement-grid">
+    <view class="card achievement-card rarity-{{item.rarity}} {{item.unlocked ? '' : 'achievement-locked'}} {{item.equipped ? 'achievement-equipped' : ''}}" wx:for="{{items}}" wx:key="key">
+      <view wx:if="{{item.equipped}}" class="equipped-mark">佩戴中</view>
+      <view class="badge-wrap">
+        <image class="achievement-badge" src="{{item.iconPath}}" mode="aspectFit"></image>
+        <view wx:if="{{!item.unlocked}}" class="lock-mark">锁</view>
+      </view>
+      <text class="achievement-title">{{item.title}}</text>
+      <text class="achievement-rarity">{{item.rarityName}}</text>
+      <text class="achievement-description">{{item.description}}</text>
+      <view class="progress-track"><view class="progress-value" style="width: {{item.progressPercent}}%"></view></view>
+      <text class="progress-text">{{item.progress}} / {{item.target}}</text>
+      <button wx:if="{{item.unlocked}}" class="equip-button {{item.equipped ? 'unequip-button' : ''}}" data-key="{{item.key}}" loading="{{equipping === item.key}}" bindtap="toggleEquip">{{item.equipped ? '取消佩戴' : '佩戴称号'}}</button>
+    </view>
+  </view>
+</view>

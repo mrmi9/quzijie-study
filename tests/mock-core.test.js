@@ -61,7 +61,7 @@ function answerSession(core, session, firstWrong = false) {
 
 assert.strictEqual(questions.length, 500);
 assert.strictEqual(new Set(questions.map((item) => item.id)).size, 500);
-assert.deepStrictEqual(registry.subjectIds.sort(), ['co', 'cpp', 'ds', 'linux', 'network', 'os', 'stl']);
+assert.deepStrictEqual(registry.subjectIds.slice().sort(), ['co', 'cpp', 'ds', 'linux', 'network', 'os', 'stl']);
 assert(sameAnswer(['A', 'B'], ['B', 'A']));
 assert(!sameAnswer(['A'], ['B']));
 
@@ -82,6 +82,8 @@ registry.subjectIds.forEach((subjectId) => {
   core.setFavorite(subjectId, first.id, true);
   const favoriteSession = core.createSession({ subject: subjectId, mode: 'favorite', count: 5 });
   assert.strictEqual(favoriteSession.totalCount, 1);
+  assert.strictEqual(favoriteSession.scope, 'subject');
+  assert.strictEqual(favoriteSession.subject, subjectId);
   assert.strictEqual(core.getSession(chapterSession.id).status, 'abandoned');
   const wrongSession = core.createSession({ subject: subjectId, mode: 'wrong', count: 5 });
   assert.strictEqual(wrongSession.totalCount, 1);
@@ -149,7 +151,40 @@ registry.subjectIds.forEach((subjectId) => {
   assert.strictEqual(overview.favoriteCount, 1);
   assert.strictEqual(overview.activeSession.id, 'legacy_session');
   assert.strictEqual(core.getSession('legacy_session').subjectId, 'cpp');
+  assert.strictEqual(core.getSession('legacy_session').scope, 'subject');
+  assert.strictEqual(core.getGamificationMe().points.total, 10);
+  assert.strictEqual(core.getGamificationMe().equippedTitle.key, 'first-step');
   assert.strictEqual(storage.data.new_key.version, 2);
+}
+
+// 已存在的 v2 会话补齐 scope；显式全局会话保持空学科，不会误恢复为 C/C++。
+{
+  const storage = memoryStorage({
+    current_key: {
+      version: 2,
+      sessions: {
+        old_subject_session: { id: 'old_subject_session', mode: 'random', questionIds: ['cpp001'], answers: {}, status: 'abandoned', createdAt: 1, updatedAt: 2 },
+        global_session: { id: 'global_session', scope: 'all', mode: 'favorite', questionIds: ['ds001'], answers: {}, status: 'active', createdAt: 3, updatedAt: 4 }
+      },
+      activeSessionId: 'global_session',
+      submissions: {},
+      subjects: {},
+      dailyAttempts: {},
+      exams: {},
+      activeExamId: ''
+    }
+  });
+  const { core } = makeCore({ storage, stateKey: 'current_key' });
+  const oldSubjectSession = core.getSession('old_subject_session');
+  const globalSession = core.getSession('global_session');
+  assert.strictEqual(oldSubjectSession.scope, 'subject');
+  assert.strictEqual(oldSubjectSession.subjectId, 'cpp');
+  assert.strictEqual(globalSession.scope, 'all');
+  assert.strictEqual(globalSession.subjectId, null);
+  assert.strictEqual(globalSession.subject, null);
+  assert.strictEqual(storage.data.current_key.sessions.global_session.subject, null);
+  assert.strictEqual(core.getLearningOverview().activeSession.scope, 'all');
+  assert.strictEqual(core.getSubjectOverview('cpp').activeSession, null);
 }
 
 // 全局聚合按不同题目计进度，跨学科收藏和错题互不污染。
@@ -168,6 +203,70 @@ registry.subjectIds.forEach((subjectId) => {
   assert.strictEqual(core.getFavorites().length, 2);
   assert.strictEqual(core.getWrongQuestions().length, 1);
   assert.strictEqual(overview.modules.length, 5);
+}
+
+// 全局收藏支持 5/10/20/全部，跨学科随机取题且不重复，并输出分学科与带学科的章节统计。
+{
+  const cppFavorites = questions.filter((question) => question.subjectId === 'cpp').slice(0, 6);
+  const dsFavorites = questions.filter((question) => question.subjectId === 'ds').slice(0, 6);
+  const favoriteQuestions = cppFavorites.flatMap((question, index) => [question, dsFavorites[index]]);
+  const unfavoritedQuestion = questions.filter((question) => question.subjectId === 'cpp')[6];
+  const disabledFavorite = Object.assign({}, questions.filter((question) => question.subjectId === 'cpp')[7], { status: 'disabled' });
+  const { core } = makeCore({
+    questions: favoriteQuestions.concat(unfavoritedQuestion, disabledFavorite),
+    stateKey: 'global_favorite_sessions',
+    random: () => 0
+  });
+  favoriteQuestions.forEach((question) => core.setFavorite(question.subjectId, question.id, true));
+  core.setFavorite(disabledFavorite.subjectId, disabledFavorite.id, true);
+
+  const expectedCounts = new Map([[5, 5], [10, 10], [20, 12]]);
+  expectedCounts.forEach((expectedCount, count) => {
+    const session = core.createSession({ scope: 'all', mode: 'favorite', count });
+    assert.strictEqual(session.scope, 'all');
+    assert.strictEqual(session.subjectId, null);
+    assert.strictEqual(session.subject, null);
+    assert.strictEqual(session.totalCount, expectedCount);
+    assert.strictEqual(new Set(session.questions.map((question) => question.id)).size, expectedCount);
+    assert(session.questions.every((question) => question.correctOptionIds === undefined && question.explanation === undefined));
+    if (count === 5) assert.deepStrictEqual(new Set(session.questions.map((question) => question.subjectId)), new Set(['cpp', 'ds']));
+  });
+
+  const allSession = core.createSession({ scope: 'all', mode: 'favorite', count: 'all' });
+  assert.strictEqual(allSession.totalCount, favoriteQuestions.length);
+  assert.strictEqual(new Set(allSession.questions.map((question) => question.id)).size, favoriteQuestions.length);
+  assert(!allSession.questions.some((question) => question.id === unfavoritedQuestion.id));
+  assert(!allSession.questions.some((question) => question.id === disabledFavorite.id));
+  assert.notDeepStrictEqual(allSession.questions.map((question) => question.id), favoriteQuestions.map((question) => question.id));
+
+  const removedFavorite = allSession.questions[0];
+  core.setFavorite(removedFavorite.subjectId, removedFavorite.id, false);
+  assert.strictEqual(core.getSession(allSession.id).totalCount, favoriteQuestions.length);
+
+  const result = answerSession(core, allSession, true);
+  assert.strictEqual(result.scope, 'all');
+  assert.strictEqual(result.subjectId, null);
+  assert.strictEqual(result.subject, null);
+  assert.deepStrictEqual(result.subjects.map((subject) => subject.subjectId), ['cpp', 'ds']);
+  assert.strictEqual(result.subjects.reduce((sum, subject) => sum + subject.totalCount, 0), favoriteQuestions.length);
+  assert.strictEqual(result.subjects.reduce((sum, subject) => sum + subject.wrongCount, 0), 1);
+  assert(result.chapters.every((chapter) => ['cpp', 'ds'].includes(chapter.subjectId)));
+  assert(result.chapters.every((chapter) => chapter.totalCount === chapter.correctCount + chapter.wrongCount));
+
+  assert.throws(() => core.createSession({ scope: 'all', mode: 'random', count: 5 }), (error) => error.code === 'INVALID_GLOBAL_SESSION');
+  assert.throws(() => core.createSession({ scope: 'all', mode: 'favorite', subject: 'cpp', count: 5 }), (error) => error.code === 'INVALID_GLOBAL_SESSION');
+  assert.throws(() => core.createSession({ scope: 'all', mode: 'favorite', chapterId: 'c-basics', count: 5 }), (error) => error.code === 'INVALID_GLOBAL_SESSION');
+  assert.throws(() => core.createSession({ scope: 'all', mode: 'favorite', count: 6 }), (error) => error.code === 'INVALID_COUNT');
+  assert.throws(() => core.createSession({ scope: '', mode: 'favorite', count: 5 }), (error) => error.code === 'INVALID_SCOPE');
+  assert.throws(() => core.createSession({ mode: 'favorite', count: 5 }), (error) => error.code === 'SUBJECT_REQUIRED');
+  assert.throws(() => core.createSession({ subject: 'cpp', mode: 'favorite', chapterId: 'c-basics', count: 5 }), (error) => error.code === 'CHAPTER_NOT_ALLOWED');
+  assert.throws(() => core.createSession({ subject: 'cpp', mode: 'favorite', count: 'all' }), (error) => error.code === 'INVALID_COUNT');
+}
+
+// 全局收藏为空时给出明确错误，不创建空白会话。
+{
+  const { core } = makeCore({ stateKey: 'empty_global_favorites' });
+  assert.throws(() => core.createSession({ scope: 'all', mode: 'favorite', count: 'all' }), (error) => error.code === 'EMPTY_QUESTION_POOL');
 }
 
 // 408：40 道单选，12/12/9/7 配比，无答案泄露，可改草稿，提交幂等并归档错题。
@@ -229,4 +328,4 @@ registry.subjectIds.forEach((subjectId) => {
   assert.strictEqual(core.getLearningOverview().totalAttempts, 40);
 }
 
-console.log('PracticeCore tests passed: 7 subjects, migration, records, recovery and 408 exam state machine.');
+console.log('PracticeCore tests passed: 7 subjects, global favorite sessions, migration, records, recovery and 408 exam state machine.');

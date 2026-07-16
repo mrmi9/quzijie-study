@@ -30,3 +30,4 @@
     <view class="action-grid"><button class="secondary-button" bindtap="openWrong">全局错题本</button><button class="primary-button" bindtap="goExamHome">返回模拟首页</button></view>
   </block>
 </view>
+<achievement-unlock id="achievementUnlock"></achievement-unlock>

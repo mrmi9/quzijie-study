@@ -24,5 +24,10 @@ module.exports = {
   saveExamDraft: (examId, answers) => request({ url: `/api/v1/exams/${examId}/draft`, method: 'PUT', data: { answers } }),
   submitExam: (examId) => request({ url: `/api/v1/exams/${examId}/submit`, method: 'POST' }),
   getExamResult: (examId) => request({ url: `/api/v1/exams/${examId}/result` }),
-  listExams: () => request({ url: '/api/v1/exams?type=postgraduate-408-objective' })
+  listExams: () => request({ url: '/api/v1/exams?type=postgraduate-408-objective' }),
+  getGamificationMe: () => request({ url: '/api/v1/gamification/me' }),
+  updateGamificationProfile: (displayName) => request({ url: '/api/v1/gamification/profile', method: 'PUT', data: { displayName } }),
+  getLeaderboard: (period, limit) => request({ url: `/api/v1/gamification/leaderboard${queryString({ period, limit })}` }),
+  getAchievements: () => request({ url: '/api/v1/gamification/achievements' }),
+  equipAchievementTitle: (achievementKey) => request({ url: '/api/v1/gamification/equipped-title', method: 'PUT', data: { achievementKey } })
 };

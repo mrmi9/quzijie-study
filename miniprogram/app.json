@@ -5,6 +5,8 @@
     "pages/favorites/index",
     "pages/login/index",
     "pages/account/index",
+    "pages/leaderboard/index",
+    "pages/achievements/index",
     "pages/privacy/index"
   ],
   "subPackages": [
@@ -35,13 +37,14 @@
     "list": [
       { "pagePath": "pages/index/index", "text": "首页" },
       { "pagePath": "pages/wrong/index", "text": "错题" },
-      { "pagePath": "pages/favorites/index", "text": "收藏" }
+      { "pagePath": "pages/favorites/index", "text": "收藏" },
+      { "pagePath": "pages/account/index", "text": "我的" }
     ]
   },
   "window": {
     "navigationBarBackgroundColor": "#2563eb",
     "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "趣字节刷题",
+    "navigationBarTitleText": "趣刷题喽",
     "backgroundColor": "#f4f7fb",
     "backgroundTextStyle": "dark"
   },

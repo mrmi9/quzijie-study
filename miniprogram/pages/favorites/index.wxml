@@ -1,6 +1,6 @@
 <view class="page-shell records-page safe-bottom">
   <text class="page-title">全局收藏</text>
-  <text class="page-subtitle">收藏与答题正误独立，可按学科集中复习。</text>
+  <text class="page-subtitle">收藏与答题正误独立，可按学科集中复习，也可跨学科统一重练。</text>
   <scroll-view class="filter-scroll" scroll-x="true"><view class="filter-row">
     <view wx:for="{{subjectFilters}}" wx:key="id" class="filter-chip {{subjectId === item.id ? 'active' : ''}}" data-id="{{item.id}}" bindtap="changeSubject">{{item.name}}</view>
   </view></scroll-view>
@@ -17,5 +17,5 @@
       <text class="explanation">{{item.explanation}}</text>
     </view>
   </view>
-  <view class="bottom-action"><button class="primary-button" disabled="{{!subjectId || questions.length === 0}}" bindtap="startReview">按当前学科重练</button></view>
+  <view class="bottom-action"><button class="primary-button" disabled="{{loading || error || questions.length === 0}}" bindtap="startReview">{{subjectId ? '按当前学科重练' : '重练全部收藏'}}</button></view>
 </view>

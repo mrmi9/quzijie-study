@@ -2,6 +2,17 @@ const STATE_VERSION = 2;
 const EXAM_TYPE = 'postgraduate-408-objective';
 const EXAM_DURATION_MS = 60 * 60 * 1000;
 const EXAM_DISTRIBUTION = { ds: 12, co: 12, os: 9, network: 7 };
+const {
+  initialGamification,
+  ensureGamification,
+  awardAnswers,
+  evaluateAchievements,
+  getGamificationMe,
+  leaderboard,
+  updateProfile,
+  getAchievements,
+  equipTitle
+} = require('./gamificationCore');
 
 function clone(value) {
   return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
@@ -37,7 +48,8 @@ function initialState() {
     subjects: {},
     dailyAttempts: {},
     exams: {},
-    activeExamId: ''
+    activeExamId: '',
+    gamification: initialGamification()
   };
 }
 
@@ -58,17 +70,46 @@ class PracticeCore {
 
   loadState() {
     const current = this.storage.get(this.stateKey);
-    if (current && current.version === STATE_VERSION) return current;
+    if (current && current.version === STATE_VERSION) {
+      const normalized = clone(current);
+      const changed = this.normalizeSessionScopes(normalized);
+      if (changed) this.saveState(normalized);
+      return normalized;
+    }
     const migrated = this.migrateLegacyState(this.storage.get(this.legacyStateKey));
     this.saveState(migrated);
     return migrated;
+  }
+
+  normalizeSessionScopes(state) {
+    let changed = false;
+    if (ensureGamification(state, this.now())) changed = true;
+    Object.values(state.sessions || {}).forEach((session) => {
+      if (!session.scope) {
+        session.scope = 'subject';
+        changed = true;
+      }
+      if (session.scope === 'all') {
+        if (session.subject !== null) {
+          session.subject = null;
+          changed = true;
+        }
+      } else if (!session.subject) {
+        session.subject = 'cpp';
+        changed = true;
+      }
+    });
+    return changed;
   }
 
   migrateLegacyState(legacy) {
     const state = initialState();
     if (!legacy || legacy.version !== 1) return state;
     state.sessions = clone(legacy.sessions || {});
-    Object.values(state.sessions).forEach((session) => { session.subject = session.subject || 'cpp'; });
+    Object.values(state.sessions).forEach((session) => {
+      session.scope = 'subject';
+      session.subject = session.subject || 'cpp';
+    });
     state.activeSessionId = legacy.activeSessionId || '';
     state.submissions = clone(legacy.submissions || {});
     state.subjects.cpp = {
@@ -77,6 +118,8 @@ class PracticeCore {
       favorites: clone(legacy.favorites || {}),
       totals: clone(legacy.totals || { attempts: 0, correct: 0 })
     };
+    delete state.gamification;
+    ensureGamification(state, this.now());
     return state;
   }
 
@@ -227,14 +270,31 @@ class PracticeCore {
   }
 
   createSession(payload) {
+    const scope = payload.scope === undefined ? 'subject' : payload.scope;
     const mode = payload.mode;
-    if (!this.registry.getSubject(payload.subject)) throw createDomainError('学科不存在', 'SUBJECT_NOT_FOUND');
+    if (!['subject', 'all'].includes(scope)) throw createDomainError('不支持的练习范围', 'INVALID_SCOPE');
     if (!['chapter', 'random', 'wrong', 'favorite'].includes(mode)) throw createDomainError('不支持的练习模式', 'INVALID_MODE');
-    if (![5, 10, 20].includes(Number(payload.count))) throw createDomainError('题量只能选择 5、10 或 20', 'INVALID_COUNT');
+    if (scope === 'all' && (mode !== 'favorite' || payload.subject !== undefined || payload.chapterId !== undefined)) {
+      throw createDomainError('全学科范围仅支持不指定学科和章节的收藏重练', 'INVALID_GLOBAL_SESSION');
+    }
+    if (scope === 'subject' && !payload.subject) throw createDomainError('单学科练习缺少 subject', 'SUBJECT_REQUIRED');
+    if (scope === 'subject' && !this.registry.getSubject(payload.subject)) throw createDomainError('学科不存在', 'SUBJECT_NOT_FOUND');
+    const allCount = payload.count === 'all';
+    const numericCount = Number(payload.count);
+    if (scope === 'all') {
+      if (!allCount && ![5, 10, 20].includes(numericCount)) throw createDomainError('题量只能选择 5、10、20 或全部', 'INVALID_COUNT');
+    } else if (allCount || ![5, 10, 20].includes(numericCount)) {
+      throw createDomainError('题量只能选择 5、10 或 20', 'INVALID_COUNT');
+    }
+    if (scope === 'subject' && mode !== 'chapter' && payload.chapterId !== undefined) {
+      throw createDomainError('仅章节练习可以指定 chapterId', 'CHAPTER_NOT_ALLOWED');
+    }
     const state = this.loadState();
-    const subject = this.subjectState(state, payload.subject);
-    let candidates = this.activeQuestions(payload.subject);
-    if (mode === 'chapter') {
+    const subject = scope === 'subject' ? this.subjectState(state, payload.subject) : null;
+    let candidates = this.activeQuestions(scope === 'subject' ? payload.subject : undefined);
+    if (scope === 'all') {
+      candidates = candidates.filter((question) => this.subjectState(state, question.subjectId).favorites[question.id]);
+    } else if (mode === 'chapter') {
       if (!payload.chapterId) throw createDomainError('章节练习缺少 chapterId', 'CHAPTER_REQUIRED');
       candidates = candidates.filter((question) => question.chapterId === payload.chapterId);
     } else if (mode === 'wrong') {
@@ -245,12 +305,15 @@ class PracticeCore {
     if (!candidates.length) throw createDomainError('当前没有可练习的题目', 'EMPTY_QUESTION_POOL');
     if (state.activeSessionId && state.sessions[state.activeSessionId]) state.sessions[state.activeSessionId].status = 'abandoned';
     const timestamp = this.now();
+    const selectedQuestions = this.shuffle(candidates).slice(0, allCount ? candidates.length : Math.min(numericCount, candidates.length));
     const session = {
       id: `practice_${timestamp}_${Math.floor(this.random() * 100000)}`,
-      subject: payload.subject,
+      scope,
+      subject: scope === 'all' ? null : payload.subject,
       mode,
       chapterId: payload.chapterId || '',
-      questionIds: this.shuffle(candidates).slice(0, Math.min(Number(payload.count), candidates.length)).map((item) => item.id),
+      requestedCount: allCount ? selectedQuestions.length : numericCount,
+      questionIds: selectedQuestions.map((item) => item.id),
       answers: {},
       status: 'active',
       createdAt: timestamp,
@@ -263,9 +326,13 @@ class PracticeCore {
   }
 
   sessionSummary(session) {
+    const scope = session.scope || 'subject';
+    const subjectId = scope === 'all' ? null : session.subject;
     return {
       id: session.id,
-      subjectId: session.subject,
+      scope,
+      subjectId,
+      subject: subjectId,
       mode: session.mode,
       answeredCount: Object.keys(session.answers).length,
       totalCount: session.questionIds.length,
@@ -275,7 +342,6 @@ class PracticeCore {
 
   sessionView(session, state) {
     return Object.assign(this.sessionSummary(session), {
-      subject: session.subject,
       chapterId: session.chapterId,
       status: session.status,
       createdAt: session.createdAt,
@@ -345,12 +411,17 @@ class PracticeCore {
       correctOptionIds: clone(question.correctOptionIds),
       isCorrect: sameAnswer(selected, question.correctOptionIds),
       explanation: question.explanation,
-      submittedAt: timestamp
+      submittedAt: timestamp,
+      pointsAwarded: 0,
+      unlockedAchievementKeys: []
     };
     session.answers[question.id] = result;
     session.updatedAt = timestamp;
     this.markAttempt(state, question, result.isCorrect, timestamp);
     this.markWrong(state, question, result.isCorrect, session.mode, timestamp);
+    const reward = awardAnswers(state, [{ questionId: question.id, subjectId: question.subjectId, isCorrect: result.isCorrect, occurredAt: timestamp }]);
+    result.pointsAwarded = reward.pointsAwarded;
+    result.unlockedAchievementKeys = reward.unlockedAchievements.map((achievement) => achievement.key);
     if (payload.clientAnswerId) state.submissions[payload.clientAnswerId] = result;
     this.saveState(state);
     return clone(result);
@@ -372,23 +443,37 @@ class PracticeCore {
 
   buildSessionResult(session) {
     const chapters = {};
+    const subjects = {};
     Object.values(session.answers).forEach((answer) => {
       const question = this.questionMap[answer.questionId];
-      if (!chapters[question.chapterId]) chapters[question.chapterId] = { chapterId: question.chapterId, chapterName: question.chapterName, totalCount: 0, correctCount: 0 };
-      chapters[question.chapterId].totalCount += 1;
-      chapters[question.chapterId].correctCount += answer.isCorrect ? 1 : 0;
+      const chapterKey = `${question.subjectId}:${question.chapterId}`;
+      if (!chapters[chapterKey]) chapters[chapterKey] = { subjectId: question.subjectId, chapterId: question.chapterId, chapterName: question.chapterName, totalCount: 0, correctCount: 0 };
+      chapters[chapterKey].totalCount += 1;
+      chapters[chapterKey].correctCount += answer.isCorrect ? 1 : 0;
+      if (!subjects[question.subjectId]) subjects[question.subjectId] = { subjectId: question.subjectId, totalCount: 0, correctCount: 0 };
+      subjects[question.subjectId].totalCount += 1;
+      subjects[question.subjectId].correctCount += answer.isCorrect ? 1 : 0;
     });
     const correctCount = Object.values(session.answers).filter((answer) => answer.isCorrect).length;
+    const scope = session.scope || 'subject';
+    const subjectId = scope === 'all' ? null : session.subject;
+    const withAccuracy = (item) => Object.assign(item, {
+      wrongCount: item.totalCount - item.correctCount,
+      accuracy: Math.round((item.correctCount / item.totalCount) * 100)
+    });
     return {
       sessionId: session.id,
-      subjectId: session.subject,
+      scope,
+      subjectId,
+      subject: subjectId,
       mode: session.mode,
       status: session.status,
       totalCount: session.questionIds.length,
       correctCount,
       wrongCount: session.questionIds.length - correctCount,
       accuracy: session.questionIds.length ? Math.round((correctCount / session.questionIds.length) * 100) : 0,
-      chapters: Object.values(chapters).map((chapter) => Object.assign(chapter, { accuracy: Math.round((chapter.correctCount / chapter.totalCount) * 100) }))
+      subjects: this.registry.subjectIds.filter((id) => subjects[id]).map((id) => withAccuracy(subjects[id])),
+      chapters: Object.values(chapters).map(withAccuracy)
     };
   }
 
@@ -437,6 +522,8 @@ class PracticeCore {
     const subject = this.subjectState(state, subjectId);
     if (favorite) subject.favorites[questionId] = this.now();
     else delete subject.favorites[questionId];
+    ensureGamification(state, this.now());
+    evaluateAchievements(state, this.now(), false);
     this.saveState(state);
     return { subjectId, questionId, isFavorite: Boolean(favorite) };
   }
@@ -535,11 +622,13 @@ class PracticeCore {
     if (!exam) throw createDomainError('模拟考试不存在', 'EXAM_NOT_FOUND');
     if (exam.status === 'completed') return clone(exam.result);
     const timestamp = this.now();
+    const rewardInputs = [];
     const reviews = exam.questionIds.map((questionId) => {
       const question = this.questionMap[questionId];
       const selected = exam.answers[questionId] || [];
       const isCorrect = sameAnswer(selected, question.correctOptionIds);
       this.markAttempt(state, question, isCorrect, timestamp);
+      if (selected.length) rewardInputs.push({ questionId, subjectId: question.subjectId, isCorrect, occurredAt: timestamp });
       this.markWrong(state, question, isCorrect, 'exam', timestamp);
       return {
         question: clone(question),
@@ -570,8 +659,13 @@ class PracticeCore {
       accuracy: Math.round((correctCount / exam.questionIds.length) * 100),
       subjects: Object.values(subjects).map((subject) => Object.assign(subject, { accuracy: Math.round((subject.correctCount / subject.totalCount) * 100) })),
       reviews,
-      submittedAt: timestamp
+      submittedAt: timestamp,
+      pointsAwarded: 0,
+      unlockedAchievementKeys: []
     };
+    const reward = awardAnswers(state, rewardInputs);
+    exam.result.pointsAwarded = reward.pointsAwarded;
+    exam.result.unlockedAchievementKeys = reward.unlockedAchievements.map((achievement) => achievement.key);
     if (state.activeExamId === examId) state.activeExamId = '';
     this.saveState(state);
     return clone(exam.result);
@@ -588,6 +682,41 @@ class PracticeCore {
   listExams() {
     const state = this.loadState();
     return Object.values(state.exams).sort((a, b) => b.createdAt - a.createdAt).map((exam) => this.examSummary(exam));
+  }
+
+  getGamificationMe() {
+    const state = this.loadState();
+    const result = getGamificationMe(state, this.now());
+    this.saveState(state);
+    return result;
+  }
+
+  updateGamificationProfile(displayName) {
+    const state = this.loadState();
+    const result = updateProfile(state, displayName, this.now());
+    this.saveState(state);
+    return result;
+  }
+
+  getLeaderboard(period, limit) {
+    const state = this.loadState();
+    const result = leaderboard(state, period, limit, this.now());
+    this.saveState(state);
+    return result;
+  }
+
+  getAchievements() {
+    const state = this.loadState();
+    const result = getAchievements(state, this.now());
+    this.saveState(state);
+    return result;
+  }
+
+  equipAchievementTitle(achievementKey) {
+    const state = this.loadState();
+    const result = equipTitle(state, achievementKey, this.now());
+    this.saveState(state);
+    return result;
   }
 
   reset() {

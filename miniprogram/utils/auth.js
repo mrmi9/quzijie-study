@@ -57,6 +57,7 @@ function clearUserData() {
     }
   });
   clearLocalDrafts();
+  removeKeysByPrefix(['gamification_reward_exam_']);
 }
 
 function isAuthenticated() {

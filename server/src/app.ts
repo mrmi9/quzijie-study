@@ -8,9 +8,12 @@ import { createWechatAuthProvider, type WechatAuthProvider } from "./auth/wechat
 import { registerAuthRoutes } from "./routes/auth.js";
 import { registerPracticeRoutes } from "./routes/practice.js";
 import { registerExamRoutes } from "./routes/exams.js";
+import { registerGamificationRoutes } from "./routes/gamification.js";
 import { PracticeService } from "./services/practice.js";
 import { ExamService } from "./services/exam.js";
+import { GamificationService } from "./services/gamification.js";
 import { createAuthenticate } from "./auth/tokens.js";
+import { isDatabaseBootstrapPending } from "./bootstrap-state.js";
 
 export interface AppDependencies {
   config: AppConfig;
@@ -44,6 +47,10 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
   }));
 
   app.get("/ready", async (_request, reply) => {
+    if (isDatabaseBootstrapPending()) {
+      reply.code(503);
+      return { code: "SERVICE_BOOTSTRAPPING", message: "数据初始化尚未完成", details: null };
+    }
     try {
       await deps.prisma.$queryRaw`SELECT 1`;
       return { data: { status: "ok", database: "ok", timestamp: new Date().toISOString() } };
@@ -54,17 +61,20 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
   });
 
   const authenticate = createAuthenticate(deps.prisma, deps.config);
+  const gamificationService = new GamificationService(deps.prisma);
   registerAuthRoutes(app, {
     prisma: deps.prisma,
     config: deps.config,
     wechatProvider: deps.config.wechatAuthMode === "cloud"
       ? undefined
       : (deps.wechatProvider || createWechatAuthProvider(deps.config)),
-    authenticate
+    authenticate,
+    onAuthenticated: (userId) => gamificationService.initializeUser(userId)
   });
-  const examService = new ExamService(deps.prisma);
-  registerPracticeRoutes(app, new PracticeService(deps.prisma, examService), authenticate);
+  const examService = new ExamService(deps.prisma, {}, gamificationService);
+  registerPracticeRoutes(app, new PracticeService(deps.prisma, gamificationService, examService), authenticate);
   registerExamRoutes(app, examService, authenticate);
+  registerGamificationRoutes(app, gamificationService, authenticate);
   examService.start((error) => app.log.error({ err: error }, "expired exam finalization failed"));
   app.addHook("onClose", async () => examService.stop());
 

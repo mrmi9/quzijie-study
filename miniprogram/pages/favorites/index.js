@@ -51,10 +51,13 @@ Page({
   },
 
   startReview() {
-    if (!this.data.subjectId) {
-      wx.showToast({ title: '请先选择一个学科', icon: 'none' });
+    if (this.data.loading || this.data.error || !this.data.questions.length) {
+      wx.showToast({ title: '当前没有可重练的收藏题', icon: 'none' });
       return;
     }
-    wx.navigateTo({ url: `/modules/cpp/pages/setup/index?subjectId=${this.data.subjectId}&mode=favorite` });
+    const url = this.data.subjectId
+      ? `/modules/cpp/pages/setup/index?subjectId=${this.data.subjectId}&mode=favorite`
+      : '/modules/cpp/pages/setup/index?scope=all&mode=favorite';
+    wx.navigateTo({ url });
   }
 });

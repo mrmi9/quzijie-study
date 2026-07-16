@@ -49,6 +49,12 @@ enum ExamSubmitReason {
   EXPIRED
 }
 
+enum PointEventType {
+  FIRST_ATTEMPT
+  FIRST_CORRECT
+  DAILY_REVIEW
+}
+
 model User {
   id            String                @id @default(uuid()) @db.Char(36)
   wechatOpenId  String                @unique @map("wechat_open_id")
@@ -63,6 +69,9 @@ model User {
   wrongRecords  WrongQuestionRecord[]
   favorites     Favorite[]
   exams         Exam[]
+  gamification  UserGamification?
+  pointEvents   PointEvent[]
+  achievements  UserAchievement[]
 
   @@map("users")
 }
@@ -126,6 +135,7 @@ model Question {
   wrongRecords     WrongQuestionRecord[]
   favorites        Favorite[]
   examQuestions    ExamQuestion[]
+  pointEvents      PointEvent[]
 
   @@index([subjectId, chapterId, status])
   @@map("questions")
@@ -172,7 +182,7 @@ model QuestionOption {
 model PracticeSession {
   id             String                    @id @default(uuid()) @db.Char(36)
   userId         String                    @map("user_id") @db.Char(36)
-  subjectId      String                    @map("subject_id")
+  subjectId      String?                   @map("subject_id")
   mode           PracticeMode
   chapterId      String?                   @map("chapter_id")
   requestedCount Int                       @map("requested_count")
@@ -182,7 +192,7 @@ model PracticeSession {
   completedAt    DateTime?                 @map("completed_at")
   abandonedAt    DateTime?                 @map("abandoned_at")
   user           User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject        Subject                   @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  subject        Subject?                  @relation(fields: [subjectId], references: [id], onDelete: Restrict)
   chapter        Chapter?                  @relation(fields: [chapterId], references: [id], onDelete: Restrict)
   questions      PracticeSessionQuestion[]
   answers        PracticeAnswer[]
@@ -216,6 +226,8 @@ model PracticeAnswer {
   correctOptionIds  Json            @map("correct_option_ids")
   explanation       String          @db.Text
   isCorrect         Boolean         @map("is_correct")
+  pointsAwarded     Int             @default(0) @map("points_awarded")
+  unlockedAchievements Json         @map("unlocked_achievements")
   submittedAt       DateTime        @default(now()) @map("submitted_at")
   session           PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   question          Question        @relation(fields: [questionId], references: [id], onDelete: Restrict)
@@ -317,8 +329,68 @@ model ExamResult {
   accuracy      Int
   subjectStats  Json             @map("subject_stats")
   submitReason  ExamSubmitReason @map("submit_reason")
+  pointsAwarded Int              @default(0) @map("points_awarded")
+  unlockedAchievements Json      @map("unlocked_achievements")
   submittedAt   DateTime         @map("submitted_at")
   exam          Exam             @relation(fields: [examId], references: [id], onDelete: Cascade)
 
   @@map("exam_results")
+}
+
+model UserGamification {
+  userId                 String    @id @map("user_id") @db.Char(36)
+  publicCode             String    @unique @map("public_code") @db.VarChar(4)
+  displayName            String?   @map("display_name") @db.VarChar(48)
+  nicknameUpdatedAt      DateTime? @map("nickname_updated_at")
+  totalPoints            Int       @default(0) @map("total_points")
+  attemptedQuestionCount Int       @default(0) @map("attempted_question_count")
+  correctQuestionCount   Int       @default(0) @map("correct_question_count")
+  equippedAchievementKey String?   @map("equipped_achievement_key") @db.VarChar(64)
+  pointsUpdatedAt        DateTime? @map("points_updated_at")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([totalPoints, pointsUpdatedAt])
+  @@map("user_gamification")
+}
+
+model PointEvent {
+  id         BigInt         @id @default(autoincrement())
+  userId     String         @map("user_id") @db.Char(36)
+  questionId String?        @map("question_id")
+  eventKey   String         @map("event_key") @db.VarChar(191)
+  type       PointEventType
+  points     Int
+  occurredAt DateTime       @map("occurred_at")
+  sourceType String         @map("source_type") @db.VarChar(32)
+  sourceId   String         @map("source_id") @db.VarChar(96)
+  createdAt  DateTime       @default(now()) @map("created_at")
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question   Question?      @relation(fields: [questionId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, eventKey])
+  @@index([occurredAt, userId])
+  @@index([userId, occurredAt])
+  @@index([questionId])
+  @@map("point_events")
+}
+
+model UserAchievement {
+  userId         String   @map("user_id") @db.Char(36)
+  achievementKey String   @map("achievement_key") @db.VarChar(64)
+  unlockedAt     DateTime @default(now()) @map("unlocked_at")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, achievementKey])
+  @@index([achievementKey, unlockedAt])
+  @@map("user_achievements")
+}
+
+model SystemJob {
+  key         String   @id @db.VarChar(96)
+  completedAt DateTime @map("completed_at")
+  details     Json?
+
+  @@map("system_jobs")
 }

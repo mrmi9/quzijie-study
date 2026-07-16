@@ -1,19 +1,19 @@
 <view class="page-shell privacy-page safe-bottom">
   <view class="card privacy-card">
-    <text class="privacy-title">趣字节刷题隐私说明</text>
-    <text class="privacy-updated">正式版 · 最后更新 2026-07-15</text>
+    <text class="privacy-title">趣刷题喽隐私说明</text>
+    <text class="privacy-updated">正式版 · 最后更新 2026-07-16</text>
 
     <text class="privacy-heading">我们处理哪些数据</text>
-    <text class="privacy-text">使用微信登录时，微信云托管平台会向服务端提供用于识别学习账户的 OpenID，以及可用时的 UnionID。服务端还会保存账户创建和最近登录时间、答题记录、练习进度、错题、收藏和 408 考试记录；小程序本地会保存登录状态凭据，以及作答期间和尚未同步时的答题草稿。</text>
+    <text class="privacy-text">使用微信登录时，微信云托管平台会向服务端提供用于识别学习账户的 OpenID，以及可用时的 UnionID。服务端还会保存账户创建和最近登录时间、答题记录、练习进度、错题、收藏、408 考试记录，以及积分流水、成就、佩戴称号、自定义昵称和随机生成的公开编号；小程序本地会保存登录状态凭据、答题草稿和奖励弹窗展示标记。</text>
 
     <text class="privacy-heading">处理目的</text>
-    <text class="privacy-text">上述数据仅用于识别学习账户、同步学习进度、生成错题与收藏记录，以及展示练习和考试结果。首版不读取微信昵称、头像、手机号、位置、通讯录或相册。</text>
+    <text class="privacy-text">上述数据用于识别学习账户、同步学习进度、生成错题与收藏记录、展示练习和考试结果，以及计算积分、解锁成就和生成排行榜。排行榜会公开展示你的自定义昵称或默认“刷题者”、公开编号、积分和已佩戴称号；不会公开内部用户 ID、OpenID 或 UnionID。小程序不读取微信昵称、头像、手机号、位置、通讯录或相册。</text>
 
     <text class="privacy-heading">保存与安全</text>
     <text class="privacy-text">小程序通过微信云托管安全链路访问服务端，不在客户端保存 OpenID、UnionID 或 AppSecret。学习数据保存在微信云托管 MySQL 中，并限制服务端和数据库访问权限；账户数据保存至你主动删除账户。</text>
 
     <text class="privacy-heading">你的选择</text>
-    <text class="privacy-text">你可以在“首页 → 账户与数据”退出登录或永久删除账户。删除账户会清除服务端账户及其练习、错题、收藏和考试历史，且无法恢复。</text>
+    <text class="privacy-text">你可以在底部“我的”中设置公开昵称、选择或取消佩戴称号、退出登录或永久删除账户。删除账户会清除服务端账户及其练习、错题、收藏、考试、积分和成就历史，且无法恢复。</text>
 
     <text class="privacy-heading">运营者与联系渠道</text>
     <text class="privacy-text">运营者：{{operatorName}}</text>

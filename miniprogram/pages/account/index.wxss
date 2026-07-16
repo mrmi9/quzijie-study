@@ -1,31 +1,41 @@
+.account-page {
+  padding-top: 28rpx;
+}
+
 .account-card,
-.menu-card,
-.danger-zone {
+.danger-zone,
+.gamification-card {
   padding: 30rpx;
 }
 
+.account-kicker,
 .account-title,
 .account-meta,
 .account-error,
-.menu-title,
-.menu-subtitle,
+.mine-stat-value,
+.mine-stat-label,
+.shortcut-title,
+.shortcut-subtitle,
+.shortcut-meta,
 .danger-title,
 .danger-description {
   display: block;
 }
 
-.account-title,
-.menu-title,
-.danger-title {
+.account-kicker {
+  color: #2563eb;
+  font-size: 24rpx;
   font-weight: 700;
 }
 
 .account-title {
-  font-size: 36rpx;
+  margin-top: 8rpx;
+  font-size: 38rpx;
+  font-weight: 800;
 }
 
 .account-meta,
-.menu-subtitle,
+.shortcut-subtitle,
 .danger-description {
   margin-top: 10rpx;
   color: #718096;
@@ -33,29 +43,190 @@
   line-height: 1.6;
 }
 
-.account-error {
-  margin-top: 16rpx;
-  color: #b42318;
-}
-
-.menu-card {
+.inline-error,
+.section-error {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 24rpx;
+  gap: 18rpx;
 }
 
-.menu-arrow {
+.inline-error {
+  margin-top: 16rpx;
+}
+
+.account-error,
+.section-state.section-error,
+.action-error {
+  color: #b42318;
+}
+
+.action-error {
+  display: block;
+  margin-bottom: 18rpx;
+  font-size: 24rpx;
+}
+
+.retry-link {
+  width: auto;
+  min-width: 112rpx;
+  height: 56rpx;
+  margin: 0;
+  padding: 0 20rpx;
+  color: #2563eb;
+  background: #eaf1ff;
+  font-size: 24rpx;
+  line-height: 56rpx;
+  border-radius: 14rpx;
+}
+
+.mine-section-title {
+  display: block;
+  margin-top: 34rpx;
+  margin-bottom: 18rpx;
+}
+
+.section-state {
+  padding: 30rpx;
+  color: #718096;
+}
+
+.mine-stats-grid,
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18rpx;
+}
+
+.mine-stat-card {
+  padding: 24rpx;
+}
+
+.mine-stat-value {
+  color: #1d4ed8;
+  font-size: 36rpx;
+  font-weight: 800;
+}
+
+.mine-stat-label {
+  margin-top: 6rpx;
+  color: #718096;
+  font-size: 23rpx;
+}
+
+.shortcut-card {
+  min-height: 196rpx;
+  padding: 24rpx;
+}
+
+.shortcut-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.shortcut-title,
+.danger-title {
+  font-weight: 700;
+}
+
+.shortcut-arrow {
   color: #94a3b8;
-  font-size: 48rpx;
+  font-size: 38rpx;
+  line-height: 1;
+}
+
+.shortcut-subtitle {
+  min-height: 76rpx;
+}
+
+.shortcut-meta {
+  margin-top: 14rpx;
+  color: #2563eb;
+  font-size: 24rpx;
+  font-weight: 700;
 }
 
 .action-button {
-  margin-top: 32rpx;
+  margin-top: 0;
 }
 
+.gamification-card {
+  overflow: hidden;
+  color: #0f172a;
+  background: linear-gradient(145deg, #eff6ff, #ffffff 58%, #faf5ff);
+  border: 2rpx solid #bfdbfe;
+}
+
+.gamification-head,
+.rank-strip,
+.nickname-form,
+.gamification-actions {
+  display: flex;
+  align-items: center;
+}
+
+.gamification-head,
+.rank-strip {
+  justify-content: space-between;
+}
+
+.gamification-name,
+.gamification-title,
+.points-value,
+.points-label,
+.rank-value,
+.rank-label,
+.rename-note {
+  display: block;
+}
+
+.gamification-name {
+  max-width: 430rpx;
+  overflow: hidden;
+  font-size: 31rpx;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gamification-title {
+  margin-top: 7rpx;
+  color: #7c3aed;
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+.points-orb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 126rpx;
+  height: 126rpx;
+  color: white;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  border-radius: 50%;
+  box-shadow: 0 14rpx 28rpx rgba(37,99,235,.22);
+}
+
+.points-value { font-size: 34rpx; font-weight: 900; }
+.points-label { font-size: 19rpx; }
+.rank-strip { margin-top: 24rpx; padding: 20rpx 10rpx; text-align: center; background: rgba(255,255,255,.72); border-radius: 18rpx; }
+.rank-strip > view { flex: 1; }
+.rank-value { color: #1d4ed8; font-size: 25rpx; font-weight: 800; }
+.rank-label { margin-top: 4rpx; color: #64748b; font-size: 20rpx; }
+.nickname-form { gap: 12rpx; margin-top: 22rpx; }
+.nickname-input { flex: 1; height: 74rpx; padding: 0 20rpx; background: white; border: 2rpx solid #cbd5e1; border-radius: 15rpx; }
+.nickname-button { width: 140rpx; height: 74rpx; margin: 0; color: white; background: #2563eb; font-size: 23rpx; line-height: 74rpx; border-radius: 15rpx; }
+.rename-note { margin-top: 10rpx; color: #94a3b8; font-size: 21rpx; }
+.gamification-actions { gap: 14rpx; margin-top: 22rpx; }
+.gamification-actions button { flex: 1; height: 72rpx; margin: 0; font-size: 23rpx; line-height: 72rpx; border-radius: 15rpx; }
+.leaderboard-button { color: white; background: linear-gradient(135deg, #f59e0b, #d97706); }
+.achievement-button { color: white; background: linear-gradient(135deg, #7c3aed, #4f46e5); }
+
 .danger-zone {
-  margin-top: 48rpx;
+  margin-top: 36rpx;
   border: 2rpx solid #fecaca;
 }
 

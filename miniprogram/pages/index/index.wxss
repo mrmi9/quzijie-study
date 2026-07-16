@@ -113,31 +113,3 @@
 }
 .module-progress-value { height: 100%; border-radius: 4rpx; }
 .retry-button { width: 220rpx; margin-top: 24rpx; }
-
-.account-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 28rpx;
-  padding: 28rpx 30rpx;
-}
-
-.account-entry-title,
-.account-entry-subtitle {
-  display: block;
-}
-
-.account-entry-title {
-  font-weight: 700;
-}
-
-.account-entry-subtitle {
-  margin-top: 8rpx;
-  color: #718096;
-  font-size: 24rpx;
-}
-
-.account-entry-arrow {
-  color: #94a3b8;
-  font-size: 48rpx;
-}
