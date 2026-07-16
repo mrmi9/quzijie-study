@@ -10,8 +10,8 @@
 .achievement-state { margin-top: 24rpx; padding: 34rpx; color: #64748b; text-align: center; }
 .achievement-error { color: #b42318; }
 .retry-button { width: 180rpx; margin-top: 18rpx; color: #2563eb; background: #eaf1ff; }
-.achievement-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18rpx; margin-top: 24rpx; }
-.achievement-card { position: relative; min-width: 0; padding: 24rpx 20rpx 20rpx; text-align: center; border: 2rpx solid #dbeafe; }
+.achievement-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18rpx; margin-top: 24rpx; }
+.achievement-card { position: relative; min-width: 0; overflow: hidden; padding: 24rpx 20rpx 20rpx; text-align: center; border: 2rpx solid #dbeafe; }
 .rarity-rare { border-color: #7dd3fc; background: linear-gradient(150deg, #ffffff, #f0f9ff); }
 .rarity-epic { border-color: #c4b5fd; background: linear-gradient(150deg, #ffffff, #faf5ff); }
 .rarity-legendary { border-color: #fbbf24; background: linear-gradient(150deg, #fffbeb, #fff7ed); }
@@ -27,5 +27,5 @@
 .progress-track { height: 10rpx; margin-top: 16rpx; background: #e2e8f0; }
 .progress-value { background: linear-gradient(90deg, #60a5fa, #7c3aed); }
 .progress-text { margin-top: 7rpx; color: #64748b; font-size: 20rpx; }
-.equip-button { height: 62rpx; margin-top: 14rpx; color: white; background: #2563eb; font-size: 22rpx; line-height: 62rpx; border-radius: 14rpx; }
+.equip-button { display: block; width: 100%; min-width: 0; max-width: 100%; height: 62rpx; margin: 14rpx 0 0; padding: 0 12rpx; overflow: hidden; color: white; background: #2563eb; font-size: 22rpx; line-height: 62rpx; white-space: nowrap; border-radius: 14rpx; }
 .unequip-button { color: #64748b; background: #e2e8f0; }
