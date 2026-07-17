@@ -5,6 +5,9 @@ import { publicQuestion, sameAnswer, validateSelection, type QuestionSnapshot } 
 import { createWechatAuthProvider } from "../../src/auth/wechat.js";
 import { ACHIEVEMENTS } from "../../src/domain/achievements.js";
 import { normalizeDisplayName, publicCodeFor, shanghaiDayKey, shanghaiPeriod } from "../../src/domain/gamification.js";
+import { decryptAdminSecret, encryptAdminSecret, hashAdminPassword, normalizeAdminRoles, normalizeAdminUsername, verifyAdminPassword, verifyTotp } from "../../src/auth/admin.js";
+import { normalizeDraftQuestion, normalizeFillAnswer, questionTextSimilarity, sameFillAnswer, stableStringify, validateDraftQuestion } from "../../src/domain/question-bank.js";
+import { validateQuestionImage } from "../../src/services/media.js";
 
 const snapshot: QuestionSnapshot = {
   id: "cpp001",
@@ -21,6 +24,9 @@ const snapshot: QuestionSnapshot = {
     { id: "C", label: "C", text: "选项 C" }
   ],
   correctOptionIds: ["A", "C"],
+  acceptedAnswers: [],
+  answerConfig: {},
+  referenceAnswer: "",
   explanation: "测试解析",
   difficulty: 1,
   tags: ["测试"],
@@ -94,6 +100,62 @@ describe("配置与微信适配器", () => {
     });
     assert.equal(config.databaseUrl, "mysql://root:p%40ss%2Fword@10.0.0.8:3306/quzijie");
     assert.equal(config.jwtAccessSecret, "");
+  });
+});
+
+describe("题库管理领域规则", () => {
+  it("稳定序列化不受对象键顺序和 Date 实例影响", () => {
+    assert.equal(
+      stableStringify({ when: new Date("2026-07-16T00:00:00.000Z"), a: 1 }),
+      stableStringify({ a: 1, when: "2026-07-16T00:00:00.000Z" })
+    );
+  });
+
+  it("填空答案执行 NFKC、空白、大小写和标点规范化", () => {
+    assert.equal(normalizeFillAnswer("  Ｈｅｌｌｏ，  WORLD! "), "hello world");
+    assert.equal(sameFillAnswer(["  TCP/IP  ", "四"], [["tcpip", "TCP/IP"], ["4", "四"]]), true);
+    assert.equal(sameFillAnswer(["TCP", "四"], [["TCP/IP"], ["四"]]), false);
+  });
+
+  it("近似题干使用规范化二元组识别", () => {
+    assert.equal(questionTextSimilarity("HTTP 默认端口是什么？", "HTTP默认端口是什么"), 1);
+    assert.equal(questionTextSimilarity("HTTP 默认端口是什么？", "二叉树的高度如何计算？") < 0.3, true);
+  });
+
+  it("五种题型执行各自答案结构校验", () => {
+    const fill = normalizeDraftQuestion({
+      subjectId: "network", chapterId: "network-application", type: "fill_blank", stem: "HTTP 默认端口是？",
+      explanation: "HTTP 的默认明文端口为 80。", difficulty: 1, acceptedAnswers: [["80"]]
+    });
+    assert.deepEqual(validateDraftQuestion(fill).errors, []);
+    const short = normalizeDraftQuestion({
+      subjectId: "os", chapterId: "os-process", type: "short_answer", stem: "简述死锁条件。",
+      explanation: "需要列出四个必要条件。", difficulty: 2, referenceAnswer: "互斥、请求并保持、不可剥夺、循环等待"
+    });
+    assert.deepEqual(validateDraftQuestion(short).errors, []);
+  });
+
+  it("管理员密码、角色、TOTP 与密钥密文可验证", async () => {
+    assert.equal(normalizeAdminUsername("  Owner_01 "), "owner_01");
+    assert.deepEqual(normalizeAdminRoles(["OWNER", "EDITOR", "OWNER", "INVALID"]), ["OWNER", "EDITOR"]);
+    const passwordHash = await hashAdminPassword("A-strong-admin-password-2026");
+    assert.equal(await verifyAdminPassword(passwordHash, "A-strong-admin-password-2026"), true);
+    assert.equal(await verifyAdminPassword(passwordHash, "wrong-password"), false);
+    const key = "unit-test-admin-encryption-key-at-least-32";
+    const encrypted = encryptAdminSecret("JBSWY3DPEHPK3PXP", key);
+    assert.equal(decryptAdminSecret(encrypted, key), "JBSWY3DPEHPK3PXP");
+    assert.equal(verifyTotp("GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ", "287082", 59_000), true);
+  });
+
+  it("题图校验真实文件头、MIME 和尺寸", () => {
+    const png = Buffer.alloc(24);
+    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]).copy(png);
+    png.writeUInt32BE(800, 16);
+    png.writeUInt32BE(600, 20);
+    assert.deepEqual(validateQuestionImage(png, "image/png"), { mimeType: "image/png", width: 800, height: 600 });
+    assert.throws(() => validateQuestionImage(png, "image/jpeg"), /格式不一致/);
+    png.writeUInt32BE(5000, 16);
+    assert.throws(() => validateQuestionImage(png, "image/png"), /4096/);
   });
 });
 

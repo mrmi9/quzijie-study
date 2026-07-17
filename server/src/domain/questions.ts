@@ -9,12 +9,15 @@ export interface QuestionSnapshot {
   subjectId: string;
   chapterId: string;
   chapterName: string;
-  type: "single" | "multiple" | "judge";
+  type: "single" | "multiple" | "judge" | "fill_blank" | "short_answer";
   stem: string;
   code: string;
   images: Array<{ src: string; alt: string; caption?: string }>;
   options: SnapshotOption[];
   correctOptionIds: string[];
+  acceptedAnswers: string[][];
+  answerConfig: { caseSensitive?: boolean; punctuationSensitive?: boolean };
+  referenceAnswer: string;
   explanation: string;
   difficulty: number;
   tags: string[];
@@ -32,8 +35,18 @@ export function sameAnswer(left: string[], right: string[]): boolean {
 }
 
 export function publicQuestion(snapshot: QuestionSnapshot, isFavorite: boolean) {
-  const { correctOptionIds: _correct, explanation: _explanation, ...safe } = snapshot;
-  return Object.assign({}, safe, { isFavorite });
+  const {
+    correctOptionIds: _correct,
+    acceptedAnswers: _accepted,
+    referenceAnswer: _reference,
+    answerConfig: _answerConfig,
+    explanation: _explanation,
+    ...safe
+  } = snapshot;
+  return Object.assign({}, safe, {
+    isFavorite,
+    blankCount: snapshot.type === "fill_blank" ? snapshot.acceptedAnswers.length : 0
+  });
 }
 
 export function shuffle<T>(values: T[], random: () => number = Math.random): T[] {
@@ -46,6 +59,7 @@ export function shuffle<T>(values: T[], random: () => number = Math.random): T[]
 }
 
 export function validateSelection(snapshot: QuestionSnapshot, selected: string[]): string[] {
+  if (!["single", "multiple", "judge"].includes(snapshot.type)) throw new Error("INVALID_ANSWER_TYPE");
   const normalized = normalizedOptionIds(selected);
   if (!normalized.length) throw new Error("ANSWER_REQUIRED");
   if (normalized.some((id) => !snapshot.options.some((option) => option.id === id))) throw new Error("INVALID_OPTION");

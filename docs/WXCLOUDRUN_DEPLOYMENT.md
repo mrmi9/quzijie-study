@@ -1,13 +1,15 @@
 # 微信云托管部署说明
 
+> 题库管理后台启用时还必须配置 `ADMIN_ENABLED=true`、稳定的 `ADMIN_ENCRYPTION_KEY` 和 COS 加密凭据；首次账号、对象生命周期、Excel 与发布流程见 [标准化题库管理手册](QUESTION_BANK_MANAGEMENT.md)。未配置这些变量时 `/admin` 保持关闭，不影响现有小程序 API。
+
 ## 已绑定资源
 
 - 云环境：`prod-d4gnnimmh1d0677fc`
 - 服务：`express-tfts`
 - 小程序调用方式：`wx.cloud.callContainer`
 - 容器端口：`3000`
-- 存活检查：`/health`
-- 就绪检查：`/ready`
+- 存活检查：`/health`（仅证明容器进程仍在运行）
+- 就绪检查：`/ready`（云托管流量门禁必须使用此路径）
 - 数据库：微信云托管 MySQL，业务库名默认 `quzijie`
 
 `express-tfts` 只是创建环境时生成的服务名。部署本项目后，模板的 `/api/count` 会被业务 API 取代，这是预期行为。
@@ -35,19 +37,30 @@ QUIZIJIE_SEED_ON_EMPTY=true
 
 也可以只设置一个标准 `mysql://` 格式的 `DATABASE_URL`，但不要同时在代码中保存连接串。默认启动流程会：
 
-1. 创建不存在的 `quzijie` 数据库；
-2. 执行 `prisma migrate deploy`；
-3. 仅在题目表为空时导入 500 道题；
-4. 启动 Fastify 服务。
+1. 先监听端口，让 `/health` 可以报告进程存活；
+2. 将除 `/health`、`/ready` 外的业务和管理后台请求统一拦截为 `503 SERVICE_BOOTSTRAPPING`；
+3. 创建不存在的 `quzijie` 数据库并执行 `prisma migrate deploy`；
+4. 仅在用户、题库、目录、发布、导入和管理员等业务表完全为空时导入 500 道基线题，并完成系统回填与启动检查；
+5. 所有启动任务成功后才让 `/ready` 返回 `200`，解除业务和管理后台的启动门禁。
+
+`/health=200` 不能证明数据库、迁移、题库基线或系统回填已经就绪，也不能作为接收业务流量的依据。云托管的就绪探针或流量健康检查必须配置为 `/ready`；启动期间 `/ready` 返回 `503` 是预期行为。存活探针仍可使用 `/health`，避免把正在执行迁移的健康容器误杀。
 
 ## 控制台部署
 
-1. 在云托管控制台打开环境 `prod-d4gnnimmh1d0677fc`。
-2. 打开服务 `express-tfts`，新建版本并选择本仓库代码。
-3. 构建目录使用仓库根目录，Dockerfile 使用根目录的 `Dockerfile`。
-4. 确认监听端口为 `3000`，环境变量符合上一节。
-5. 部署完成后先检查版本日志，必须看到 MySQL 迁移成功；空库首次启动还应看到 `Seeded 500 questions`。
-6. 访问公网域名的 `/health` 和 `/ready`，两者都应返回 `data.status = ok`，其中 `/ready` 还应返回 `database = ok`。
+生产部署分两个阶段，且任何包含数据库迁移的部署都必须先通过下一节的备份门禁：
+
+1. 在云托管控制台打开环境 `prod-d4gnnimmh1d0677fc` 和服务 `express-tfts`，确认存活探针为 `/health`、就绪探针或流量健康检查为 `/ready`。
+2. 新建第一阶段版本，构建目录使用仓库根目录、Dockerfile 使用根目录的 `Dockerfile`，监听端口为 `3000`，并设置 `ADMIN_ENABLED=false`。
+3. 部署第一阶段版本。启动期间允许 `/health=200`，但 `/ready`、业务 API 和 `/admin/` 必须保持 `503`；只有日志确认 MySQL 迁移、基线检查和系统回填全部成功后，`/ready` 才应返回 `200` 且 `database=ok`。
+4. 在第一阶段执行登录、目录、随机练习、错题、收藏、408 和积分的现有业务冒烟；失败时回滚应用版本，不启用管理后台。
+5. 配齐稳定的 `ADMIN_ENCRYPTION_KEY`、私有 COS 桶、最小权限凭据和至少两个独立管理员后，新建第二阶段版本并设置 `ADMIN_ENABLED=true`。
+6. 部署第二阶段版本，再次等待 `/ready=200/database ok`，随后验证 `/admin/` 登录、对象回读、基线快照和跨人复核发布流程。
+
+## MySQL 备份与恢复
+
+部署迁移前必须同时满足以下门禁：腾讯云控制台自动备份正常且存在近期可恢复时间点；从能访问 MySQL 私网地址的受信运维环境执行 `ops/backup-mysql.sh` 并得到通过完整结束标记和 gzip 校验的 `.sql.gz` 文件；最近一次 `ops/restore-mysql.sh` 一次性数据库恢复演练有成功记录。任一项缺失时停止部署，不得以 `/health=200` 代替备份或恢复证据。生产恢复需要目标库名复述、双重破坏性确认和额外的生产确认。完整命令见 [生产运行手册](OPERATIONS_RUNBOOK.md)。
+
+仓库 JSON 导入只用于完全空库基线。已有生产库新增或修订题目必须通过 `/admin/` 的草稿、跨人复核和发布流程，不能运行基线导入命令。
 
 ## 小程序验证
 

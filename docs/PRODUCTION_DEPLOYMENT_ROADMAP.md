@@ -639,7 +639,7 @@ GitHub Actions 至少执行：
 ### 23.1 代码、CI 与腾讯云同步
 
 - 题库复核与难度重构提交 `e0537728cf9e7922577ddeb5f6ed47fc264249c4` 已直接推送到 `main`；GitHub Actions 运行 `29393859076` 全部通过。
-- 部署前生成并校验 PostgreSQL 自定义格式备份 `/opt/quzijie-study/backups/quzijie-20260715T062040Z.dump`。
+- 每次部署前使用 `ops/backup-mysql.sh` 生成并校验 MySQL `.sql.gz` 一致性备份，并定期恢复到一次性数据库演练。
 - 腾讯云已部署 `quzijie-api:e053772` 与 `quzijie-api-migrate:e053772`，迁移无待执行项，题库幂等导入为 500 道。
 - 数据库当前题目版本分布为：版本 1 共 96 道、版本 2 共 404 道；历史 `question_versions` 共 904 条，既有练习和考试快照不被覆盖。
 - 七学科当前题量为：组成原理 100、C/C++ 100、数据结构 100、Linux 50、计算机网络 50、操作系统 50、STL 50。

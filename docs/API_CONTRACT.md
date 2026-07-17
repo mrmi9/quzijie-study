@@ -9,7 +9,7 @@
 - 请求与响应使用 UTF-8 JSON；服务端时间使用 ISO 8601。Mock 为便于本地测试使用毫秒时间戳。
 - 成功响应建议为 `{ "data": ... }`，前端也兼容直接返回业务对象。
 - 错误响应为 `{ "code": "ERROR_CODE", "message": "用户可理解的信息", "details": {} }`。
-- `subjectId` 只能为 `cpp|linux|os|ds|network|stl|co`。
+- `subjectId` 必须来自当前 `GET /api/v1/catalog`；现有七学科 ID 保持兼容，但服务端允许发布新的动态学科。
 
 公共错误码：`UNAUTHORIZED`、`FORBIDDEN`、`VALIDATION_ERROR`、`NOT_FOUND`、`NETWORK_ERROR`、`TIMEOUT`、`SERVER_ERROR`。401 时前端清除失效 Token，调用公共登录能力并保存回跳地址。
 
@@ -182,11 +182,11 @@
 
 ### GET /records/favorites?subjectId={id}
 
-`subjectId` 可省略以返回全局收藏。返回带答案与解析的复习视图。
+`subjectId` 可省略以返回全局收藏。仅当用户已经作答过题目的当前版本时返回答案与解析，并标记 `answersAvailable=true`；历史遗留的未作答收藏只返回安全题面并标记 `answersAvailable=false`，不得借收藏接口提前取得待答答案。
 
 ### PUT /records/favorites/{subjectId}/{questionId}
 
-加入收藏，重复 PUT 幂等。
+加入收藏，重复 PUT 幂等。用户必须已经作答过题目的当前版本，否则返回 `409 QUESTION_NOT_ANSWERED`。
 
 ### DELETE /records/favorites/{subjectId}/{questionId}
 
@@ -269,3 +269,38 @@
 - 记录：`QUESTION_NOT_FOUND`。
 - 考试：`INVALID_EXAM_TYPE`、`ACTIVE_EXAM_EXISTS`、`EXAM_POOL_INSUFFICIENT`、`EXAM_NOT_FOUND`、`EXAM_FINISHED`、`EXAM_INCOMPLETE`、`QUESTION_NOT_IN_EXAM`、`INVALID_OPTION`。
 - 积分与成就：`INVALID_LEADERBOARD_PERIOD`、`INVALID_DISPLAY_NAME`、`RESERVED_DISPLAY_NAME`、`UNSAFE_DISPLAY_NAME`、`NICKNAME_COOLDOWN`、`ACHIEVEMENT_NOT_FOUND`、`ACHIEVEMENT_LOCKED`。
+# 动态题库补充
+
+## 公开目录
+
+`GET /api/v1/catalog` 返回当前发布哈希、动态模块、学科展示配置、题量、章节数及当前发布中的章节目录。目录正文与 `version` 均来自同一不可变发布投影；后台尚未发布的学科、章节或展示配置不会提前出现在公开接口。客户端不得再把七学科或 500 题作为正式运行时常量。
+
+## 判别式答案
+
+原有 `selectedOptionIds` 继续兼容。新客户端优先发送：
+
+```json
+{ "questionId": "q_xxx", "clientAnswerId": "unique-id", "answer": { "kind": "choice", "optionIds": ["A"] } }
+```
+
+```json
+{ "questionId": "q_xxx", "clientAnswerId": "unique-id", "answer": { "kind": "fill", "values": ["答案一", "答案二"] } }
+```
+
+```json
+{ "questionId": "q_xxx", "clientAnswerId": "unique-id", "answer": { "kind": "short", "value": "用户简答" } }
+```
+
+简答提交后响应 `evaluationRequired=true` 并展示参考答案，再调用 `POST /api/v1/practice-sessions/:id/answers/:questionId/self-assessment`，请求体为 `{ "assessment": "mastered" | "unmastered" }`。待答题响应绝不返回 `correctOptionIds`、`acceptedAnswers`、`referenceAnswer` 或 `explanation`。
+
+管理 API 统一位于 `/api/v1/admin/*`，只供同源 `/admin/` 后台使用；完整流程、环境变量和接口用途见 `docs/QUESTION_BANK_MANAGEMENT.md`。
+
+目录变更集或 Excel 学科行可携带 `qualityPolicy`，规范结构为 `{ questionTypes?, difficulties?, chapters? }`，各目标项仅允许整数 `min`/`max`。未知字段、跨学科/停用章节引用或非法范围会阻止提交。`GET /api/v1/admin/releases` 的每条记录包含不可变的 `qualityWarnings` 和 `qualitySummary`，分别记录候选发布的普通质量偏差及逐学科策略/实际计数；这些警告不阻止发布，结构与 408 题池约束仍会阻断。
+
+## 管理端目录、导入与发布
+
+- 目录调整必须通过 `POST /api/v1/admin/catalog-drafts` 创建完整目录变更集，使用带 `revision` 的 PATCH 更新，随后提交并由非提交人复核。旧学科、章节和首页模块直写接口固定返回 `CATALOG_DRAFT_REQUIRED`。
+- Excel 批次通过 `POST /api/v1/admin/imports/:id/submit` 冻结内容哈希，再由非提交人调用 `POST /api/v1/admin/imports/:id/review` 整批批准或驳回；导入题目不能绕过批次单独提交或复核。只包含学科/章节的目录型工作簿同样支持该流程。
+- `POST /api/v1/admin/releases` 请求体为 `{ name, draftIds, catalogDraftId?, importBatchIds? }`。目录变更集、题目草稿和 Excel 目录批次在同一事务中生效，任一内容哈希、revision、复核记录或活动基线不一致都会阻止发布。
+- 发布切换后立即执行快照、目录投影、题目版本、题型内容、媒体和 408 题池自检。失败时返回 `RELEASE_VERIFICATION_FAILED` 并冻结新发布；所有者可调用 `POST /api/v1/admin/releases/:id/retry-verification`，回滚接口在冻结期间仍可用。
+- `GET /api/v1/admin/questions`、`/drafts`、`/catalog-drafts`、`/imports`、`/releases`、`/media` 和 `/audit-logs` 使用 `page`/`pageSize` 分页；列表响应统一包含 `{ page, pageSize, total, items }`。题目列表还支持 `search`、`subjectId`、`chapterId`、`type`、`difficulty`、`status`、`publishedFrom` 和 `publishedTo`。

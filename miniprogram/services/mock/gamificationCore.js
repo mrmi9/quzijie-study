@@ -120,8 +120,9 @@ function awardAnswers(state, inputs) {
       pointsAwarded += points;
     };
     add(attemptKey, 2);
-    if (input.isCorrect && !hadCorrect) add(correctKey, 8);
-    else if (input.isCorrect && hadCorrect) {
+    const rewardCorrect = input.isCorrect && input.allowCorrectReward !== false;
+    if (rewardCorrect && !hadCorrect) add(correctKey, 8);
+    else if (rewardCorrect && hadCorrect) {
       const dayKey = shanghaiDayKey(input.occurredAt);
       const reviewKey = `review:${dayKey}:${input.questionId}`;
       if ((dailyCounts[dayKey] || 0) < 20 && !gamification.events[reviewKey]) {

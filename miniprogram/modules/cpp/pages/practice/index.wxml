@@ -38,7 +38,7 @@
       </view>
     </view>
 
-    <view class="option-list">
+    <view wx:if="{{question.isChoice}}" class="option-list">
       <view
         wx:for="{{question.options}}"
         wx:key="id"
@@ -54,17 +54,48 @@
       </view>
     </view>
 
-    <view wx:if="{{reviewed}}" class="feedback-card card {{result.isCorrect ? 'feedback-correct' : 'feedback-wrong'}}">
+    <view wx:elif="{{question.isFill}}" class="subjective-card card">
+      <text class="subjective-title">填写答案</text>
+      <view class="blank-row" wx:for="{{question.blankInputs}}" wx:key="index">
+        <text class="blank-label">第 {{item.index + 1}} 空</text>
+        <input
+          class="blank-input"
+          value="{{item.value}}"
+          data-index="{{item.index}}"
+          disabled="{{reviewed}}"
+          bindinput="inputFillAnswer"
+          placeholder="请输入答案"
+        />
+      </view>
+    </view>
+
+    <view wx:elif="{{question.isShort}}" class="subjective-card card">
+      <text class="subjective-title">写下你的回答</text>
+      <textarea
+        class="short-answer-input"
+        value="{{shortAnswer}}"
+        disabled="{{reviewed || awaitingSelfAssessment}}"
+        bindinput="inputShortAnswer"
+        maxlength="4000"
+        placeholder="请先独立思考，再提交并对照参考答案自评"
+      ></textarea>
+    </view>
+
+    <view wx:if="{{reviewed || awaitingSelfAssessment}}" class="feedback-card card {{awaitingSelfAssessment ? 'feedback-pending' : (result.isCorrect ? 'feedback-correct' : 'feedback-wrong')}}">
       <view class="feedback-head">
-        <text class="feedback-title">{{result.isCorrect ? '回答正确' : '回答错误'}}</text>
-        <button class="favorite-button" loading="{{favoriteLoading}}" bindtap="toggleFavorite">
+        <text class="feedback-title">{{awaitingSelfAssessment ? '请对照参考答案自评' : (result.isCorrect ? '回答正确' : '回答错误')}}</text>
+        <button wx:if="{{reviewed}}" class="favorite-button" loading="{{favoriteLoading}}" bindtap="toggleFavorite">
           {{question.isFavorite ? '★ 已收藏' : '☆ 收藏'}}
         </button>
       </view>
-      <text class="answer-line">正确答案：{{correctAnswerText}}</text>
+      <text class="answer-line">{{question.isShort ? '参考答案' : '正确答案'}}：{{correctAnswerText}}</text>
       <text wx:if="{{missedAnswerText}}" class="answer-line missed-answer-line">漏选选项：{{missedAnswerText}}</text>
       <text class="explanation-title">答案解析</text>
       <text class="explanation-text">{{result.explanation}}</text>
+      <view wx:if="{{awaitingSelfAssessment}}" class="self-assessment-actions">
+        <button class="secondary-button" data-assessment="unmastered" loading="{{submitting}}" bindtap="assessShortAnswer">还未掌握</button>
+        <button class="primary-button" data-assessment="mastered" loading="{{submitting}}" bindtap="assessShortAnswer">已经掌握</button>
+      </view>
     </view>
 
     <view class="bottom-action practice-actions">
@@ -74,12 +105,13 @@
         bindtap="previousQuestion"
       >上一题</button>
       <button
-        wx:if="{{!reviewed}}"
+        wx:if="{{!reviewed && !awaitingSelfAssessment}}"
         class="primary-button"
-        disabled="{{selectedOptionIds.length === 0}}"
+        disabled="{{!canSubmit}}"
         loading="{{submitting}}"
         bindtap="submitAnswer"
       >确认答案</button>
+      <button wx:elif="{{awaitingSelfAssessment}}" class="primary-button" disabled="{{true}}">请先完成自评</button>
       <button wx:else class="primary-button" loading="{{submitting}}" bindtap="nextQuestion">
         {{isLast ? '完成练习并查看结果' : '下一题'}}
       </button>

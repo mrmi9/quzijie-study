@@ -13,8 +13,11 @@
       <text class="stem">{{item.stem}}</text>
       <scroll-view wx:if="{{item.code}}" class="record-code" scroll-x="true"><text>{{item.code}}</text></scroll-view>
       <view class="record-images" wx:if="{{item.images.length}}"><view wx:for="{{item.images}}" wx:key="src" wx:for-item="imageItem"><image class="record-image" src="{{imageItem.src}}" mode="widthFix" data-src="{{imageItem.src}}" bindtap="previewImage"></image><text class="image-alt">{{imageItem.alt}}</text></view></view>
-      <text class="answer">正确答案：{{item.answerText}}</text>
-      <text class="explanation">{{item.explanation}}</text>
+      <block wx:if="{{item.answersAvailable}}">
+        <text class="answer">正确答案：{{item.answerText}}</text>
+        <text class="explanation">{{item.explanation}}</text>
+      </block>
+      <text wx:else class="explanation">完成当前版本作答后可查看答案与解析</text>
     </view>
   </view>
   <view class="bottom-action"><button class="primary-button" disabled="{{loading || error || questions.length === 0}}" bindtap="startReview">{{subjectId ? '按当前学科重练' : '重练全部收藏'}}</button></view>

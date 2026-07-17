@@ -1,0 +1,282 @@
+{
+  "batchId": "open-sources-2026-07-17",
+  "generatedAt": "2026-07-16T21:39:22.376Z",
+  "questions": 350,
+  "sources": 58,
+  "review": {
+    "factChecked": 350,
+    "answerChecked": 350,
+    "copyrightChecked": 350,
+    "duplicateChecked": 350,
+    "independentlyReviewed": 350
+  },
+  "subjectStats": {
+    "cpp": {
+      "name": "C/C++",
+      "total": 50,
+      "types": {
+        "single": 30,
+        "multiple": 8,
+        "judge": 5,
+        "fill_blank": 4,
+        "short_answer": 3
+      },
+      "difficulties": {
+        "1": 11,
+        "2": 24,
+        "3": 15
+      },
+      "chapters": {
+        "c-basics": 10,
+        "control-functions": 2,
+        "arrays-strings": 3,
+        "pointers-memory": 5,
+        "struct-file-preprocessor": 6,
+        "cpp-basics-references": 4,
+        "classes-objects": 7,
+        "inheritance-polymorphism": 4,
+        "operators-templates-exceptions": 9
+      }
+    },
+    "linux": {
+      "name": "Linux",
+      "total": 50,
+      "types": {
+        "single": 30,
+        "multiple": 8,
+        "judge": 5,
+        "fill_blank": 4,
+        "short_answer": 3
+      },
+      "difficulties": {
+        "1": 19,
+        "2": 21,
+        "3": 10
+      },
+      "chapters": {
+        "linux-shell": 10,
+        "linux-files": 12,
+        "linux-process": 16,
+        "linux-users": 7,
+        "linux-network": 5
+      }
+    },
+    "os": {
+      "name": "操作系统",
+      "total": 50,
+      "types": {
+        "single": 30,
+        "multiple": 8,
+        "judge": 5,
+        "fill_blank": 4,
+        "short_answer": 3
+      },
+      "difficulties": {
+        "1": 13,
+        "2": 27,
+        "3": 10
+      },
+      "chapters": {
+        "os-process": 12,
+        "os-sync": 10,
+        "os-memory": 10,
+        "os-filesystem": 10,
+        "os-io": 8
+      }
+    },
+    "ds": {
+      "name": "数据结构",
+      "total": 50,
+      "types": {
+        "single": 30,
+        "multiple": 8,
+        "fill_blank": 4,
+        "judge": 5,
+        "short_answer": 3
+      },
+      "difficulties": {
+        "1": 19,
+        "2": 22,
+        "3": 9
+      },
+      "chapters": {
+        "ds-basics": 5,
+        "ds-list": 6,
+        "ds-stack-queue": 5,
+        "ds-string-array": 5,
+        "ds-tree": 9,
+        "ds-graph": 9,
+        "ds-search": 6,
+        "ds-sort": 5
+      }
+    },
+    "network": {
+      "name": "计算机网络",
+      "total": 50,
+      "types": {
+        "single": 30,
+        "judge": 5,
+        "multiple": 8,
+        "fill_blank": 4,
+        "short_answer": 3
+      },
+      "difficulties": {
+        "1": 13,
+        "2": 29,
+        "3": 8
+      },
+      "chapters": {
+        "net-architecture": 4,
+        "net-physical": 5,
+        "net-datalink": 7,
+        "net-network": 12,
+        "net-transport": 11,
+        "net-application": 11
+      }
+    },
+    "stl": {
+      "name": "STL",
+      "total": 50,
+      "types": {
+        "single": 30,
+        "multiple": 8,
+        "judge": 5,
+        "fill_blank": 4,
+        "short_answer": 3
+      },
+      "difficulties": {
+        "1": 18,
+        "2": 21,
+        "3": 11
+      },
+      "chapters": {
+        "stl-generic": 9,
+        "stl-sequence": 12,
+        "stl-associative": 12,
+        "stl-algorithms": 12,
+        "stl-adapters": 5
+      }
+    },
+    "co": {
+      "name": "计算机组成原理",
+      "total": 50,
+      "types": {
+        "single": 30,
+        "multiple": 8,
+        "judge": 5,
+        "fill_blank": 4,
+        "short_answer": 3
+      },
+      "difficulties": {
+        "1": 14,
+        "2": 25,
+        "3": 11
+      },
+      "chapters": {
+        "co-data": 6,
+        "co-memory": 8,
+        "co-instruction": 10,
+        "co-cpu": 9,
+        "co-bus": 4,
+        "co-io": 5,
+        "co-performance": 8
+      }
+    }
+  },
+  "answerPositions": {
+    "cpp": {
+      "A": 8,
+      "B": 8,
+      "C": 8,
+      "D": 6
+    },
+    "linux": {
+      "B": 10,
+      "C": 7,
+      "D": 6,
+      "A": 7
+    },
+    "os": {
+      "B": 7,
+      "C": 9,
+      "A": 7,
+      "D": 7
+    },
+    "ds": {
+      "B": 7,
+      "C": 8,
+      "A": 8,
+      "D": 7
+    },
+    "network": {
+      "B": 7,
+      "C": 9,
+      "D": 7,
+      "A": 7
+    },
+    "stl": {
+      "B": 8,
+      "C": 9,
+      "D": 6,
+      "A": 7
+    },
+    "co": {
+      "C": 7,
+      "B": 9,
+      "D": 7,
+      "A": 7
+    }
+  },
+  "sourceUsage": {
+    "wg14-n1570": 5,
+    "wg14-n3096": 16,
+    "wg21-n4950": 69,
+    "gcc-c-dialect": 1,
+    "bash53": 8,
+    "coreutils911": 2,
+    "linux-man-pages": 22,
+    "linux-open2": 7,
+    "linux-fork2": 5,
+    "linux-execve2": 5,
+    "glibc242": 1,
+    "systemd-docs": 7,
+    "linux-kernel-docs": 3,
+    "linux-proc": 1,
+    "posix-2024": 21,
+    "xv6-book": 33,
+    "linux-scheduler": 4,
+    "riscv-priv": 22,
+    "linux-mm": 9,
+    "linux-locking": 3,
+    "linux-filesystems": 10,
+    "xv6-source": 1,
+    "ods": 28,
+    "nist-dads": 37,
+    "ods-cpp": 11,
+    "opendsa": 30,
+    "ieee-8023": 9,
+    "rfc8200": 10,
+    "rfc9293": 12,
+    "rfc8446": 3,
+    "ieee-8021q": 5,
+    "rfc8201": 4,
+    "rfc4443": 5,
+    "rfc4861": 4,
+    "rfc8085": 1,
+    "rfc1034": 3,
+    "rfc9499": 2,
+    "rfc1035": 4,
+    "rfc6891": 1,
+    "rfc7766": 2,
+    "rfc9110": 2,
+    "rfc9000": 1,
+    "eel-ranges": 2,
+    "eel-algorithms": 9,
+    "eel-iterators": 2,
+    "ieee754-2019": 4,
+    "riscv-rv32i": 21,
+    "openalg-co": 16,
+    "riscv-spec-library": 1,
+    "riscv-a": 1
+  }
+}

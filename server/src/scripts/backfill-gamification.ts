@@ -48,7 +48,7 @@ async function backfillUser(prisma: DatabaseClient, userId: string): Promise<boo
     const inputs: AwardAnswerInput[] = [
       ...practiceAnswers.map((answer) => ({
         questionId: answer.questionId,
-        isCorrect: answer.isCorrect,
+        isCorrect: Boolean(answer.isCorrect),
         occurredAt: answer.submittedAt,
         sourceType: "practice" as const,
         sourceId: answer.id

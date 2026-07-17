@@ -9,7 +9,7 @@ cd "$root_dir"
 : "${QUIZIJIE_MIGRATE_IMAGE:?set QUIZIJIE_MIGRATE_IMAGE}"
 
 api_port="${QUIZIJIE_API_PORT:-3000}"
-import_questions="${QUIZIJIE_IMPORT_QUESTIONS:-false}"
+bootstrap_empty_baseline="${QUIZIJIE_BOOTSTRAP_EMPTY_BASELINE:-false}"
 pull_images="${QUIZIJIE_PULL_IMAGES:-true}"
 state_dir="${QUIZIJIE_RELEASE_STATE_DIR:-$root_dir/.release}"
 compose=(docker compose -f compose.release.yaml)
@@ -47,8 +47,14 @@ if [[ "$pull_images" == "true" ]]; then
 fi
 "${compose[@]}" --profile tools run --rm migrate
 
-if [[ "$import_questions" == "true" ]]; then
-  "${compose[@]}" --profile tools run --rm migrate npm run db:seed:compiled --workspace server
+if [[ "$bootstrap_empty_baseline" != "true" && "$bootstrap_empty_baseline" != "false" ]]; then
+  echo "QUIZIJIE_BOOTSTRAP_EMPTY_BASELINE must equal true or false" >&2
+  exit 1
+fi
+if [[ "$bootstrap_empty_baseline" == "true" ]]; then
+  "${compose[@]}" --profile tools run --rm \
+    -e QUIZIJIE_ALLOW_EMPTY_BASELINE_IMPORT=IMPORT_EMPTY_BASELINE \
+    migrate npm run db:bootstrap-baseline:compiled --workspace server
 fi
 
 "${compose[@]}" up -d --no-build --remove-orphans api

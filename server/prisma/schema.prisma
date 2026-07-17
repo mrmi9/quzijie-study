@@ -24,6 +24,77 @@ enum QuestionType {
   SINGLE
   MULTIPLE
   JUDGE
+  FILL_BLANK
+  SHORT_ANSWER
+}
+
+enum AdminStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum CatalogModuleType {
+  SUBJECT
+  GROUP
+  EXAM
+}
+
+enum QuestionDraftStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  PUBLISHED
+  CANCELLED
+}
+
+enum QuestionDraftAction {
+  UPSERT
+  DISABLE
+}
+
+enum ReviewDecision {
+  APPROVED
+  REJECTED
+}
+
+enum ImportBatchStatus {
+  STAGING
+  VALID
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  PUBLISHED
+  CANCELLED
+}
+
+enum ReleaseStatus {
+  PREPARING
+  PUBLISHED
+  FAILED
+}
+
+enum ReleaseKind {
+  NORMAL
+  ROLLBACK
+  BASELINE
+}
+
+enum ReleaseVerificationStatus {
+  PENDING
+  PASSED
+  FAILED
+}
+
+enum MediaAssetStatus {
+  PENDING
+  READY
+  REJECTED
+}
+
+enum SelfAssessment {
+  MASTERED
+  UNMASTERED
 }
 
 enum PracticeMode {
@@ -91,28 +162,38 @@ model RefreshToken {
 }
 
 model Subject {
-  id            String            @id
+  id            String                 @id
   name          String
-  shortName     String            @map("short_name")
+  shortName     String                 @map("short_name")
   order         Int
-  active        Boolean           @default(true)
+  color         String                 @default("#2563eb") @db.VarChar(16)
+  description   String?                @db.VarChar(512)
+  iconKey       String?                @map("icon_key") @db.VarChar(64)
+  qualityPolicy Json?                  @map("quality_policy")
+  active        Boolean                @default(true)
+  createdAt     DateTime               @default(now()) @map("created_at")
+  updatedAt     DateTime               @updatedAt @map("updated_at")
   chapters      Chapter[]
   questions     Question[]
   sessions      PracticeSession[]
   examQuestions ExamQuestion[]
+  moduleLinks   CatalogModuleSubject[]
 
   @@map("subjects")
 }
 
 model Chapter {
-  id        String            @id
-  subjectId String            @map("subject_id")
-  name      String
-  order     Int
-  active    Boolean           @default(true)
-  subject   Subject           @relation(fields: [subjectId], references: [id], onDelete: Restrict)
-  questions Question[]
-  sessions  PracticeSession[]
+  id          String            @id
+  subjectId   String            @map("subject_id")
+  name        String
+  order       Int
+  active      Boolean           @default(true)
+  description String?           @db.VarChar(512)
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+  subject     Subject           @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  questions   Question[]
+  sessions    PracticeSession[]
 
   @@unique([subjectId, order])
   @@map("chapters")
@@ -124,6 +205,10 @@ model Question {
   chapterId        String                    @map("chapter_id")
   currentVersionId String?                   @unique @map("current_version_id") @db.Char(36)
   status           QuestionStatus            @default(ACTIVE)
+  externalCode     String?                   @unique @map("external_code") @db.VarChar(96)
+  sourceSystem     String?                   @map("source_system") @db.VarChar(64)
+  sourceReference  String?                   @map("source_reference") @db.VarChar(191)
+  contentHash      String?                   @map("content_hash") @db.Char(64)
   createdAt        DateTime                  @default(now()) @map("created_at")
   updatedAt        DateTime                  @updatedAt @map("updated_at")
   subject          Subject                   @relation(fields: [subjectId], references: [id], onDelete: Restrict)
@@ -136,6 +221,7 @@ model Question {
   favorites        Favorite[]
   examQuestions    ExamQuestion[]
   pointEvents      PointEvent[]
+  drafts           QuestionDraft[]
 
   @@index([subjectId, chapterId, status])
   @@map("questions")
@@ -154,12 +240,18 @@ model QuestionVersion {
   images             Json
   examScopes         Json                      @map("exam_scopes")
   correctOptionIds   Json                      @map("correct_option_ids")
+  acceptedAnswers    Json                      @map("accepted_answers")
+  answerConfig       Json                      @map("answer_config")
+  referenceAnswer    String?                   @map("reference_answer") @db.Text
   createdAt          DateTime                  @default(now()) @map("created_at")
   question           Question                  @relation("QuestionVersions", fields: [questionId], references: [id], onDelete: Cascade)
   currentForQuestion Question?                 @relation("CurrentQuestionVersion")
   options            QuestionOption[]
   sessionQuestions   PracticeSessionQuestion[]
   examQuestions      ExamQuestion[]
+  basedDrafts        QuestionDraft[]           @relation("DraftBaseVersion")
+  releaseItemsBefore QuestionReleaseItem[]     @relation("ReleasePreviousVersion")
+  releaseItemsAfter  QuestionReleaseItem[]     @relation("ReleasePublishedVersion")
 
   @@unique([questionId, version])
   @@map("question_versions")
@@ -217,21 +309,25 @@ model PracticeSessionQuestion {
 }
 
 model PracticeAnswer {
-  id                String          @id @default(uuid()) @db.Char(36)
-  sessionId         String          @map("session_id") @db.Char(36)
-  questionId        String          @map("question_id")
-  userId            String          @map("user_id") @db.Char(36)
-  clientAnswerId    String          @map("client_answer_id")
-  selectedOptionIds Json            @map("selected_option_ids")
-  correctOptionIds  Json            @map("correct_option_ids")
-  explanation       String          @db.Text
-  isCorrect         Boolean         @map("is_correct")
-  pointsAwarded     Int             @default(0) @map("points_awarded")
-  unlockedAchievements Json         @map("unlocked_achievements")
-  submittedAt       DateTime        @default(now()) @map("submitted_at")
-  session           PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  question          Question        @relation(fields: [questionId], references: [id], onDelete: Restrict)
-  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                   String          @id @default(uuid()) @db.Char(36)
+  sessionId            String          @map("session_id") @db.Char(36)
+  questionId           String          @map("question_id")
+  userId               String          @map("user_id") @db.Char(36)
+  clientAnswerId       String          @map("client_answer_id")
+  selectedOptionIds    Json            @map("selected_option_ids")
+  correctOptionIds     Json            @map("correct_option_ids")
+  explanation          String          @db.Text
+  answerType           QuestionType    @default(SINGLE) @map("answer_type")
+  textAnswer           String?         @map("text_answer") @db.Text
+  normalizedTextAnswer String?         @map("normalized_text_answer") @db.Text
+  selfAssessment       SelfAssessment? @map("self_assessment")
+  isCorrect            Boolean?        @map("is_correct")
+  pointsAwarded        Int             @default(0) @map("points_awarded")
+  unlockedAchievements Json            @map("unlocked_achievements")
+  submittedAt          DateTime        @default(now()) @map("submitted_at")
+  session              PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  question             Question        @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  user                 User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, clientAnswerId])
   @@unique([sessionId, questionId])
@@ -319,20 +415,20 @@ model ExamDraft {
 }
 
 model ExamResult {
-  examId        String           @id @map("exam_id") @db.Char(36)
-  totalCount    Int              @map("total_count")
-  answeredCount Int              @map("answered_count")
-  correctCount  Int              @map("correct_count")
-  wrongCount    Int              @map("wrong_count")
-  score         Int
-  maxScore      Int              @map("max_score")
-  accuracy      Int
-  subjectStats  Json             @map("subject_stats")
-  submitReason  ExamSubmitReason @map("submit_reason")
-  pointsAwarded Int              @default(0) @map("points_awarded")
-  unlockedAchievements Json      @map("unlocked_achievements")
-  submittedAt   DateTime         @map("submitted_at")
-  exam          Exam             @relation(fields: [examId], references: [id], onDelete: Cascade)
+  examId               String           @id @map("exam_id") @db.Char(36)
+  totalCount           Int              @map("total_count")
+  answeredCount        Int              @map("answered_count")
+  correctCount         Int              @map("correct_count")
+  wrongCount           Int              @map("wrong_count")
+  score                Int
+  maxScore             Int              @map("max_score")
+  accuracy             Int
+  subjectStats         Json             @map("subject_stats")
+  submitReason         ExamSubmitReason @map("submit_reason")
+  pointsAwarded        Int              @default(0) @map("points_awarded")
+  unlockedAchievements Json             @map("unlocked_achievements")
+  submittedAt          DateTime         @map("submitted_at")
+  exam                 Exam             @relation(fields: [examId], references: [id], onDelete: Cascade)
 
   @@map("exam_results")
 }
@@ -393,4 +489,360 @@ model SystemJob {
   details     Json?
 
   @@map("system_jobs")
+}
+
+model CatalogModule {
+  id        String                 @id @db.VarChar(64)
+  name      String                 @db.VarChar(96)
+  subtitle  String?                @db.VarChar(191)
+  color     String                 @default("#2563eb") @db.VarChar(16)
+  type      CatalogModuleType
+  order     Int
+  active    Boolean                @default(true)
+  createdAt DateTime               @default(now()) @map("created_at")
+  updatedAt DateTime               @updatedAt @map("updated_at")
+  subjects  CatalogModuleSubject[]
+
+  @@unique([order])
+  @@map("catalog_modules")
+}
+
+model CatalogModuleSubject {
+  moduleId  String        @map("module_id") @db.VarChar(64)
+  subjectId String        @map("subject_id")
+  order     Int
+  module    CatalogModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  subject   Subject       @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+
+  @@id([moduleId, subjectId])
+  @@unique([moduleId, order])
+  @@map("catalog_module_subjects")
+}
+
+model AdminUser {
+  id                     String                @id @default(uuid()) @db.Char(36)
+  username               String                @unique @db.VarChar(64)
+  displayName            String                @map("display_name") @db.VarChar(96)
+  passwordHash           String                @map("password_hash") @db.VarChar(255)
+  totpSecretEncrypted    String                @map("totp_secret_encrypted") @db.Text
+  roles                  Json
+  status                 AdminStatus           @default(ACTIVE)
+  failedLoginCount       Int                   @default(0) @map("failed_login_count")
+  lockedUntil            DateTime?             @map("locked_until")
+  lastLoginAt            DateTime?             @map("last_login_at")
+  passwordChangedAt      DateTime              @default(now()) @map("password_changed_at")
+  createdAt              DateTime              @default(now()) @map("created_at")
+  updatedAt              DateTime              @updatedAt @map("updated_at")
+  sessions               AdminSession[]
+  createdDrafts          QuestionDraft[]       @relation("DraftCreatedBy")
+  submittedDrafts        QuestionDraft[]       @relation("DraftSubmittedBy")
+  reviews                DraftReview[]
+  createdCatalogDrafts   CatalogDraft[]        @relation("CatalogDraftCreatedBy")
+  submittedCatalogDrafts CatalogDraft[]        @relation("CatalogDraftSubmittedBy")
+  catalogReviews         CatalogDraftReview[]
+  imports                QuestionImportBatch[]
+  submittedImports       QuestionImportBatch[] @relation("ImportBatchSubmittedBy")
+  importReviews          ImportBatchReview[]
+  createdReleases        QuestionRelease[]     @relation("ReleaseCreatedBy")
+  publishedReleases      QuestionRelease[]     @relation("ReleasePublishedBy")
+  assets                 MediaAsset[]
+  auditLogs              AdminAuditLog[]
+
+  @@map("admin_users")
+}
+
+model AdminSession {
+  id            String    @id @default(uuid()) @db.Char(36)
+  adminUserId   String    @map("admin_user_id") @db.Char(36)
+  tokenHash     String    @unique @map("token_hash") @db.Char(64)
+  csrfTokenHash String    @map("csrf_token_hash") @db.Char(64)
+  expiresAt     DateTime  @map("expires_at")
+  revokedAt     DateTime? @map("revoked_at")
+  ipHash        String?   @map("ip_hash") @db.Char(64)
+  userAgent     String?   @map("user_agent") @db.VarChar(255)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  adminUser     AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId, expiresAt])
+  @@map("admin_sessions")
+}
+
+model QuestionDraft {
+  id                     String                @id @default(uuid()) @db.Char(36)
+  questionId             String                @map("question_id")
+  externalCode           String?               @map("external_code") @db.VarChar(96)
+  baseVersionId          String?               @map("base_version_id") @db.Char(36)
+  subjectId              String                @map("subject_id")
+  chapterId              String                @map("chapter_id")
+  type                   QuestionType
+  stem                   String                @db.Text
+  code                   String?               @db.Text
+  explanation            String                @db.Text
+  difficulty             Int
+  tags                   Json
+  images                 Json
+  examScopes             Json                  @map("exam_scopes")
+  correctOptionIds       Json                  @map("correct_option_ids")
+  acceptedAnswers        Json                  @map("accepted_answers")
+  answerConfig           Json                  @map("answer_config")
+  referenceAnswer        String?               @map("reference_answer") @db.Text
+  options                Json
+  contentHash            String                @map("content_hash") @db.Char(64)
+  action                 QuestionDraftAction   @default(UPSERT)
+  status                 QuestionDraftStatus   @default(DRAFT)
+  revision               Int                   @default(1)
+  validationErrors       Json                  @map("validation_errors")
+  validationWarnings     Json                  @map("validation_warnings")
+  createdById            String                @map("created_by_id") @db.Char(36)
+  submittedById          String?               @map("submitted_by_id") @db.Char(36)
+  submittedAt            DateTime?             @map("submitted_at")
+  warningsAcknowledgedAt DateTime?             @map("warnings_acknowledged_at")
+  createdAt              DateTime              @default(now()) @map("created_at")
+  updatedAt              DateTime              @updatedAt @map("updated_at")
+  question               Question?             @relation(fields: [questionId], references: [id], onDelete: Restrict)
+  baseVersion            QuestionVersion?      @relation("DraftBaseVersion", fields: [baseVersionId], references: [id], onDelete: Restrict)
+  createdBy              AdminUser             @relation("DraftCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  submittedBy            AdminUser?            @relation("DraftSubmittedBy", fields: [submittedById], references: [id], onDelete: Restrict)
+  reviews                DraftReview[]
+  importRows             QuestionImportRow[]
+  releaseItems           QuestionReleaseItem[]
+
+  @@index([status, updatedAt])
+  @@index([subjectId, chapterId, status])
+  @@index([questionId, status])
+  @@map("question_drafts")
+}
+
+model DraftReview {
+  id         String         @id @default(uuid()) @db.Char(36)
+  draftId    String         @map("draft_id") @db.Char(36)
+  reviewerId String         @map("reviewer_id") @db.Char(36)
+  decision   ReviewDecision
+  comment    String?        @db.Text
+  createdAt  DateTime       @default(now()) @map("created_at")
+  draft      QuestionDraft  @relation(fields: [draftId], references: [id], onDelete: Cascade)
+  reviewer   AdminUser      @relation(fields: [reviewerId], references: [id], onDelete: Restrict)
+
+  @@index([draftId, createdAt])
+  @@map("draft_reviews")
+}
+
+model CatalogDraft {
+  id                     String               @id @default(uuid()) @db.Char(36)
+  name                   String               @db.VarChar(128)
+  baseReleaseId          String               @map("base_release_id") @db.Char(36)
+  baseCatalogHash        String               @map("base_catalog_hash") @db.Char(64)
+  payload                Json
+  contentHash            String               @map("content_hash") @db.Char(64)
+  status                 QuestionDraftStatus  @default(DRAFT)
+  revision               Int                  @default(1)
+  validationErrors       Json                 @map("validation_errors")
+  validationWarnings     Json                 @map("validation_warnings")
+  createdById            String               @map("created_by_id") @db.Char(36)
+  submittedById          String?              @map("submitted_by_id") @db.Char(36)
+  submittedAt            DateTime?            @map("submitted_at")
+  warningsAcknowledgedAt DateTime?            @map("warnings_acknowledged_at")
+  createdAt              DateTime             @default(now()) @map("created_at")
+  updatedAt              DateTime             @updatedAt @map("updated_at")
+  baseRelease            QuestionRelease      @relation("CatalogDraftBaseRelease", fields: [baseReleaseId], references: [id], onDelete: Restrict)
+  createdBy              AdminUser            @relation("CatalogDraftCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  submittedBy            AdminUser?           @relation("CatalogDraftSubmittedBy", fields: [submittedById], references: [id], onDelete: Restrict)
+  reviews                CatalogDraftReview[]
+  publishedRelease       QuestionRelease?     @relation("PublishedCatalogDraft")
+
+  @@index([status, updatedAt])
+  @@index([baseCatalogHash, status])
+  @@map("catalog_drafts")
+}
+
+model CatalogDraftReview {
+  id             String         @id @default(uuid()) @db.Char(36)
+  catalogDraftId String         @map("catalog_draft_id") @db.Char(36)
+  reviewerId     String         @map("reviewer_id") @db.Char(36)
+  decision       ReviewDecision
+  contentHash    String         @map("content_hash") @db.Char(64)
+  comment        String?        @db.Text
+  createdAt      DateTime       @default(now()) @map("created_at")
+  catalogDraft   CatalogDraft   @relation(fields: [catalogDraftId], references: [id], onDelete: Cascade)
+  reviewer       AdminUser      @relation(fields: [reviewerId], references: [id], onDelete: Restrict)
+
+  @@index([catalogDraftId, createdAt])
+  @@map("catalog_draft_reviews")
+}
+
+model QuestionImportBatch {
+  id                     String              @id @default(uuid()) @db.Char(36)
+  fileName               String              @map("file_name") @db.VarChar(255)
+  sourceHash             String              @map("source_hash") @db.Char(64)
+  sourceObjectKey        String?             @map("source_object_key") @db.VarChar(512)
+  sourceExpiresAt        DateTime?           @map("source_expires_at")
+  status                 ImportBatchStatus   @default(STAGING)
+  totalRows              Int                 @default(0) @map("total_rows")
+  validRows              Int                 @default(0) @map("valid_rows")
+  errorRows              Int                 @default(0) @map("error_rows")
+  warningRows            Int                 @default(0) @map("warning_rows")
+  contentHash            String?             @map("content_hash") @db.Char(64)
+  revision               Int                 @default(1)
+  createdById            String              @map("created_by_id") @db.Char(36)
+  submittedById          String?             @map("submitted_by_id") @db.Char(36)
+  submittedAt            DateTime?           @map("submitted_at")
+  warningsAcknowledgedAt DateTime?           @map("warnings_acknowledged_at")
+  publishedReleaseId     String?             @map("published_release_id") @db.Char(36)
+  createdAt              DateTime            @default(now()) @map("created_at")
+  updatedAt              DateTime            @updatedAt @map("updated_at")
+  createdBy              AdminUser           @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  submittedBy            AdminUser?          @relation("ImportBatchSubmittedBy", fields: [submittedById], references: [id], onDelete: Restrict)
+  publishedRelease       QuestionRelease?    @relation(fields: [publishedReleaseId], references: [id], onDelete: Restrict)
+  rows                   QuestionImportRow[]
+  reviews                ImportBatchReview[]
+
+  @@unique([sourceHash, createdById])
+  @@index([status, createdAt])
+  @@map("question_import_batches")
+}
+
+model ImportBatchReview {
+  id          String              @id @default(uuid()) @db.Char(36)
+  batchId     String              @map("batch_id") @db.Char(36)
+  reviewerId  String              @map("reviewer_id") @db.Char(36)
+  decision    ReviewDecision
+  contentHash String              @map("content_hash") @db.Char(64)
+  comment     String?             @db.Text
+  createdAt   DateTime            @default(now()) @map("created_at")
+  batch       QuestionImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  reviewer    AdminUser           @relation(fields: [reviewerId], references: [id], onDelete: Restrict)
+
+  @@index([batchId, createdAt])
+  @@map("import_batch_reviews")
+}
+
+model QuestionImportRow {
+  id             String              @id @default(uuid()) @db.Char(36)
+  batchId        String              @map("batch_id") @db.Char(36)
+  rowNumber      Int                 @map("row_number")
+  entityType     String              @map("entity_type") @db.VarChar(32)
+  rawData        Json                @map("raw_data")
+  normalizedData Json?               @map("normalized_data")
+  errors         Json
+  warnings       Json
+  draftId        String?             @map("draft_id") @db.Char(36)
+  batch          QuestionImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  draft          QuestionDraft?      @relation(fields: [draftId], references: [id], onDelete: SetNull)
+
+  @@unique([batchId, rowNumber, entityType])
+  @@index([batchId, draftId])
+  @@map("question_import_rows")
+}
+
+model QuestionRelease {
+  id                       String                    @id @default(uuid()) @db.Char(36)
+  name                     String                    @db.VarChar(128)
+  kind                     ReleaseKind               @default(NORMAL)
+  status                   ReleaseStatus             @default(PREPARING)
+  previousReleaseId        String?                   @map("previous_release_id") @db.Char(36)
+  snapshotKey              String?                   @map("snapshot_key") @db.VarChar(512)
+  snapshotHash             String?                   @map("snapshot_hash") @db.Char(64)
+  catalogHash              String?                   @map("catalog_hash") @db.Char(64)
+  snapshotSize             Int?                      @map("snapshot_size")
+  publicCatalog            Json?                     @map("public_catalog")
+  qualityWarnings          Json?                     @map("quality_warnings")
+  qualitySummary           Json?                     @map("quality_summary")
+  verificationStatus       ReleaseVerificationStatus @default(PENDING) @map("verification_status")
+  verificationReport       Json?                     @map("verification_report")
+  verificationStartedAt    DateTime?                 @map("verification_started_at")
+  verificationCompletedAt  DateTime?                 @map("verification_completed_at")
+  verificationDurationMs   Int?                      @map("verification_duration_ms")
+  validationErrorCount     Int                       @default(0) @map("validation_error_count")
+  objectUploadFailureCount Int                       @default(0) @map("object_upload_failure_count")
+  missingVersionCount      Int                       @default(0) @map("missing_version_count")
+  api5xxCount              Int                       @default(0) @map("api_5xx_count")
+  questionCount            Int                       @default(0) @map("question_count")
+  createdById              String?                   @map("created_by_id") @db.Char(36)
+  publishedById            String?                   @map("published_by_id") @db.Char(36)
+  catalogDraftId           String?                   @unique @map("catalog_draft_id") @db.Char(36)
+  failureReason            String?                   @map("failure_reason") @db.Text
+  createdAt                DateTime                  @default(now()) @map("created_at")
+  publishedAt              DateTime?                 @map("published_at")
+  previousRelease          QuestionRelease?          @relation("PreviousRelease", fields: [previousReleaseId], references: [id], onDelete: Restrict)
+  nextReleases             QuestionRelease[]         @relation("PreviousRelease")
+  basedCatalogDrafts       CatalogDraft[]            @relation("CatalogDraftBaseRelease")
+  createdBy                AdminUser?                @relation("ReleaseCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  publishedBy              AdminUser?                @relation("ReleasePublishedBy", fields: [publishedById], references: [id], onDelete: Restrict)
+  catalogDraft             CatalogDraft?             @relation("PublishedCatalogDraft", fields: [catalogDraftId], references: [id], onDelete: Restrict)
+  importBatches            QuestionImportBatch[]
+  items                    QuestionReleaseItem[]
+  activeFor                CatalogState[]
+
+  @@index([status, publishedAt])
+  @@map("question_releases")
+}
+
+model QuestionReleaseItem {
+  id                 String           @id @default(uuid()) @db.Char(36)
+  releaseId          String           @map("release_id") @db.Char(36)
+  draftId            String?          @map("draft_id") @db.Char(36)
+  questionId         String           @map("question_id")
+  action             String           @db.VarChar(24)
+  previousVersionId  String?          @map("previous_version_id") @db.Char(36)
+  publishedVersionId String?          @map("published_version_id") @db.Char(36)
+  beforeState        Json?            @map("before_state")
+  afterState         Json?            @map("after_state")
+  release            QuestionRelease  @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  draft              QuestionDraft?   @relation(fields: [draftId], references: [id], onDelete: Restrict)
+  previousVersion    QuestionVersion? @relation("ReleasePreviousVersion", fields: [previousVersionId], references: [id], onDelete: Restrict)
+  publishedVersion   QuestionVersion? @relation("ReleasePublishedVersion", fields: [publishedVersionId], references: [id], onDelete: Restrict)
+
+  @@unique([releaseId, questionId])
+  @@index([questionId, releaseId])
+  @@map("question_release_items")
+}
+
+model CatalogState {
+  id              Int              @id
+  activeReleaseId String?          @map("active_release_id") @db.Char(36)
+  publishFrozen   Boolean          @default(false) @map("publish_frozen")
+  freezeReason    String?          @map("freeze_reason") @db.Text
+  frozenAt        DateTime?        @map("frozen_at")
+  frozenReleaseId String?          @map("frozen_release_id") @db.Char(36)
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  activeRelease   QuestionRelease? @relation(fields: [activeReleaseId], references: [id], onDelete: Restrict)
+
+  @@map("catalog_state")
+}
+
+model MediaAsset {
+  id          String           @id @default(uuid()) @db.Char(36)
+  objectKey   String           @unique @map("object_key") @db.VarChar(512)
+  sha256      String?          @unique @db.Char(64)
+  mimeType    String           @map("mime_type") @db.VarChar(96)
+  size        Int
+  width       Int?
+  height      Int?
+  publicUrl   String?          @map("public_url") @db.VarChar(1024)
+  status      MediaAssetStatus @default(PENDING)
+  createdById String           @map("created_by_id") @db.Char(36)
+  createdAt   DateTime         @default(now()) @map("created_at")
+  readyAt     DateTime?        @map("ready_at")
+  createdBy   AdminUser        @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([status, createdAt])
+  @@map("media_assets")
+}
+
+model AdminAuditLog {
+  id          BigInt     @id @default(autoincrement())
+  adminUserId String?    @map("admin_user_id") @db.Char(36)
+  action      String     @db.VarChar(96)
+  entityType  String     @map("entity_type") @db.VarChar(64)
+  entityId    String?    @map("entity_id") @db.VarChar(96)
+  beforeState Json?      @map("before_state")
+  afterState  Json?      @map("after_state")
+  requestId   String?    @map("request_id") @db.VarChar(96)
+  ipHash      String?    @map("ip_hash") @db.Char(64)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  adminUser   AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([entityType, entityId, createdAt])
+  @@map("admin_audit_logs")
 }

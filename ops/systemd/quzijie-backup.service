@@ -1,7 +1,7 @@
 [Unit]
-Description=Quzijie PostgreSQL verified backup
-After=postgresql.service
-Requires=postgresql.service
+Description=Quzijie MySQL verified backup
+Wants=network-online.target
+After=network-online.target
 
 [Service]
 Type=oneshot
@@ -11,7 +11,7 @@ WorkingDirectory=/opt/quzijie-study
 Environment=QUIZIJIE_API_ENV_FILE=/opt/quzijie-study/server/.env.production
 Environment=QUIZIJIE_BACKUP_DIR=/opt/quzijie-study/backups
 Environment=QUIZIJIE_BACKUP_RETENTION_DAYS=14
-ExecStart=/usr/bin/bash /opt/quzijie-study/ops/backup-postgres.sh
+ExecStart=/usr/bin/bash /opt/quzijie-study/ops/backup-mysql.sh
 UMask=0077
 NoNewPrivileges=true
 PrivateTmp=true

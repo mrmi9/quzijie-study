@@ -1,5 +1,6 @@
 const auth = require('../../utils/auth');
 const repository = require('../../services/practiceRepository');
+const registry = require('../../config/subjectRegistry');
 
 Page({
   data: { loading: true, error: '', overview: null, modules: [] },
@@ -15,8 +16,11 @@ Page({
 
   loadOverview() {
     this.setData({ loading: true, error: '' });
-    return repository.getLearningOverview()
-      .then((overview) => this.setData({ overview, modules: overview.modules, loading: false }))
+    return Promise.all([repository.getLearningOverview(), repository.getCatalog()])
+      .then(([overview, catalog]) => {
+        registry.applyCatalog(catalog);
+        this.setData({ overview, modules: overview.modules, loading: false });
+      })
       .catch((error) => this.setData({ loading: false, error: error.message || '学习数据加载失败' }));
   },
 

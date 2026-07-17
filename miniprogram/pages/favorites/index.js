@@ -1,6 +1,7 @@
 const auth = require('../../utils/auth');
 const repository = require('../../services/practiceRepository');
 const registry = require('../../config/subjectRegistry');
+const { answerText } = require('../../utils/questionAnswerPresentation');
 
 Page({
   data: {
@@ -13,7 +14,10 @@ Page({
 
   onShow() {
     if (!auth.requireLogin('/pages/favorites/index')) return;
-    this.loadQuestions();
+    repository.getCatalog().then((catalog) => {
+      registry.applyCatalog(catalog);
+      this.setData({ subjectFilters: [{ id: '', name: '全部' }].concat(registry.getSubjects()) });
+    }).catch(() => null).then(() => this.loadQuestions());
   },
 
   onPullDownRefresh() {
@@ -31,7 +35,7 @@ Page({
     const subject = registry.getSubject(question.subjectId);
     return Object.assign({}, question, {
       subjectName: subject ? subject.shortName : question.subjectId,
-      answerText: question.correctOptionIds.map((id) => question.options.find((option) => option.id === id)).filter(Boolean).map((option) => option.label).join('、')
+      answerText: answerText(question)
     });
   },
 

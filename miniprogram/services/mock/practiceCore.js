@@ -30,6 +30,20 @@ function sameAnswer(left, right) {
   return a.length === b.length && a.every((item, index) => item === b[index]);
 }
 
+function normalizeFill(value, config) {
+  let result = String(value || '').normalize('NFKC').trim().replace(/\s+/g, ' ');
+  if (!(config && config.caseSensitive)) result = result.toLocaleLowerCase('zh-CN');
+  if (!(config && config.punctuationSensitive)) result = result.replace(/[^\p{L}\p{N}\s]/gu, '');
+  return result;
+}
+
+function sameFillAnswer(submitted, accepted, config) {
+  return submitted.length === accepted.length && submitted.every((answer, index) => {
+    const normalized = normalizeFill(answer, config);
+    return (accepted[index] || []).some((candidate) => normalizeFill(candidate, config) === normalized);
+  });
+}
+
 function emptySubjectState() {
   return {
     attemptedQuestions: {},
@@ -155,6 +169,7 @@ class PracticeCore {
       difficulty: question.difficulty,
       tags: clone(question.tags),
       version: question.version,
+      blankCount: question.type === 'fill_blank' ? (question.acceptedAnswers || []).length : 0,
       isFavorite: Boolean(subject.favorites[question.id])
     };
   }
@@ -164,6 +179,8 @@ class PracticeCore {
     const wrong = subject.wrongQuestions[question.id] || null;
     return Object.assign(this.publicQuestion(question, state), {
       correctOptionIds: clone(question.correctOptionIds),
+      acceptedAnswers: clone(question.acceptedAnswers || []),
+      referenceAnswer: question.referenceAnswer || '',
       explanation: question.explanation,
       wrong: wrong ? clone(wrong) : null
     });
@@ -345,7 +362,7 @@ class PracticeCore {
       chapterId: session.chapterId,
       status: session.status,
       createdAt: session.createdAt,
-      currentIndex: Math.min(Object.keys(session.answers).length, session.questionIds.length - 1),
+      currentIndex: Math.min(Object.values(session.answers).filter((answer) => answer.isCorrect !== null).length, session.questionIds.length - 1),
       questions: session.questionIds.map((id) => this.publicQuestion(this.questionMap[id], state)),
       answers: clone(session.answers)
     });
@@ -401,15 +418,35 @@ class PracticeCore {
     if (!session.questionIds.includes(payload.questionId)) throw createDomainError('题目不属于当前练习', 'QUESTION_NOT_IN_SESSION');
     if (session.answers[payload.questionId]) throw createDomainError('该题已经提交，不能修改答案', 'ANSWER_ALREADY_SUBMITTED');
     const question = this.questionMap[payload.questionId];
-    const selected = payload.selectedOptionIds || [];
-    if (!selected.length) throw createDomainError('请先选择答案', 'ANSWER_REQUIRED');
-    if (selected.some((id) => !question.options.some((option) => option.id === id))) throw createDomainError('提交的选项不存在', 'INVALID_OPTION');
+    let selected = [];
+    let textAnswers = [];
+    let isCorrect = null;
+    if (['single', 'multiple', 'judge'].includes(question.type)) {
+      selected = payload.selectedOptionIds || (payload.answer && payload.answer.optionIds) || [];
+      if (!selected.length) throw createDomainError('请先选择答案', 'ANSWER_REQUIRED');
+      if (selected.some((id) => !question.options.some((option) => option.id === id))) throw createDomainError('提交的选项不存在', 'INVALID_OPTION');
+      isCorrect = sameAnswer(selected, question.correctOptionIds);
+    } else if (question.type === 'fill_blank') {
+      textAnswers = (payload.answer && payload.answer.values) || (Array.isArray(payload.textAnswer) ? payload.textAnswer : [payload.textAnswer || '']);
+      if (textAnswers.some((value) => !String(value).trim())) throw createDomainError('请完成全部填空', 'ANSWER_REQUIRED');
+      isCorrect = sameFillAnswer(textAnswers, question.acceptedAnswers || [], question.answerConfig || {});
+    } else {
+      const value = (payload.answer && payload.answer.value) || payload.textAnswer || '';
+      if (!String(value).trim()) throw createDomainError('请先填写简答内容', 'ANSWER_REQUIRED');
+      textAnswers = [String(value).trim()];
+    }
     const timestamp = this.now();
     const result = {
       questionId: question.id,
       selectedOptionIds: clone(selected),
+      textAnswers: clone(textAnswers),
+      answerType: question.type,
       correctOptionIds: clone(question.correctOptionIds),
-      isCorrect: sameAnswer(selected, question.correctOptionIds),
+      acceptedAnswers: question.type === 'fill_blank' ? clone(question.acceptedAnswers || []) : [],
+      referenceAnswer: question.type === 'short_answer' ? (question.referenceAnswer || '') : '',
+      evaluationRequired: question.type === 'short_answer',
+      selfAssessment: null,
+      isCorrect,
       explanation: question.explanation,
       submittedAt: timestamp,
       pointsAwarded: 0,
@@ -417,14 +454,32 @@ class PracticeCore {
     };
     session.answers[question.id] = result;
     session.updatedAt = timestamp;
-    this.markAttempt(state, question, result.isCorrect, timestamp);
-    this.markWrong(state, question, result.isCorrect, session.mode, timestamp);
-    const reward = awardAnswers(state, [{ questionId: question.id, subjectId: question.subjectId, isCorrect: result.isCorrect, occurredAt: timestamp }]);
+    this.markAttempt(state, question, Boolean(result.isCorrect), timestamp);
+    if (result.isCorrect !== null) this.markWrong(state, question, result.isCorrect, session.mode, timestamp);
+    const reward = awardAnswers(state, [{ questionId: question.id, subjectId: question.subjectId, isCorrect: Boolean(result.isCorrect), allowCorrectReward: question.type !== 'short_answer', occurredAt: timestamp }]);
     result.pointsAwarded = reward.pointsAwarded;
     result.unlockedAchievementKeys = reward.unlockedAchievements.map((achievement) => achievement.key);
     if (payload.clientAnswerId) state.submissions[payload.clientAnswerId] = result;
     this.saveState(state);
     return clone(result);
+  }
+
+  assessShortAnswer(sessionId, questionId, assessment) {
+    const state = this.loadState();
+    const session = state.sessions[sessionId];
+    if (!session || session.status !== 'active') throw createDomainError('练习不存在或已经结束', 'SESSION_NOT_FOUND');
+    const question = this.questionMap[questionId];
+    const answer = session.answers[questionId];
+    if (!question || question.type !== 'short_answer' || !answer) throw createDomainError('简答题尚未提交', 'ANSWER_REQUIRED');
+    if (answer.isCorrect !== null) return clone(answer);
+    const mastered = assessment === 'mastered';
+    answer.isCorrect = mastered;
+    answer.selfAssessment = assessment;
+    answer.evaluationRequired = false;
+    if (mastered) this.subjectState(state, question.subjectId).totals.correct += 1;
+    this.markWrong(state, question, mastered, session.mode, this.now());
+    this.saveState(state);
+    return clone(answer);
   }
 
   finishSession(sessionId) {
@@ -433,6 +488,7 @@ class PracticeCore {
     if (!session) throw createDomainError('练习不存在或已失效', 'SESSION_NOT_FOUND');
     if (session.status === 'completed') return this.buildSessionResult(session);
     if (Object.keys(session.answers).length !== session.questionIds.length) throw createDomainError('仍有题目未完成', 'SESSION_INCOMPLETE');
+    if (Object.values(session.answers).some((answer) => answer.isCorrect === null)) throw createDomainError('仍有简答题尚未完成自评', 'SELF_ASSESSMENT_REQUIRED');
     session.status = 'completed';
     session.completedAt = this.now();
     session.updatedAt = session.completedAt;
@@ -509,7 +565,15 @@ class PracticeCore {
       const subject = this.subjectState(state, id);
       Object.keys(subject.favorites).forEach((questionId) => {
         const question = this.questionMap[questionId];
-        if (question) records.push({ savedAt: subject.favorites[questionId], question: this.reviewQuestion(question, state) });
+        if (question) {
+          const attempted = Boolean(subject.attemptedQuestions[questionId]);
+          records.push({
+            savedAt: subject.favorites[questionId],
+            question: attempted
+              ? Object.assign(this.reviewQuestion(question, state), { answersAvailable: true })
+              : Object.assign(this.publicQuestion(question, state), { answersAvailable: false, wrong: null })
+          });
+        }
       });
     });
     return records.sort((a, b) => b.savedAt - a.savedAt).map((item) => item.question);
@@ -520,6 +584,9 @@ class PracticeCore {
     const question = this.questionMap[questionId];
     if (!question || question.subjectId !== subjectId) throw createDomainError('题目不存在', 'QUESTION_NOT_FOUND');
     const subject = this.subjectState(state, subjectId);
+    if (favorite && !subject.attemptedQuestions[questionId]) {
+      throw createDomainError('完成当前题目作答后才能收藏', 'QUESTION_NOT_ANSWERED');
+    }
     if (favorite) subject.favorites[questionId] = this.now();
     else delete subject.favorites[questionId];
     ensureGamification(state, this.now());

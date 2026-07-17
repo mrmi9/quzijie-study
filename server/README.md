@@ -1,12 +1,12 @@
 # 趣字节刷题 API
 
-服务端采用 Fastify、TypeScript、Prisma 7 和 MySQL 8，已提供微信云托管身份适配、七学科普通练习、错题收藏、聚合统计、408 客观题考试，以及积分、排行榜和成就闭环。
+服务端采用 Fastify、TypeScript、Prisma 7 和 MySQL 8，已提供微信云托管身份适配、动态学科目录、五种题型、错题收藏、408 客观题考试、积分成就，以及 `/admin/` 标准化题库管理闭环。
 
 ## 环境要求
 
 - Node.js 24 或更高版本
 - MySQL 8
-- 开发库 `quzijie_dev` 与独立测试库 `quzijie_test`
+- 开发库 `quzijie_dev`、独立集成库 `quzijie_test` 与独立迁移库 `quzijie_migration_test`
 
 复制 `server/.env.example` 为 `server/.env`，修改数据库连接和 JWT 密钥。真实微信登录需要设置 `WECHAT_AUTH_MODE=real`、正式 AppID 和 AppSecret；AppSecret 不得进入客户端、Git 或日志。
 
@@ -17,9 +17,13 @@
 ```powershell
 npm install
 npm run db:deploy --workspace server
-npm run server:db:seed
+$env:QUIZIJIE_ALLOW_EMPTY_BASELINE_IMPORT='IMPORT_EMPTY_BASELINE'
+npm run server:db:bootstrap-baseline
+Remove-Item Env:QUIZIJIE_ALLOW_EMPTY_BASELINE_IMPORT
 npm run server:dev
 ```
+
+基线导入只允许用于完全空白的新数据库；只要已有用户、题目、目录、发布或管理员数据就会拒绝。已有数据库扩题必须走管理后台草稿、复核和发布流程。
 
 - `GET http://127.0.0.1:3000/health`：进程存活检查，不依赖数据库。
 - `GET http://127.0.0.1:3000/ready`：数据库就绪检查。
@@ -33,11 +37,15 @@ npm run server:dev
 npm run verify
 npm run verify:server
 npm run verify:integration
+npm run verify:migration
+npm run admin:build
 npm run verify:all
 npm run verify:release
 ```
 
-集成测试会迁移独立的 `mysql://.../quzijie_test`，覆盖 500 题导入、Token 轮换、普通练习、408 组卷、草稿、并发幂等交卷、积分每日上限、排行榜、历史回填、删除级联和历史快照。测试库不得指向开发库或生产库。
+集成测试会迁移独立的 `mysql://.../quzijie_test`，覆盖基线导入、Token 轮换、普通练习、408、积分、动态目录、管理员 TOTP/CSRF/RBAC、跨人复核、发布、填空、简答和回滚。`verify:migration` 使用名称以 `_migration_test` 结尾的专用库验证旧 500 题和历史外键无损迁移。任何测试 URL 都不得指向开发库或生产库。
+
+管理后台默认关闭。生产启用方法、管理员 CLI、Excel、COS 快照和发布 SOP 见 [标准化题库管理手册](../docs/QUESTION_BANK_MANAGEMENT.md)。
 
 ## 小程序 API 模式
 

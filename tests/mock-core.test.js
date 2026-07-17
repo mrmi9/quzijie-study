@@ -59,9 +59,9 @@ function answerSession(core, session, firstWrong = false) {
   return core.finishSession(session.id);
 }
 
-assert.strictEqual(questions.length, 500);
-assert.strictEqual(new Set(questions.map((item) => item.id)).size, 500);
-assert.deepStrictEqual(registry.subjectIds.slice().sort(), ['co', 'cpp', 'ds', 'linux', 'network', 'os', 'stl']);
+assert(questions.length > 0 && questions.length <= 100000);
+assert.strictEqual(new Set(questions.map((item) => item.id)).size, questions.length);
+assert.deepStrictEqual(registry.subjectIds.slice().sort(), Array.from(new Set(questions.map((item) => item.subjectId))).sort());
 assert(sameAnswer(['A', 'B'], ['B', 'A']));
 assert(!sameAnswer(['A'], ['B']));
 
@@ -211,14 +211,23 @@ registry.subjectIds.forEach((subjectId) => {
   const dsFavorites = questions.filter((question) => question.subjectId === 'ds').slice(0, 6);
   const favoriteQuestions = cppFavorites.flatMap((question, index) => [question, dsFavorites[index]]);
   const unfavoritedQuestion = questions.filter((question) => question.subjectId === 'cpp')[6];
-  const disabledFavorite = Object.assign({}, questions.filter((question) => question.subjectId === 'cpp')[7], { status: 'disabled' });
+  const disabledFavorite = Object.assign({}, questions.filter((question) => question.subjectId === 'cpp')[7], { status: 'active' });
   const { core } = makeCore({
     questions: favoriteQuestions.concat(unfavoritedQuestion, disabledFavorite),
     stateKey: 'global_favorite_sessions',
     random: () => 0
   });
+  assert.throws(
+    () => core.setFavorite(favoriteQuestions[0].subjectId, favoriteQuestions[0].id, true),
+    (error) => error.code === 'QUESTION_NOT_ANSWERED'
+  );
+  ['cpp', 'ds'].forEach((subjectId) => {
+    const session = core.createSession({ subject: subjectId, mode: 'random', count: 10 });
+    answerSession(core, session);
+  });
   favoriteQuestions.forEach((question) => core.setFavorite(question.subjectId, question.id, true));
   core.setFavorite(disabledFavorite.subjectId, disabledFavorite.id, true);
+  disabledFavorite.status = 'disabled';
 
   const expectedCounts = new Map([[5, 5], [10, 10], [20, 12]]);
   expectedCounts.forEach((expectedCount, count) => {
@@ -267,6 +276,43 @@ registry.subjectIds.forEach((subjectId) => {
 {
   const { core } = makeCore({ stateKey: 'empty_global_favorites' });
   assert.throws(() => core.createSession({ scope: 'all', mode: 'favorite', count: 'all' }), (error) => error.code === 'EMPTY_QUESTION_POOL');
+}
+
+// 填空题自动判定，简答题提交后展示参考答案并必须自评；未掌握进入错题本。
+{
+  const subjectiveQuestions = [
+    {
+      id: 'mock-fill-1', subjectId: 'cpp', chapterId: 'mock-subjective', chapterName: '主观题验证', chapterOrder: 1,
+      type: 'fill_blank', stem: 'C++ 文件扩展名可以是？', code: '', images: [], options: [], correctOptionIds: [],
+      acceptedAnswers: [['cpp', '.cpp']], answerConfig: { caseSensitive: false, punctuationSensitive: false }, referenceAnswer: '',
+      explanation: '常见 C++ 源文件扩展名是 .cpp。', difficulty: 1, tags: ['填空'], examScopes: [], status: 'active', version: 1
+    },
+    {
+      id: 'mock-short-1', subjectId: 'cpp', chapterId: 'mock-subjective', chapterName: '主观题验证', chapterOrder: 1,
+      type: 'short_answer', stem: '简述 RAII。', code: '', images: [], options: [], correctOptionIds: [], acceptedAnswers: [], answerConfig: {},
+      referenceAnswer: '资源获取即初始化，由对象生命周期管理资源。', explanation: 'RAII 将资源生命周期绑定到对象生命周期。',
+      difficulty: 2, tags: ['简答'], examScopes: [], status: 'active', version: 1
+    }
+  ];
+  const { core } = makeCore({ stateKey: 'subjective_types', questions: subjectiveQuestions });
+  const session = core.createSession({ subject: 'cpp', mode: 'random', count: 5 });
+  const fill = session.questions.find((question) => question.type === 'fill_blank');
+  const short = session.questions.find((question) => question.type === 'short_answer');
+  assert.strictEqual(fill.acceptedAnswers, undefined);
+  assert.strictEqual(short.referenceAnswer, undefined);
+  const fillResult = core.submitAnswer(session.id, { questionId: fill.id, answer: { kind: 'fill', values: [' ＣＰＰ '] }, clientAnswerId: 'subjective-fill' });
+  assert.strictEqual(fillResult.isCorrect, true);
+  assert.deepStrictEqual(fillResult.acceptedAnswers, [['cpp', '.cpp']]);
+  const shortResult = core.submitAnswer(session.id, { questionId: short.id, answer: { kind: 'short', value: '让对象负责资源释放' }, clientAnswerId: 'subjective-short' });
+  assert.strictEqual(shortResult.evaluationRequired, true);
+  assert.strictEqual(shortResult.pointsAwarded, 2);
+  assert(shortResult.referenceAnswer.includes('对象生命周期'));
+  assert.throws(() => core.finishSession(session.id), (error) => error.code === 'SELF_ASSESSMENT_REQUIRED');
+  const assessed = core.assessShortAnswer(session.id, short.id, 'unmastered');
+  assert.strictEqual(assessed.isCorrect, false);
+  const result = core.finishSession(session.id);
+  assert.strictEqual(result.correctCount, 1);
+  assert.strictEqual(core.getWrongQuestions('cpp', false).some((question) => question.id === short.id), true);
 }
 
 // 408：40 道单选，12/12/9/7 配比，无答案泄露，可改草稿，提交幂等并归档错题。
@@ -328,4 +374,4 @@ registry.subjectIds.forEach((subjectId) => {
   assert.strictEqual(core.getLearningOverview().totalAttempts, 40);
 }
 
-console.log('PracticeCore tests passed: 7 subjects, global favorite sessions, migration, records, recovery and 408 exam state machine.');
+console.log(`PracticeCore tests passed: ${registry.subjectIds.length} subjects, five question types, global favorites, migration, records, recovery and 408.`);

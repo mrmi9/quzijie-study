@@ -1,0 +1,2958 @@
+[
+  {
+    "externalCode": "WEB-20260717-LINUX-001",
+    "subjectId": "linux",
+    "chapterId": "linux-shell",
+    "type": "single",
+    "stem": "在 Bash 中，双引号内的 `$var` 通常会怎样？",
+    "code": null,
+    "explanation": "双引号保留参数展开，同时避免展开结果再做普通分词和路径名展开；正确答案为B，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 1,
+    "tags": [
+      "Bash",
+      "引用"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "保持美元符号原样"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "进行参数展开但抑制普通分词和路径名展开"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "执行为命令"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "删除变量值"
+      }
+    ],
+    "sourceIds": [
+      "bash53"
+    ],
+    "sourceAnchors": [
+      "3.1.2",
+      "3.5"
+    ],
+    "dialect": "bash53",
+    "factSummary": "双引号保留参数展开，同时避免展开结果再做普通分词和路径名展开",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-002",
+    "subjectId": "linux",
+    "chapterId": "linux-shell",
+    "type": "single",
+    "stem": "Bash 命令替换 `$(command)` 会怎样处理输出末尾连续换行？",
+    "code": null,
+    "explanation": "命令替换会移除捕获输出末尾的连续换行字符；正确答案为C，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "Bash",
+      "命令替换"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "全部保留"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "转换为空格"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "删除末尾换行"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "视为语法错误"
+      }
+    ],
+    "sourceIds": [
+      "bash53"
+    ],
+    "sourceAnchors": [
+      "3.5.4"
+    ],
+    "dialect": "bash53",
+    "factSummary": "命令替换会移除捕获输出末尾的连续换行字符",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-003",
+    "subjectId": "linux",
+    "chapterId": "linux-shell",
+    "type": "single",
+    "stem": "默认 Bash 路径名展开中，模式 `*` 是否匹配文件名开头的点？",
+    "code": null,
+    "explanation": "默认通配模式不会匹配文件名开头的点，除非启用相应选项或显式写点；正确答案为D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "Bash",
+      "通配"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "总是匹配"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "仅root匹配"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "仅目录匹配"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "默认不匹配"
+      }
+    ],
+    "sourceIds": [
+      "bash53"
+    ],
+    "sourceAnchors": [
+      "3.5.8"
+    ],
+    "dialect": "bash53",
+    "factSummary": "默认通配模式不会匹配文件名开头的点，除非启用相应选项或显式写点",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-004",
+    "subjectId": "linux",
+    "chapterId": "linux-shell",
+    "type": "single",
+    "stem": "命令 `cmd >out 2>&1` 中重定向从左到右处理后，标准错误去向哪里？",
+    "code": null,
+    "explanation": "先把标准输出接到文件，再让标准错误复制当时的标准输出目标；正确答案为A，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "Bash",
+      "重定向"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "与标准输出一起到out"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "仍到终端"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "丢弃"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "进入名为1的文件"
+      }
+    ],
+    "sourceIds": [
+      "bash53"
+    ],
+    "sourceAnchors": [
+      "3.6"
+    ],
+    "dialect": "bash53",
+    "factSummary": "先把标准输出接到文件，再让标准错误复制当时的标准输出目标",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-005",
+    "subjectId": "linux",
+    "chapterId": "linux-shell",
+    "type": "single",
+    "stem": "`cmd 2>&1 >out` 与上一题顺序相反时，标准错误通常去哪里？",
+    "code": null,
+    "explanation": "先复制原标准输出给标准错误，随后只重定向标准输出，所以两者分离；正确答案为B，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 3,
+    "tags": [
+      "Bash",
+      "重定向"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "out文件"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "原标准输出目标"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "标准输入"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "进程环境"
+      }
+    ],
+    "sourceIds": [
+      "bash53"
+    ],
+    "sourceAnchors": [
+      "3.6"
+    ],
+    "dialect": "bash53",
+    "factSummary": "先复制原标准输出给标准错误，随后只重定向标准输出，所以两者分离",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-006",
+    "subjectId": "linux",
+    "chapterId": "linux-shell",
+    "type": "single",
+    "stem": "GNU `sort -u` 的主要效果是什么？",
+    "code": null,
+    "explanation": "sort -u 按排序比较规则输出唯一行而不是简单按原顺序去重；正确答案为C，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 1,
+    "tags": [
+      "coreutils",
+      "sort"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "仅反转行"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "保留原序不比较"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "排序并抑制比较相等的重复行"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "删除空文件"
+      }
+    ],
+    "sourceIds": [
+      "coreutils911"
+    ],
+    "sourceAnchors": [
+      "Operating on sorted files"
+    ],
+    "dialect": "gnu-coreutils-9.11",
+    "factSummary": "sort -u 按排序比较规则输出唯一行而不是简单按原顺序去重",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-007",
+    "subjectId": "linux",
+    "chapterId": "linux-shell",
+    "type": "single",
+    "stem": "GNU `tail -f` 更适合什么场景？",
+    "code": null,
+    "explanation": "tail -f 会等待并显示后续追加数据，常用于观察增长中的日志；正确答案为D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 1,
+    "tags": [
+      "coreutils",
+      "tail"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "修改文件权限"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "压缩文件"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "计算校验和"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "持续跟随追加内容"
+      }
+    ],
+    "sourceIds": [
+      "coreutils911"
+    ],
+    "sourceAnchors": [
+      "Output of parts of files"
+    ],
+    "dialect": "gnu-coreutils-9.11",
+    "factSummary": "tail -f 会等待并显示后续追加数据，常用于观察增长中的日志",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-008",
+    "subjectId": "linux",
+    "chapterId": "linux-files",
+    "type": "single",
+    "stem": "目录权限中的执行位主要表示什么？",
+    "code": null,
+    "explanation": "目录执行权限控制路径遍历和目录项查找，不是运行目录；正确答案为B，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "权限",
+      "目录"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "可运行目录"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "可遍历并查找目录项"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "可删除任何文件"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "可修改文件内容"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "path_resolution(7)",
+      "inode(7)"
+    ],
+    "dialect": "linux",
+    "factSummary": "目录执行权限控制路径遍历和目录项查找，不是运行目录",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-009",
+    "subjectId": "linux",
+    "chapterId": "linux-files",
+    "type": "single",
+    "stem": "`umask` 对新建对象的权限如何作用？",
+    "code": null,
+    "explanation": "umask 屏蔽创建请求中的权限位，不会凭空授予程序未请求的权限；正确答案为C，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "umask",
+      "权限"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "直接成为最终权限"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "强制增加权限"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "从程序请求权限中屏蔽相应位"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "只影响已有文件"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "umask(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "umask 屏蔽创建请求中的权限位，不会凭空授予程序未请求的权限",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-010",
+    "subjectId": "linux",
+    "chapterId": "linux-files",
+    "type": "single",
+    "stem": "同一文件系统中两个硬链接通常共享什么？",
+    "code": null,
+    "explanation": "硬链接是指向同一 inode 的不同目录项，因此共享内容和元数据；正确答案为A，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 1,
+    "tags": [
+      "硬链接",
+      "inode"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "同一inode与文件内容"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "各自独立内容"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "仅文件名字符串"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "各自独立权限"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "link(2)",
+      "inode(7)"
+    ],
+    "dialect": "linux",
+    "factSummary": "硬链接是指向同一 inode 的不同目录项，因此共享内容和元数据",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-011",
+    "subjectId": "linux",
+    "chapterId": "linux-files",
+    "type": "single",
+    "stem": "符号链接目标被删除后，符号链接通常怎样？",
+    "code": null,
+    "explanation": "符号链接存放路径文本，目标消失不会自动删除链接本身；正确答案为D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 1,
+    "tags": [
+      "符号链接",
+      "路径"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "自动变硬链接"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "同时删除"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "复制目标内容"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "保留但可能成为悬空链接"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "symlink(7)"
+    ],
+    "dialect": "linux",
+    "factSummary": "符号链接存放路径文本，目标消失不会自动删除链接本身",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-012",
+    "subjectId": "linux",
+    "chapterId": "linux-files",
+    "type": "single",
+    "stem": "进程仍打开一个普通文件时，最后一个目录链接被 `unlink` 后会怎样？",
+    "code": null,
+    "explanation": "目录项删除不撤销既有打开文件描述，数据在最后引用消失后回收；正确答案为B，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 3,
+    "tags": [
+      "unlink",
+      "文件描述符"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "所有读写立即失败"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "打开描述仍可访问，最终引用释放后回收"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "文件自动恢复名称"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "进程被终止"
+      }
+    ],
+    "sourceIds": [
+      "linux-open2",
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "open(2)",
+      "unlink(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "目录项删除不撤销既有打开文件描述，数据在最后引用消失后回收",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-013",
+    "subjectId": "linux",
+    "chapterId": "linux-files",
+    "type": "single",
+    "stem": "成功的 `open` 返回文件描述符时，通常选择哪个编号？",
+    "code": null,
+    "explanation": "open 成功返回进程当前未使用的最小非负文件描述符；正确答案为C，易错点是把描述符误认为固定编号或 inode。",
+    "difficulty": 2,
+    "tags": [
+      "open",
+      "文件描述符"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "随机大数"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "固定为3"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "当前未使用的最小非负编号"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "inode编号"
+      }
+    ],
+    "sourceIds": [
+      "linux-open2"
+    ],
+    "sourceAnchors": [
+      "open(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "open 成功返回进程当前未使用的最小文件描述符编号",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-014",
+    "subjectId": "linux",
+    "chapterId": "linux-files",
+    "type": "single",
+    "stem": "文件描述符与 open file description 的关系是哪项？",
+    "code": null,
+    "explanation": "多个描述符可引用同一打开描述并共享文件偏移和状态标志；正确答案为A，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 3,
+    "tags": [
+      "文件描述符",
+      "打开描述"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "描述符引用系统级打开描述"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "二者总是同一整数"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "一个打开描述只能有一个描述符"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "描述符保存完整文件内容"
+      }
+    ],
+    "sourceIds": [
+      "linux-open2"
+    ],
+    "sourceAnchors": [
+      "open(2) NOTES"
+    ],
+    "dialect": "linux",
+    "factSummary": "多个描述符可引用同一打开描述并共享文件偏移和状态标志",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-015",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "single",
+    "stem": "成功调用 `fork` 后，父进程收到什么返回值？",
+    "code": null,
+    "explanation": "fork 成功时父进程得到子 PID，子进程得到零；正确答案为D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 1,
+    "tags": [
+      "fork",
+      "进程"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "0"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "-1"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "自己的PID"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "子进程PID"
+      }
+    ],
+    "sourceIds": [
+      "linux-fork2"
+    ],
+    "sourceAnchors": [
+      "fork(2) RETURN VALUE"
+    ],
+    "dialect": "linux",
+    "factSummary": "fork 成功时父进程得到子 PID，子进程得到零",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-016",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "single",
+    "stem": "Linux 上 `fork` 常用写时复制的主要含义是什么？",
+    "code": null,
+    "explanation": "写时复制推迟物理页复制，但父子仍具有独立的进程地址空间语义；正确答案为B，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "fork",
+      "写时复制"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "父子永远共享可写内存"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "初始共享物理页，写入时再复制"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "只复制文件"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "禁止子进程写内存"
+      }
+    ],
+    "sourceIds": [
+      "linux-fork2"
+    ],
+    "sourceAnchors": [
+      "fork(2) NOTES"
+    ],
+    "dialect": "linux",
+    "factSummary": "写时复制推迟物理页复制，但父子仍具有独立的进程地址空间语义",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-017",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "single",
+    "stem": "成功的 `execve` 是否创建新的 PID？",
+    "code": null,
+    "explanation": "execve 让现有进程执行新程序，成功后 PID 等进程身份继续存在；正确答案为C，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "execve",
+      "PID"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "总创建新PID"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "仅root不创建"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "不创建新进程而替换当前程序映像"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "PID变为0"
+      }
+    ],
+    "sourceIds": [
+      "linux-execve2"
+    ],
+    "sourceAnchors": [
+      "execve(2) NOTES"
+    ],
+    "dialect": "linux",
+    "factSummary": "execve 让现有进程执行新程序，成功后 PID 等进程身份继续存在",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-018",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "single",
+    "stem": "默认情况下，未设置 close-on-exec 的文件描述符经过 `execve` 后怎样？",
+    "code": null,
+    "explanation": "execve 默认保留文件描述符，FD_CLOEXEC 或 O_CLOEXEC 才要求关闭；正确答案为A，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 3,
+    "tags": [
+      "execve",
+      "文件描述符"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "保持打开"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "全部关闭"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "变为目录"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "复制到父进程"
+      }
+    ],
+    "sourceIds": [
+      "linux-execve2",
+      "linux-open2"
+    ],
+    "sourceAnchors": [
+      "execve(2)",
+      "open(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "execve 默认保留文件描述符，FD_CLOEXEC 或 O_CLOEXEC 才要求关闭",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-019",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "single",
+    "stem": "已退出但父进程尚未回收状态的子进程称为什么？",
+    "code": null,
+    "explanation": "僵尸进程已停止执行，只保留供父进程 wait 获取的终止状态；正确答案为B，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 1,
+    "tags": [
+      "进程",
+      "僵尸"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "孤儿"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "僵尸"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "守护"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "内核线程"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "wait(2)",
+      "exit(3)"
+    ],
+    "dialect": "linux",
+    "factSummary": "僵尸进程已停止执行，只保留供父进程 wait 获取的终止状态",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-020",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "single",
+    "stem": "`kill(pid, SIGTERM)` 的语义最准确是哪项？",
+    "code": null,
+    "explanation": "kill 系统调用发送信号，SIGTERM 可被捕获或处理并不保证立即退出；正确答案为D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "信号",
+      "kill"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "直接删除进程表项"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "保证立即终止"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "只适用于root"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "请求内核向目标发送SIGTERM"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "kill(2)",
+      "signal(7)"
+    ],
+    "dialect": "linux",
+    "factSummary": "kill 系统调用发送信号，SIGTERM 可被捕获或处理并不保证立即退出",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-021",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "single",
+    "stem": "哪种信号不能被进程捕获、阻塞或忽略？",
+    "code": null,
+    "explanation": "SIGKILL 由内核强制处理，目标进程不能安装处理器或阻塞它；正确答案为C，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 1,
+    "tags": [
+      "信号",
+      "SIGKILL"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "SIGTERM"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "SIGUSR1"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "SIGKILL"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "SIGHUP"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "signal(7)"
+    ],
+    "dialect": "linux",
+    "factSummary": "SIGKILL 由内核强制处理，目标进程不能安装处理器或阻塞它",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-022",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "single",
+    "stem": "管道读取端在何时通常读到 EOF？",
+    "code": null,
+    "explanation": "只有所有写端引用关闭并读完缓冲数据后，读取端才观察到文件结束；正确答案为A，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 3,
+    "tags": [
+      "管道",
+      "EOF"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "所有写端描述符都关闭且缓冲已读尽"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "任一写者暂停"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "读者调用一次read"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "管道写满"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "pipe(7)",
+      "read(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "只有所有写端引用关闭并读完缓冲数据后，读取端才观察到文件结束",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-023",
+    "subjectId": "linux",
+    "chapterId": "linux-users",
+    "type": "single",
+    "stem": "`/etc/passwd` 在现代 Linux 系统中通常保存什么？",
+    "code": null,
+    "explanation": "passwd 文件保存账户记录，敏感密码散列通常分离到受限的 shadow 文件；正确答案为B，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 1,
+    "tags": [
+      "用户",
+      "passwd"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "所有明文密码"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "账户基础字段，密码散列常在shadow"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "仅登录日志"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "内核模块"
+      }
+    ],
+    "sourceIds": [
+      "glibc242",
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "User Database",
+      "passwd(5)"
+    ],
+    "dialect": "linux+glibc",
+    "factSummary": "passwd 文件保存账户记录，敏感密码散列通常分离到受限的 shadow 文件",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-024",
+    "subjectId": "linux",
+    "chapterId": "linux-users",
+    "type": "single",
+    "stem": "未单独修改文件系统用户 ID 的普通 Linux 进程进行文件权限检查时，通常使用哪一用户身份？",
+    "code": null,
+    "explanation": "Linux 文件权限检查使用文件系统用户 ID；普通情况下它跟随有效用户 ID。真实用户 ID 主要记录最初身份，不能把二者混为一谈。",
+    "difficulty": 1,
+    "tags": [
+      "用户身份",
+      "文件权限"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "真实用户 ID"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "有效用户 ID"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "父进程 ID"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "进程组 ID"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "credentials(7)",
+      "path_resolution(7)"
+    ],
+    "dialect": "linux",
+    "factSummary": "Linux 文件权限检查使用文件系统用户 ID，普通情况下它与有效用户 ID 相同",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-025",
+    "subjectId": "linux",
+    "chapterId": "linux-users",
+    "type": "single",
+    "stem": "`journalctl -b` 通常筛选什么？",
+    "code": null,
+    "explanation": "journalctl 的 -b 选项按启动记录筛选，默认指向当前启动；正确答案为A，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "systemd",
+      "journalctl"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "当前启动的日志"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "仅内核编译日志"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "所有历史文件内容"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "用户密码变更"
+      }
+    ],
+    "sourceIds": [
+      "systemd-docs"
+    ],
+    "sourceAnchors": [
+      "journalctl(1) -b"
+    ],
+    "dialect": "systemd",
+    "factSummary": "journalctl 的 -b 选项按启动记录筛选，默认指向当前启动",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-026",
+    "subjectId": "linux",
+    "chapterId": "linux-users",
+    "type": "single",
+    "stem": "关于 systemd，哪项表述更准确？",
+    "code": null,
+    "explanation": "systemd 是用户空间项目而非 Linux 内核或所有系统的必选组件；正确答案为D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "systemd",
+      "适用范围"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "Linux内核强制内置"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "所有发行版都必须使用"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "等同POSIX标准"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "常见用户空间服务管理器但非所有Linux必备"
+      }
+    ],
+    "sourceIds": [
+      "systemd-docs",
+      "linux-kernel-docs"
+    ],
+    "sourceAnchors": [
+      "systemd README",
+      "Userspace tools"
+    ],
+    "dialect": "linux+systemd",
+    "factSummary": "systemd 是用户空间项目而非 Linux 内核或所有系统的必选组件",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-027",
+    "subjectId": "linux",
+    "chapterId": "linux-users",
+    "type": "single",
+    "stem": "`journalctl -f` 的主要作用是什么？",
+    "code": null,
+    "explanation": "journalctl -f 跟随新增日志记录，本身不是日志删除命令；正确答案为B，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 1,
+    "tags": [
+      "systemd",
+      "日志"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "删除旧日志"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "持续显示新进入日志的记录"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "格式化磁盘"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "重启服务"
+      }
+    ],
+    "sourceIds": [
+      "systemd-docs"
+    ],
+    "sourceAnchors": [
+      "journalctl(1) -f"
+    ],
+    "dialect": "systemd",
+    "factSummary": "journalctl -f 跟随新增日志记录，本身不是日志删除命令",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-028",
+    "subjectId": "linux",
+    "chapterId": "linux-network",
+    "type": "single",
+    "stem": "`ping` 无响应能否单独证明目标主机已关机？",
+    "code": null,
+    "explanation": "ICMP 回显可能被防火墙过滤或限速，因此一次 `ping` 无响应只说明该探测未获响应，不能单独证明目标主机已关机。",
+    "difficulty": 2,
+    "tags": [
+      "ping",
+      "排障"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "总能证明"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "仅IPv6能证明"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "不能，ICMP可能被过滤或限速"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "说明DNS必然错误"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "icmp(7)"
+    ],
+    "dialect": "linux",
+    "factSummary": "ICMP 回显可能被策略过滤，单一 ping 失败不足以判定主机状态",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-029",
+    "subjectId": "linux",
+    "chapterId": "linux-network",
+    "type": "single",
+    "stem": "监听套接字与已建立 TCP 连接的主要区别是什么？",
+    "code": null,
+    "explanation": "监听端用于接收连接请求，accept 返回的连接套接字才对应具体会话；正确答案为A，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "TCP",
+      "套接字"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "监听套接字等待新连接，已建立套接字承载会话"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "监听套接字已与单一对端通信"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "二者完全相同"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "监听只用于UDP"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "socket(7)",
+      "listen(2)",
+      "accept(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "监听端用于接收连接请求，accept 返回的连接套接字才对应具体会话",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-030",
+    "subjectId": "linux",
+    "chapterId": "linux-network",
+    "type": "single",
+    "stem": "对已连接 TCP 套接字成功执行 `shutdown(fd, SHUT_WR)` 后，哪项描述最准确？",
+    "code": null,
+    "explanation": "`SHUT_WR` 只禁止该套接字继续发送数据，接收方向仍可使用；它也不会释放文件描述符，最终仍应调用 `close`。",
+    "difficulty": 3,
+    "tags": [
+      "TCP",
+      "shutdown"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "文件描述符立即关闭，收发两个方向都不可再用"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "仅关闭发送方向，仍可接收数据，文件描述符之后仍需关闭"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "内核丢弃所有未读数据并终止对端进程"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "该操作等价于重新调用 `bind`"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "shutdown(2)",
+      "close(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "SHUT_WR 只关闭套接字发送方向，不释放描述符，也不关闭接收方向",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-031",
+    "subjectId": "linux",
+    "chapterId": "linux-shell",
+    "type": "multiple",
+    "stem": "哪些 Bash 写法能抑制普通路径名展开？",
+    "code": null,
+    "explanation": "引号或转义可让星号保持字面含义，裸星号会参与路径名展开；正确答案为A、C、D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "Bash",
+      "引用"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "C",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "用单引号包围星号"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "裸写*"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "用反斜杠转义*"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "把*置于双引号内"
+      }
+    ],
+    "sourceIds": [
+      "bash53"
+    ],
+    "sourceAnchors": [
+      "3.1.2",
+      "3.5.8"
+    ],
+    "dialect": "bash53",
+    "factSummary": "引号或转义可让星号保持字面含义，裸星号会参与路径名展开",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-032",
+    "subjectId": "linux",
+    "chapterId": "linux-files",
+    "type": "multiple",
+    "stem": "关于目录权限，哪些正确？",
+    "code": null,
+    "explanation": "目录读写执行位分别影响列举、修改目录项和路径遍历；正确答案为A、B、D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 3,
+    "tags": [
+      "目录",
+      "权限"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "B",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "执行位控制遍历"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "读位影响列出目录项"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "写位单独就保证可删除任意项"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "删除通常还需目录写与执行权限"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "path_resolution(7)",
+      "inode(7)"
+    ],
+    "dialect": "linux",
+    "factSummary": "目录读写执行位分别影响列举、修改目录项和路径遍历",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-033",
+    "subjectId": "linux",
+    "chapterId": "linux-files",
+    "type": "multiple",
+    "stem": "关于硬链接与符号链接，哪些正确？",
+    "code": null,
+    "explanation": "硬链接是同一inode目录项，符号链接保存可跨文件系统的路径文本；正确答案为A、C、D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "链接",
+      "inode"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "C",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "硬链接通常共享inode"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "符号链接总与目标同inode"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "符号链接可跨文件系统"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "符号链接目标可不存在"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "link(2)",
+      "symlink(7)"
+    ],
+    "dialect": "linux",
+    "factSummary": "硬链接是同一inode目录项，符号链接保存可跨文件系统的路径文本",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-034",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "multiple",
+    "stem": "关于 `fork` 与 `execve`，哪些正确？",
+    "code": null,
+    "explanation": "fork 创建子进程，而成功 execve 替换当前程序且不返回旧代码；正确答案为A、C、D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 3,
+    "tags": [
+      "fork",
+      "execve"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "C",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "fork成功后父子返回值不同"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "execve成功会返回原程序下一行"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "execve通常保留PID"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "fork在Linux常使用写时复制"
+      }
+    ],
+    "sourceIds": [
+      "linux-fork2",
+      "linux-execve2"
+    ],
+    "sourceAnchors": [
+      "fork(2)",
+      "execve(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "fork 创建子进程，而成功 execve 替换当前程序且不返回旧代码",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-035",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "multiple",
+    "stem": "哪些信号不能被目标进程捕获或忽略？",
+    "code": null,
+    "explanation": "SIGKILL 与 SIGSTOP 由内核强制处理，不能安装用户处理器；正确答案为B、D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 1,
+    "tags": [
+      "信号",
+      "不可捕获"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "SIGTERM"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "SIGKILL"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "SIGINT"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "SIGSTOP"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "signal(7)"
+    ],
+    "dialect": "linux",
+    "factSummary": "SIGKILL 与 SIGSTOP 由内核强制处理，不能安装用户处理器",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-036",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "multiple",
+    "stem": "`/proc` 中哪些描述正确？",
+    "code": null,
+    "explanation": "procfs 动态暴露内核与进程状态，并受访问权限及挂载策略控制；正确答案为A、B、D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 3,
+    "tags": [
+      "procfs",
+      "进程"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "B",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "是内核提供的伪文件系统"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "/proc/PID含进程相关信息"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "内容都是永久磁盘文件"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "可见性受权限和挂载配置影响"
+      }
+    ],
+    "sourceIds": [
+      "linux-proc"
+    ],
+    "sourceAnchors": [
+      "filesystems/proc.html"
+    ],
+    "dialect": "linux",
+    "factSummary": "procfs 动态暴露内核与进程状态，并受访问权限及挂载策略控制",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-037",
+    "subjectId": "linux",
+    "chapterId": "linux-network",
+    "type": "multiple",
+    "stem": "排查“服务无法访问”时，哪些证据有帮助？",
+    "code": null,
+    "explanation": "连通性问题需结合监听、名称解析、策略和应用日志，不能只看单一 ping；正确答案为A、B、C、D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "排障",
+      "网络"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "确认进程是否监听"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "检查本机与远端防火墙"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "检查DNS解析"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "查看服务日志"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages",
+      "systemd-docs"
+    ],
+    "sourceAnchors": [
+      "socket(7)",
+      "journalctl(1)"
+    ],
+    "dialect": "linux+systemd",
+    "factSummary": "连通性问题需结合监听、名称解析、策略和应用日志，不能只看单一 ping",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-038",
+    "subjectId": "linux",
+    "chapterId": "linux-users",
+    "type": "multiple",
+    "stem": "关于 systemd 与日志，哪些正确？",
+    "code": null,
+    "explanation": "systemd 是可选用户空间体系，其工具语义应明确限定到 systemd 环境；正确答案为A、C、D，易错点是混淆 Linux、POSIX、GNU、Bash、systemd 或特定发行版的适用范围。",
+    "difficulty": 2,
+    "tags": [
+      "systemd",
+      "日志"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "C",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "journalctl可按启动筛选"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "systemd属于Linux内核系统调用"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "systemctl管理systemd单元"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "非所有Linux系统都采用systemd"
+      }
+    ],
+    "sourceIds": [
+      "systemd-docs",
+      "linux-kernel-docs"
+    ],
+    "sourceAnchors": [
+      "journalctl(1)",
+      "systemctl(1)"
+    ],
+    "dialect": "linux+systemd",
+    "factSummary": "systemd 是可选用户空间体系，其工具语义应明确限定到 systemd 环境",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-039",
+    "subjectId": "linux",
+    "chapterId": "linux-shell",
+    "type": "judge",
+    "stem": "在 Bash 默认设置下，裸写 `*` 会匹配以点开头的隐藏文件名。",
+    "code": null,
+    "explanation": "默认路径名展开不匹配文件名开头的点；正确答案为B，易错点是把显式点模式或 dotglob 选项当成默认行为。",
+    "difficulty": 1,
+    "tags": [
+      "Bash",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "bash53"
+    ],
+    "sourceAnchors": [
+      "3.5.8"
+    ],
+    "dialect": "bash53",
+    "factSummary": "默认路径名展开不匹配文件名开头的点，需显式模式或选项",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-040",
+    "subjectId": "linux",
+    "chapterId": "linux-files",
+    "type": "judge",
+    "stem": "删除文件名后，只要仍有进程保持该文件打开，数据可能继续可访问。",
+    "code": null,
+    "explanation": "打开描述保持对文件对象的引用；正确答案为A，易错点是误以为 unlink 目录项会立即撤销所有既有文件描述符。",
+    "difficulty": 2,
+    "tags": [
+      "unlink",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "linux-open2",
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "open(2)",
+      "unlink(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "打开描述保持对对象的引用，目录项删除不立即撤销现有访问",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-041",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "judge",
+    "stem": "成功的 `execve` 会创建一个新进程并为它分配新 PID。",
+    "code": null,
+    "explanation": "execve 替换当前程序映像但不创建新进程；正确答案为B，易错点是把执行新程序误解成获得新 PID。",
+    "difficulty": 1,
+    "tags": [
+      "execve",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "linux-execve2"
+    ],
+    "sourceAnchors": [
+      "execve(2) NOTES"
+    ],
+    "dialect": "linux",
+    "factSummary": "execve 替换当前进程程序映像，成功后不会返回也不新建 PID",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-042",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "judge",
+    "stem": "向进程发送 SIGTERM 必然使它立即终止。",
+    "code": null,
+    "explanation": "SIGTERM 可被捕获、阻塞或处理；正确答案为B，易错点是把发送信号成功等同于目标进程立即退出。",
+    "difficulty": 1,
+    "tags": [
+      "信号",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "signal(7)",
+      "kill(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "SIGTERM 可被捕获、阻塞或处理，发送成功不等于目标立即结束",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-043",
+    "subjectId": "linux",
+    "chapterId": "linux-users",
+    "type": "judge",
+    "stem": "systemd 是 Linux 内核中不可替换的组成部分。",
+    "code": null,
+    "explanation": "systemd 是可替换的用户空间服务管理方案；正确答案为B，易错点是把常见发行版默认组件误认为 Linux 内核本身。",
+    "difficulty": 1,
+    "tags": [
+      "systemd",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "systemd-docs",
+      "linux-kernel-docs"
+    ],
+    "sourceAnchors": [
+      "systemd README",
+      "Userspace tools"
+    ],
+    "dialect": "linux+systemd",
+    "factSummary": "systemd 是用户空间服务管理方案，不是不可替换的内核组成",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-044",
+    "subjectId": "linux",
+    "chapterId": "linux-shell",
+    "type": "fill_blank",
+    "stem": "Bash 中保存上一条前台管道退出状态、包含美元符号的特殊参数是____。",
+    "code": null,
+    "explanation": "特殊参数问号通过 `$?` 展开为最近前台管道的退出状态；正确答案为$?，易错点是把它当成普通环境变量名称。",
+    "difficulty": 1,
+    "tags": [
+      "Bash",
+      "填空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [
+      "$?"
+    ],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": true
+    },
+    "referenceAnswer": null,
+    "options": [],
+    "sourceIds": [
+      "bash53"
+    ],
+    "sourceAnchors": [
+      "3.4.2"
+    ],
+    "dialect": "bash53",
+    "factSummary": "特殊参数问号通过 `$?` 展开为最近前台管道的退出状态",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-045",
+    "subjectId": "linux",
+    "chapterId": "linux-files",
+    "type": "fill_blank",
+    "stem": "表示进程已打开文件入口的小型非负整数称为文件____。",
+    "code": null,
+    "explanation": "文件描述符是进程引用打开文件描述的非负整数句柄；正确答案为描述符，易错点是把描述符整数误认为 inode 编号。",
+    "difficulty": 1,
+    "tags": [
+      "文件描述符",
+      "填空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [
+      "描述符",
+      "descriptor",
+      "file descriptor"
+    ],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [],
+    "sourceIds": [
+      "linux-open2"
+    ],
+    "sourceAnchors": [
+      "open(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "文件描述符是进程引用打开文件描述的非负整数句柄",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-046",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "fill_blank",
+    "stem": "父进程回收子进程终止状态常使用的系统调用族名称是____。",
+    "code": null,
+    "explanation": "wait 系列取得子进程状态并清除其僵尸进程表记录；正确答案为wait，易错点是误以为 kill 负责回收终止状态。",
+    "difficulty": 2,
+    "tags": [
+      "wait",
+      "填空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [
+      "wait",
+      "waitpid"
+    ],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [],
+    "sourceIds": [
+      "linux-man-pages"
+    ],
+    "sourceAnchors": [
+      "wait(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "wait 系列取得子进程状态并清除其僵尸进程表记录",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-047",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "fill_blank",
+    "stem": "成功 `fork` 后，子进程得到的返回值是____。",
+    "code": null,
+    "explanation": "fork 在子进程返回零，在父进程返回子进程 PID；正确答案为0，易错点是把父进程返回值套到子进程分支。",
+    "difficulty": 1,
+    "tags": [
+      "fork",
+      "填空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [
+      "0",
+      "零"
+    ],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [],
+    "sourceIds": [
+      "linux-fork2"
+    ],
+    "sourceAnchors": [
+      "fork(2) RETURN VALUE"
+    ],
+    "dialect": "linux",
+    "factSummary": "fork 在子进程返回零，在父进程返回子进程 PID",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-048",
+    "subjectId": "linux",
+    "chapterId": "linux-files",
+    "type": "short_answer",
+    "stem": "解释文件描述符与 open file description 的区别，并说明 `dup` 后文件偏移的关系。",
+    "code": null,
+    "explanation": "描述符是句柄，打开描述保存偏移与状态，复制描述符会共享后者；参考答案还需说明 dup 不创建独立文件偏移。",
+    "difficulty": 3,
+    "tags": [
+      "文件描述符",
+      "简答"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": "文件描述符是进程内的整数索引，引用系统级 open file description。dup 得到新描述符但仍引用同一打开描述，因此二者共享文件偏移和文件状态标志。",
+    "options": [],
+    "sourceIds": [
+      "linux-open2"
+    ],
+    "sourceAnchors": [
+      "open(2) NOTES"
+    ],
+    "dialect": "linux",
+    "factSummary": "描述符是句柄，打开描述保存偏移与状态，复制描述符会共享后者",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-049",
+    "subjectId": "linux",
+    "chapterId": "linux-process",
+    "type": "short_answer",
+    "stem": "说明 `fork` 与 `execve` 在创建进程和替换程序方面的区别。",
+    "code": null,
+    "explanation": "fork 创建进程，execve 在现有进程中替换所执行程序；易错点是把执行新程序误写成必然创建新 PID。",
+    "difficulty": 2,
+    "tags": [
+      "fork",
+      "execve",
+      "简答"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": "fork 创建子进程并让父子从调用点继续，以不同返回值区分；execve 不创建新进程，而用新程序替换当前进程映像，成功时不返回旧程序。",
+    "options": [],
+    "sourceIds": [
+      "linux-fork2",
+      "linux-execve2"
+    ],
+    "sourceAnchors": [
+      "fork(2)",
+      "execve(2)"
+    ],
+    "dialect": "linux",
+    "factSummary": "fork 创建进程，execve 在现有进程中替换所执行程序",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-LINUX-050",
+    "subjectId": "linux",
+    "chapterId": "linux-network",
+    "type": "short_answer",
+    "stem": "为什么 ping 失败不能单独证明服务器离线？给出至少两项后续检查。",
+    "code": null,
+    "explanation": "ping 只验证特定 ICMP 交互，完整排障需结合端口、路由和应用证据；易错点是把 ICMP 无响应等同服务器离线。",
+    "difficulty": 2,
+    "tags": [
+      "ping",
+      "排障",
+      "简答"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": "ICMP 回显可能被防火墙过滤、限速或路径设备丢弃，即使应用仍可访问。应继续检查目标端口连接、DNS解析、路由、防火墙、服务监听状态和应用日志。",
+    "options": [],
+    "sourceIds": [
+      "linux-man-pages",
+      "systemd-docs"
+    ],
+    "sourceAnchors": [
+      "icmp(7)",
+      "socket(7)",
+      "journalctl(1)"
+    ],
+    "dialect": "linux+systemd",
+    "factSummary": "ping 只验证特定 ICMP 交互，完整排障需结合端口、路由和应用证据",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  }
+]

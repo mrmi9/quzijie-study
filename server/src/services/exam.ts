@@ -56,6 +56,9 @@ function snapshotFromCandidate(candidate: Candidate): QuestionSnapshot {
       text: option.text
     })),
     correctOptionIds: jsonStrings(version.correctOptionIds),
+    acceptedAnswers: [],
+    answerConfig: {},
+    referenceAnswer: "",
     explanation: version.explanation,
     difficulty: version.difficulty,
     tags: jsonStrings(version.tags),

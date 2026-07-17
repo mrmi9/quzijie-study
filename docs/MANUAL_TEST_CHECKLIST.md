@@ -127,8 +127,8 @@
 - [x] 两次 Prisma 迁移成功，题库导入后数据库包含 7 学科、500 道题。
 - [x] API 容器使用 `node` 非 root 用户、只读根文件系统、`cap_drop: ALL` 和 `no-new-privileges`；容器重启后 `/health`、`/ready` 均通过。
 - [x] API 日志对微信 Secret、JWT 和数据库连接信息的值扫描通过，未发现敏感值回显。
-- [x] 生成 PostgreSQL 自定义格式备份并通过 `pg_restore --list`；恢复到一次性测试数据库后核对 500 题，再删除测试数据库，主库和在线 API 未受影响。
-- [x] 安装每日 PostgreSQL 备份 systemd timer，安装时的首次任务成功，备份保留期为 14 天。
+- [ ] 使用 `ops/backup-mysql.sh` 生成并校验 `.sql.gz` 备份；通过 `ops/restore-mysql.sh` 恢复到一次性 MySQL 测试库，核对基线题、当前发布和历史数据后删除测试库，生产库不受影响。
+- [x] 旧自建 PostgreSQL 的每日备份 timer 验证记录已归档；当前 timer 已切换为 MySQL，需在可访问云数据库的受信运维机重新演练。
 - [x] 执行上一镜像回滚并通过 `/ready`，随后重新发布当前 Git SHA 镜像并再次通过就绪检查。
 - [x] DNS、TLS、公网 8443 与微信 `request` 合法域名均已配置。
 - [x] 该独立 PostgreSQL/HTTPS 预发布链路已停止作为小程序发布目标；体验版改为验证微信云托管链路。
@@ -150,7 +150,7 @@
 - [x] `npm run verify:release` 全部通过：500 题、7 学科、45 章节、题型与难度配比、内容审计、18 页面、8 项服务端单元测试和 7 组 PostgreSQL 集成测试均通过。
 - [x] 题库复核提交 `e0537728cf9e7922577ddeb5f6ed47fc264249c4` 已推送到 `main`，GitHub Actions 运行 `29393859076` 成功。
 - [x] 腾讯云部署 `quzijie-api:e053772` 与迁移镜像；导入后数据库为 500 道当前题目，版本 1 共 96 道、版本 2 共 404 道，历史题目版本共 904 条。
-- [x] 部署前备份 `/opt/quzijie-study/backups/quzijie-20260715T062040Z.dump` 可读取；公网 `/health`、`/ready` 和数据库就绪检查通过，原 443、9000、10000、2096 服务保持不变。
+- [ ] 当前云托管 MySQL 部署前已生成并校验 `quzijie-YYYYMMDDTHHMMSSZ.sql.gz`；公网 `/health`、`/ready` 和数据库就绪检查通过。
 - [x] 微信开发者工具 CLI 已登录，并成功向 AppID `wx69380e593ebd5ac7` 上传开发版本 `2.1.0`，说明为“500题复核与公网API体验版”。
 - [x] 上传包体积：总计 1,687,233 字节，主包 1,614,635 字节，`/modules/cpp/` 分包 72,598 字节。
 - [ ] 用当前 `codex/wechat-cloudrun` 分支重新上传云托管正式版 `2.1.0`，覆盖旧 HTTP 开发版本；再在公众平台将其设为体验版并确认体验二维码与体验成员权限。

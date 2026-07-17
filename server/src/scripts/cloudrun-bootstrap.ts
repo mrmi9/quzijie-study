@@ -5,9 +5,13 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { resolveDatabaseUrl, parseMysqlDatabaseUrl } from "../database-url.js";
 import { createPrismaClient } from "../db.js";
-import { importQuestions } from "./import-questions.js";
+import { EMPTY_BASELINE_IMPORT_CONFIRMATION, importQuestions } from "./import-questions.js";
 import { backfillGamification } from "./backfill-gamification.js";
 import { markDatabaseBootstrapPending, markDatabaseBootstrapReady } from "../bootstrap-state.js";
+import { CatalogService } from "../services/catalog.js";
+import { loadConfig } from "../config.js";
+import { createQuestionBankStorage } from "../services/question-bank-storage.js";
+import { QuestionBankService } from "../services/question-bank.js";
 
 const INITIAL_MIGRATION = "20260715090000_mysql_cloud_init";
 const INITIAL_TABLES = [
@@ -150,7 +154,9 @@ async function seedEmptyDatabase(connectionString: string): Promise<void> {
     const contentDirectory = process.env.QUESTION_CONTENT_DIR
       ? resolve(process.env.QUESTION_CONTENT_DIR).replaceAll("\\", "/")
       : fileURLToPath(new URL("../../../../content", import.meta.url)).replaceAll("\\", "/");
-    const count = await importQuestions(prisma, contentDirectory);
+    const count = await importQuestions(prisma, contentDirectory, {
+      confirmation: EMPTY_BASELINE_IMPORT_CONFIRMATION
+    });
     console.log(`Seeded ${count} questions into the empty cloud database.`);
   } finally {
     await prisma.$disconnect();
@@ -174,6 +180,11 @@ async function main(): Promise<void> {
   await seedEmptyDatabase(databaseUrl);
   const prisma = createPrismaClient(databaseUrl);
   try {
+    await new CatalogService(prisma).ensureBaseline();
+    const config = loadConfig();
+    if (config.adminEnabled) {
+      await new QuestionBankService(prisma, config, createQuestionBankStorage(config)).ensureBaselineRelease();
+    }
     const backfill = await backfillGamification(prisma);
     console.log(`Gamification backfill completed for ${backfill.usersProcessed} users.`);
   } finally {

@@ -1,4 +1,4 @@
-const SUBJECTS = {
+let SUBJECTS = {
   cpp: { id: 'cpp', name: 'C/C++', shortName: 'C/C++', color: '#2563eb', groupId: 'cpp', description: '语言基础、内存、面向对象与模板' },
   linux: { id: 'linux', name: 'Linux', shortName: 'Linux', color: '#7c3aed', groupId: 'linux-os', description: '命令、权限、进程、服务与排障' },
   os: { id: 'os', name: '操作系统', shortName: '操作系统', color: '#6d28d9', groupId: 'linux-os', description: '进程、同步、内存、文件与 I/O' },
@@ -8,7 +8,7 @@ const SUBJECTS = {
   co: { id: 'co', name: '计算机组成原理', shortName: '组成原理', color: '#db2777', groupId: 'postgraduate', description: '数据表示、存储、指令、CPU 与 I/O' }
 };
 
-const MODULES = [
+let MODULES = [
   { id: 'cpp', name: 'C/C++', subtitle: '语言基础与面向对象', color: '#2563eb', type: 'subject', subjectIds: ['cpp'] },
   { id: 'linux-os', name: 'Linux / 操作系统', subtitle: '双方向专项练习', color: '#7c3aed', type: 'group', subjectIds: ['linux', 'os'] },
   { id: 'ds', name: '数据结构', subtitle: '结构、算法与复杂度', color: '#059669', type: 'subject', subjectIds: ['ds'] },
@@ -28,11 +28,33 @@ function getSubjects(subjectIds) {
   return (subjectIds || Object.keys(SUBJECTS)).map(getSubject).filter(Boolean);
 }
 
+function applyCatalog(catalog) {
+  if (!catalog || !Array.isArray(catalog.modules)) return;
+  const subjects = {};
+  const modules = catalog.modules.map((module) => {
+    const moduleSubjectIds = (module.subjects || []).map((subject) => {
+      subjects[subject.id] = Object.assign({}, subject, { groupId: module.id });
+      return subject.id;
+    });
+    return {
+      id: module.id,
+      name: module.name,
+      subtitle: module.subtitle || '',
+      color: module.color || '#2563eb',
+      type: module.type,
+      subjectIds: moduleSubjectIds
+    };
+  });
+  if (Object.keys(subjects).length) SUBJECTS = subjects;
+  if (modules.length) MODULES = modules;
+}
+
 module.exports = {
-  SUBJECTS,
-  MODULES,
+  get SUBJECTS() { return SUBJECTS; },
+  get MODULES() { return MODULES; },
   getSubject,
   getModule,
   getSubjects,
-  subjectIds: Object.keys(SUBJECTS)
+  applyCatalog,
+  get subjectIds() { return Object.keys(SUBJECTS); }
 };

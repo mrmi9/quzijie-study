@@ -109,6 +109,52 @@
   margin-top: 24rpx;
 }
 
+.subjective-card {
+  margin-top: 24rpx;
+  padding: 30rpx;
+}
+
+.subjective-title {
+  display: block;
+  font-size: 29rpx;
+  font-weight: 800;
+}
+
+.blank-row {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  margin-top: 22rpx;
+}
+
+.blank-label {
+  flex-shrink: 0;
+  width: 100rpx;
+  color: #475569;
+  font-size: 24rpx;
+}
+
+.blank-input {
+  flex: 1;
+  min-height: 76rpx;
+  padding: 0 22rpx;
+  border: 2rpx solid #cbd5e1;
+  border-radius: 14rpx;
+  background: #f8fafc;
+}
+
+.short-answer-input {
+  display: block;
+  width: 100%;
+  min-height: 230rpx;
+  margin-top: 22rpx;
+  padding: 22rpx;
+  border: 2rpx solid #cbd5e1;
+  border-radius: 14rpx;
+  background: #f8fafc;
+  line-height: 1.65;
+}
+
 .option-card {
   display: flex;
   align-items: center;
@@ -212,6 +258,7 @@
 
 .feedback-correct { border-color: #22a06b; }
 .feedback-wrong { border-color: #e5484d; }
+.feedback-pending { border-color: #f59e0b; }
 
 .feedback-head {
   display: flex;
@@ -246,6 +293,19 @@
   margin-top: 24rpx;
   color: #1d4ed8;
   font-weight: 700;
+}
+
+.self-assessment-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 26rpx;
+}
+
+.self-assessment-actions button {
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  margin: 0;
 }
 
 .missed-answer-line {

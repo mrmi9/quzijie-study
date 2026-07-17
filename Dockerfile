@@ -5,12 +5,15 @@ ENV PRISMA_ENGINES_MIRROR=https://registry.npmmirror.com/-/binary/prisma
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY server/package.json ./server/package.json
+COPY admin/package.json ./admin/package.json
 RUN npm config set registry https://mirrors.cloud.tencent.com/npm/ \
   && npm ci --ignore-scripts
 
 COPY server ./server
+COPY admin ./admin
 COPY content ./content
-RUN DATABASE_URL=mysql://build:build@127.0.0.1:3306/build npm run server:build
+RUN npm run admin:build \
+  && DATABASE_URL=mysql://build:build@127.0.0.1:3306/build npm run server:build
 
 FROM build AS migration
 
@@ -23,6 +26,7 @@ FROM node:24-alpine AS production-deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY server/package.json ./server/package.json
+COPY admin/package.json ./admin/package.json
 RUN npm config set registry https://mirrors.cloud.tencent.com/npm/ \
   && npm ci --omit=dev --omit=peer --ignore-scripts \
   && rm -rf /app/node_modules/@hono/node-server \
@@ -50,6 +54,7 @@ COPY --from=build /app/server/dist ./server/dist
 COPY --from=build /app/server/prisma ./server/prisma
 COPY --from=build /app/server/prisma.config.ts ./server/prisma.config.ts
 COPY --from=build /app/content ./content
+COPY --from=build /app/admin/dist ./admin/dist
 
 USER node
 EXPOSE 3000

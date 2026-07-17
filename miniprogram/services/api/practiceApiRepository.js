@@ -8,12 +8,14 @@ function queryString(params) {
 }
 
 module.exports = {
+  getCatalog: () => request({ url: '/api/v1/catalog' }),
   getLearningOverview: () => request({ url: '/api/v1/learning/overview' }),
   getSubjectOverview: (subjectId) => request({ url: `/api/v1/subjects/${subjectId}/overview` }),
   getChapters: (subjectId) => request({ url: `/api/v1/subjects/${subjectId}/chapters` }),
   createSession: (payload) => request({ url: '/api/v1/practice-sessions', method: 'POST', data: payload }),
   getSession: (sessionId) => request({ url: `/api/v1/practice-sessions/${sessionId}` }),
   submitAnswer: (sessionId, payload) => request({ url: `/api/v1/practice-sessions/${sessionId}/answers`, method: 'POST', data: payload }),
+  assessShortAnswer: (sessionId, questionId, assessment) => request({ url: `/api/v1/practice-sessions/${sessionId}/answers/${questionId}/self-assessment`, method: 'POST', data: { assessment } }),
   finishSession: (sessionId) => request({ url: `/api/v1/practice-sessions/${sessionId}/finish`, method: 'POST' }),
   getResult: (sessionId) => request({ url: `/api/v1/practice-sessions/${sessionId}/result` }),
   getWrongQuestions: (subjectId, mastered) => request({ url: `/api/v1/records/wrong${queryString({ subjectId, mastered })}` }),

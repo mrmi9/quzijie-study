@@ -14,6 +14,24 @@ export interface AppConfig {
   wechatDevOpenId: string;
   wechatAppId: string;
   wechatAppSecret: string;
+  adminEnabled: boolean;
+  adminEncryptionKey: string;
+  adminSessionTtlHours: number;
+  questionBankStorage: "local" | "cos";
+  questionBankStorageDir: string;
+  cosSecretId: string;
+  cosSecretKey: string;
+  cosBucket: string;
+  cosRegion: string;
+  cosPublicBaseUrl: string;
+  questionBankMaxSnapshotBytes: number;
+}
+
+function booleanValue(value: string | undefined, fallback = false): boolean {
+  if (value === undefined || value === "") return fallback;
+  if (value === "true") return true;
+  if (value === "false") return false;
+  throw new Error("布尔环境变量只能是 true 或 false");
 }
 
 function positiveInteger(value: string | undefined, fallback: number, name: string): number {
@@ -49,6 +67,23 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
   if (wechatAuthMode === "real" && (!wechatAppId || !wechatAppSecret)) {
     throw new Error("真实微信登录需要 WECHAT_APP_ID 和 WECHAT_APP_SECRET");
   }
+  const adminEnabled = booleanValue(source.ADMIN_ENABLED, false);
+  const adminEncryptionKey = source.ADMIN_ENCRYPTION_KEY || "";
+  if (adminEnabled && adminEncryptionKey.length < 32) {
+    throw new Error("启用管理后台时 ADMIN_ENCRYPTION_KEY 至少需要 32 个字符");
+  }
+  const questionBankStorage = (source.QUESTION_BANK_STORAGE || "local") as "local" | "cos";
+  if (!['local', 'cos'].includes(questionBankStorage)) throw new Error("QUESTION_BANK_STORAGE 只能是 local 或 cos");
+  if (nodeEnv === "production" && adminEnabled && questionBankStorage !== "cos") {
+    throw new Error("生产环境启用管理后台时必须使用 COS 题库存储");
+  }
+  const cosSecretId = source.COS_SECRET_ID || "";
+  const cosSecretKey = source.COS_SECRET_KEY || "";
+  const cosBucket = source.COS_BUCKET || "";
+  const cosRegion = source.COS_REGION || "";
+  if (questionBankStorage === "cos" && (!cosSecretId || !cosSecretKey || !cosBucket || !cosRegion)) {
+    throw new Error("COS 题库存储缺少 COS_SECRET_ID/COS_SECRET_KEY/COS_BUCKET/COS_REGION");
+  }
 
   return {
     nodeEnv,
@@ -61,6 +96,17 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
     wechatAuthMode,
     wechatDevOpenId: source.WECHAT_DEV_OPENID || "dev-openid-quzijie",
     wechatAppId,
-    wechatAppSecret
+    wechatAppSecret,
+    adminEnabled,
+    adminEncryptionKey,
+    adminSessionTtlHours: positiveInteger(source.ADMIN_SESSION_TTL_HOURS, 12, "ADMIN_SESSION_TTL_HOURS"),
+    questionBankStorage,
+    questionBankStorageDir: source.QUESTION_BANK_STORAGE_DIR || ".question-bank-storage",
+    cosSecretId,
+    cosSecretKey,
+    cosBucket,
+    cosRegion,
+    cosPublicBaseUrl: source.COS_PUBLIC_BASE_URL || "",
+    questionBankMaxSnapshotBytes: positiveInteger(source.QUESTION_BANK_MAX_SNAPSHOT_BYTES, 256 * 1024 * 1024, "QUESTION_BANK_MAX_SNAPSHOT_BYTES")
   };
 }

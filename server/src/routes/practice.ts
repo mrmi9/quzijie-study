@@ -70,7 +70,13 @@ export function registerPracticeRoutes(
 
   app.post<{
     Params: { id: string };
-    Body: { questionId: string; selectedOptionIds: string[]; clientAnswerId: string };
+    Body: {
+      questionId: string;
+      selectedOptionIds?: string[];
+      textAnswer?: string | string[];
+      answer?: { kind: "choice"; optionIds: string[] } | { kind: "fill"; values: string[] } | { kind: "short"; value: string };
+      clientAnswerId: string;
+    };
   }>("/api/v1/practice-sessions/:id/answers", {
     preHandler: authenticate,
     schema: {
@@ -78,15 +84,56 @@ export function registerPracticeRoutes(
       body: {
         type: "object",
         additionalProperties: false,
-        required: ["questionId", "selectedOptionIds", "clientAnswerId"],
+        required: ["questionId", "clientAnswerId"],
         properties: {
           questionId: { type: "string", minLength: 1, maxLength: 32 },
           selectedOptionIds: { type: "array", minItems: 1, maxItems: 6, uniqueItems: true, items: { type: "string", minLength: 1, maxLength: 8 } },
+          textAnswer: {
+            anyOf: [
+              { type: "string", minLength: 1, maxLength: 4000 },
+              { type: "array", minItems: 1, maxItems: 20, items: { type: "string", minLength: 1, maxLength: 1000 } }
+            ]
+          },
+          answer: {
+            type: "object",
+            additionalProperties: false,
+            required: ["kind"],
+            properties: {
+              kind: { enum: ["choice", "fill", "short"] },
+              optionIds: { type: "array", minItems: 1, maxItems: 6, uniqueItems: true, items: { type: "string", minLength: 1, maxLength: 8 } },
+              values: { type: "array", minItems: 1, maxItems: 20, items: { type: "string", minLength: 1, maxLength: 1000 } },
+              value: { type: "string", minLength: 1, maxLength: 4000 }
+            }
+          },
           clientAnswerId: { type: "string", minLength: 8, maxLength: 160 }
         }
       }
     }
   }, async (request) => ({ data: await service.submitAnswer(request.userId, request.params.id, request.body) }));
+
+  app.post<{
+    Params: { id: string; questionId: string };
+    Body: { assessment: "mastered" | "unmastered" };
+  }>("/api/v1/practice-sessions/:id/answers/:questionId/self-assessment", {
+    preHandler: authenticate,
+    schema: {
+      params: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "questionId"],
+        properties: {
+          id: { type: "string", minLength: 1, maxLength: 64 },
+          questionId: { type: "string", minLength: 1, maxLength: 32 }
+        }
+      },
+      body: {
+        type: "object",
+        additionalProperties: false,
+        required: ["assessment"],
+        properties: { assessment: { enum: ["mastered", "unmastered"] } }
+      }
+    }
+  }, async (request) => ({ data: await service.assessShortAnswer(request.userId, request.params.id, request.params.questionId, request.body.assessment) }));
 
   app.post<{ Params: { id: string } }>("/api/v1/practice-sessions/:id/finish", {
     preHandler: authenticate,

@@ -5,9 +5,17 @@ Page({
   data: { module: null, tracks: [], loading: true, error: '' },
 
   onLoad(options) {
+    this.groupId = options.groupId;
     const module = registry.getModule(options.groupId);
     if (!module || module.type !== 'group') {
-      this.setData({ loading: false, error: '组合模块不存在' });
+      repository.getCatalog().then((catalog) => {
+        registry.applyCatalog(catalog);
+        const loaded = registry.getModule(this.groupId);
+        if (!loaded || loaded.type !== 'group') throw new Error('组合模块不存在');
+        this.setData({ module: loaded });
+        wx.setNavigationBarTitle({ title: loaded.name });
+        return this.loadTracks();
+      }).catch((error) => this.setData({ loading: false, error: error.message || '组合模块不存在' }));
       return;
     }
     this.setData({ module });

@@ -1,0 +1,2945 @@
+[
+  {
+    "externalCode": "WEB-20260717-CPP-001",
+    "subjectId": "cpp",
+    "chapterId": "c-basics",
+    "type": "single",
+    "stem": "C11 中表达式 `-7 / 3` 的结果是什么？",
+    "code": null,
+    "explanation": "整数除法的商向零截断，所以 `-7 / 3` 为 -2；不能套用向下取整得到 -3。",
+    "difficulty": 2,
+    "tags": [
+      "整数除法",
+      "C11"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "-2"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "-3"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "2"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "由实现任意决定"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n1570"
+    ],
+    "sourceAnchors": [
+      "6.5.5"
+    ],
+    "dialect": "c11",
+    "factSummary": "整数除法的商向零截断，所以结果为 -2",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-002",
+    "subjectId": "cpp",
+    "chapterId": "c-basics",
+    "type": "single",
+    "stem": "C11 的 `_Generic` 选择表达式如何处理控制表达式？",
+    "code": null,
+    "explanation": "`_Generic` 的控制表达式用于类型匹配而不求值，只有选中的结果表达式参与后续求值。",
+    "difficulty": 3,
+    "tags": [
+      "_Generic",
+      "C11"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "先求值再匹配"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "不求值而按类型选择"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "只允许整数常量"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "求值全部分支"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n1570"
+    ],
+    "sourceAnchors": [
+      "6.5.1.1"
+    ],
+    "dialect": "c11",
+    "factSummary": "控制表达式用于类型匹配而不求值，只有被选结果参与后续求值",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-003",
+    "subjectId": "cpp",
+    "chapterId": "c-basics",
+    "type": "single",
+    "stem": "关于 `sizeof(char)`，哪项符合 C23？",
+    "code": null,
+    "explanation": "`sizeof(char)` 始终为 1，但一个字节包含多少位由 `CHAR_BIT` 给出，不保证固定为 8 位。",
+    "difficulty": 2,
+    "tags": [
+      "sizeof",
+      "可移植性"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "固定为8"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "由编码决定"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "为1但一字节不保证8位"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "仅unsigned char为1"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "6.5.3.4",
+      "5.2.4.2.1"
+    ],
+    "dialect": "c23",
+    "factSummary": "字符类型大小为一个字节，但每字节位数由 CHAR_BIT 描述",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-004",
+    "subjectId": "cpp",
+    "chapterId": "c-basics",
+    "type": "single",
+    "stem": "C23 无符号整数加法超出表示范围时会怎样？",
+    "code": null,
+    "explanation": "无符号算术按该类型可表示值的数量取模，这是标准保证；不要与有符号整数溢出的规则混淆。",
+    "difficulty": 2,
+    "tags": [
+      "无符号整数",
+      "溢出"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "抛异常"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "钳制最大值"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "行为未定义"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "按类型模数回绕"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "6.2.5"
+    ],
+    "dialect": "c23",
+    "factSummary": "无符号算术按该类型可表示值数量取模",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-005",
+    "subjectId": "cpp",
+    "chapterId": "c-basics",
+    "type": "single",
+    "stem": "普通 `char` 与 `signed char` 取值范围相同时，二者是否同一类型？",
+    "code": null,
+    "explanation": "`char`、`signed char` 和 `unsigned char` 是三种不同类型，普通 `char` 的有符号性由实现选择。",
+    "difficulty": 3,
+    "tags": [
+      "字符类型",
+      "实现定义"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "完全同型"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "仍是不同类型"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "仅C++不同"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "仅小端不同"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "6.2.5"
+    ],
+    "dialect": "c23",
+    "factSummary": "三种字符类型彼此不同，普通 char 的有符号性由实现选择",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-006",
+    "subjectId": "cpp",
+    "chapterId": "control-functions",
+    "type": "single",
+    "stem": "同一 C11 `switch` 的两个 `case` 转换后值相同会怎样？",
+    "code": null,
+    "explanation": "同一 `switch` 中各 `case` 常量转换到控制表达式的类型后必须互不相同；不同写法也可能转换成同一值。",
+    "difficulty": 2,
+    "tags": [
+      "switch",
+      "约束"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "违反约束并需诊断"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "执行先出现者"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "执行后出现者"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "运行时选择"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n1570"
+    ],
+    "sourceAnchors": [
+      "6.8.4.2"
+    ],
+    "dialect": "c11",
+    "factSummary": "同一 switch 中各 case 常量转换后的值必须互不相同",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-007",
+    "subjectId": "cpp",
+    "chapterId": "control-functions",
+    "type": "single",
+    "stem": "C++23 默认实参主要在何处确定？",
+    "code": null,
+    "explanation": "默认实参在调用点根据当时可见的声明确定，不会在运行时从函数定义处动态查找。",
+    "difficulty": 3,
+    "tags": [
+      "默认实参",
+      "声明"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "链接结束"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "函数首次执行"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "调用点可见声明"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "运行时类型"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "dcl.fct.default"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "默认实参在调用点根据可见声明组合确定",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-008",
+    "subjectId": "cpp",
+    "chapterId": "arrays-strings",
+    "type": "single",
+    "stem": "指针指向数组最后元素时，`p+1` 是什么？",
+    "code": null,
+    "explanation": "标准允许形成数组尾后指针并用它界定范围，但该位置不对应数组元素，不能解引用。",
+    "difficulty": 2,
+    "tags": [
+      "数组",
+      "尾后指针"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "空指针"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "可形成但不可解引用的尾后指针"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "整数溢出"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "仍指向元素"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "expr.add",
+      "basic.compound"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "标准允许形成数组尾后指针作为范围终点，但不得解引用",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-009",
+    "subjectId": "cpp",
+    "chapterId": "arrays-strings",
+    "type": "single",
+    "stem": "复制两个可能重叠的字节区域应使用哪个函数？",
+    "code": null,
+    "explanation": "`memmove` 对源、目标重叠的复制有定义语义；`memcpy` 的源和目标一旦重叠，行为未定义。",
+    "difficulty": 1,
+    "tags": [
+      "内存复制",
+      "重叠"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "strcpy"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "memcmp"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "memcpy"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "memmove"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "7.26.2.2",
+      "7.26.2.3"
+    ],
+    "dialect": "c23",
+    "factSummary": "memmove 支持重叠区域，而 memcpy 对重叠源目标没有定义结果",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-010",
+    "subjectId": "cpp",
+    "chapterId": "arrays-strings",
+    "type": "single",
+    "stem": "对变长数组类型使用 `sizeof`，哪项正确？",
+    "code": null,
+    "explanation": "操作数具有变长数组类型时，`sizeof` 可能在运行期求值；不能把普通对象上的“不求值”口诀无条件套用。",
+    "difficulty": 3,
+    "tags": [
+      "VLA",
+      "sizeof"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "总是预处理常量"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "C中禁止VLA"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "可能运行期计算"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "总返回指针大小"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n1570"
+    ],
+    "sourceAnchors": [
+      "6.5.3.4"
+    ],
+    "dialect": "c11",
+    "factSummary": "变长数组的大小可能需要运行期求得，不能套用普通不求值口诀",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-011",
+    "subjectId": "cpp",
+    "chapterId": "pointers-memory",
+    "type": "single",
+    "stem": "`calloc` 成功后，标准保证分配区域怎样初始化？",
+    "code": null,
+    "explanation": "`calloc` 把分配存储的所有位清零，但全零位模式不保证表示任意类型的语义零值，例如空指针。",
+    "difficulty": 3,
+    "tags": [
+      "calloc",
+      "对象表示"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "所有位为零"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "调用对象构造"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "每个指针为空"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "区域只读"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "7.24.3.2"
+    ],
+    "dialect": "c23",
+    "factSummary": "calloc 将存储的所有位清零，但零位模式不等于任意类型语义值",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-012",
+    "subjectId": "cpp",
+    "chapterId": "pointers-memory",
+    "type": "single",
+    "stem": "对同一已释放分配块再次 `free` 的结果是什么？",
+    "code": null,
+    "explanation": "对同一已释放存储再次调用释放函数会产生未定义行为；释放后必须确保所有权路径不再重复释放它。",
+    "difficulty": 2,
+    "tags": [
+      "free",
+      "生命周期"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "静默忽略"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "行为未定义"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "仅内存泄漏"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "返回错误码"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "7.24.3.3"
+    ],
+    "dialect": "c23",
+    "factSummary": "重复释放没有标准结果，释放后应立即终止该所有权路径",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-013",
+    "subjectId": "cpp",
+    "chapterId": "pointers-memory",
+    "type": "single",
+    "stem": "C++23 对空指针执行 `delete` 会怎样？",
+    "code": null,
+    "explanation": "对空指针执行 `delete` 或 `delete[]` 没有效果，因此仅为避免删除空指针而额外判空没有必要。",
+    "difficulty": 1,
+    "tags": [
+      "delete",
+      "空指针"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "抛异常"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "行为未定义"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "没有效果"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "创建空对象"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "expr.delete"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "delete 空指针不销毁对象也不造成错误，无需额外判空",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-014",
+    "subjectId": "cpp",
+    "chapterId": "struct-file-preprocessor",
+    "type": "single",
+    "stem": "宏参数紧邻 `#` 时，在字符串化前如何处理？",
+    "code": null,
+    "explanation": "宏参数紧邻字符串化运算符 `#` 时不会先展开；若要先展开再字符串化，通常需要再加一层辅助宏。",
+    "difficulty": 3,
+    "tags": [
+      "预处理",
+      "字符串化"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "不先展开而按调用拼写字符串化"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "完全展开后字符串化"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "只接收字面量"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "当文件名"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "6.10.5"
+    ],
+    "dialect": "c23",
+    "factSummary": "紧邻字符串化运算符的参数不会预先宏展开",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-015",
+    "subjectId": "cpp",
+    "chapterId": "struct-file-preprocessor",
+    "type": "single",
+    "stem": "文件作用域 `static` 函数具有什么链接？",
+    "code": null,
+    "explanation": "文件作用域的 `static` 函数名具有内部链接，只能在当前翻译单元内通过该名称引用。",
+    "difficulty": 1,
+    "tags": [
+      "链接",
+      "static"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "无链接"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "模块链接"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "外部链接"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "内部链接"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n1570"
+    ],
+    "sourceAnchors": [
+      "6.2.2",
+      "6.9.1"
+    ],
+    "dialect": "c11",
+    "factSummary": "文件作用域 static 函数名称只在当前翻译单元具有内部链接",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-016",
+    "subjectId": "cpp",
+    "chapterId": "struct-file-preprocessor",
+    "type": "single",
+    "stem": "C 结构体的柔性数组成员应位于哪里？",
+    "code": null,
+    "explanation": "柔性数组成员必须是结构体的最后一个成员，并且结构体中还要有至少一个其他具名成员。",
+    "difficulty": 2,
+    "tags": [
+      "结构体",
+      "柔性数组"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "任意位置"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "末尾且前有具名成员"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "首位"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "只能在联合体"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "6.7.3.2"
+    ],
+    "dialect": "c23",
+    "factSummary": "柔性数组成员必须位于结构体末尾且前面存在至少一个具名成员",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-017",
+    "subjectId": "cpp",
+    "chapterId": "struct-file-preprocessor",
+    "type": "single",
+    "stem": "以 `\"a\"` 模式打开 C 流后，写入位置如何保证？",
+    "code": null,
+    "explanation": "以追加模式打开流时，所有写入都定位到文件末尾；不能把它当作能在任意当前位置覆盖写入的普通模式。",
+    "difficulty": 3,
+    "tags": [
+      "文件",
+      "追加模式"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "从开头覆盖"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "从当前读位置"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "写入发生在文件末尾"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "只可写一行"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "7.23.5.3"
+    ],
+    "dialect": "c23",
+    "factSummary": "追加模式保证写入定位于文件末尾，不能当作普通读写位置",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-018",
+    "subjectId": "cpp",
+    "chapterId": "cpp-basics-references",
+    "type": "single",
+    "stem": "给已初始化的 C++ 左值引用赋值，实际改变什么？",
+    "code": null,
+    "explanation": "C++ 引用初始化后不能重新绑定；对引用赋值实际修改的是它最初绑定的对象。",
+    "difficulty": 1,
+    "tags": [
+      "引用",
+      "赋值"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "被引用对象"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "引用绑定目标"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "引用地址"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "引用类型"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "dcl.ref",
+      "expr.ass"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "引用不能重新绑定，赋值会修改最初绑定的对象",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-019",
+    "subjectId": "cpp",
+    "chapterId": "cpp-basics-references",
+    "type": "single",
+    "stem": "局部 `const T&` 直接绑定临时 `T` 时，临时通常存活多久？",
+    "code": null,
+    "explanation": "满足直接绑定规则的局部引用可把临时对象的生命周期延长到该引用的生命周期结束，但引用转接并不总会继续延寿。",
+    "difficulty": 2,
+    "tags": [
+      "临时对象",
+      "生命周期"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "到初始化结束"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "到程序结束"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "到下次调用"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "到局部引用生命周期结束"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "class.temporary"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "直接绑定可把临时对象生命周期延长至该局部引用结束",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-020",
+    "subjectId": "cpp",
+    "chapterId": "cpp-basics-references",
+    "type": "single",
+    "stem": "`std::move(x)` 立即对 x 做了什么？",
+    "code": null,
+    "explanation": "`std::move` 本身只把表达式转换为可供移动的值类别；资源是否真正转移取决于后续调用的构造或赋值操作。",
+    "difficulty": 1,
+    "tags": [
+      "移动语义",
+      "值类别"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "清空资源"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "转换表达式值类别"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "调用析构"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "复制到堆"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "forward"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "std::move 只做值类别转换，真正资源转移取决于后续操作",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-021",
+    "subjectId": "cpp",
+    "chapterId": "classes-objects",
+    "type": "single",
+    "stem": "基类构造期间调用虚函数会分派到哪里？",
+    "code": null,
+    "explanation": "构造期间的虚调用按当前正在构造的类分派，不会进入尚未完成构造的派生类覆盖函数。",
+    "difficulty": 3,
+    "tags": [
+      "虚函数",
+      "构造"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "最派生覆盖"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "随机选择"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "当前构造层级的最终覆盖"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "语法禁止"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "class.cdtor"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "构造期间虚调用不会进入尚未完成构造的派生层",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-022",
+    "subjectId": "cpp",
+    "chapterId": "classes-objects",
+    "type": "single",
+    "stem": "含 `std::unique_ptr<int>` 成员的类，其隐式复制构造通常怎样？",
+    "code": null,
+    "explanation": "类含有不可复制成员时，其隐式声明的复制构造函数会被定义为删除；`std::unique_ptr` 正是典型的不可复制成员。",
+    "difficulty": 2,
+    "tags": [
+      "特殊成员",
+      "unique_ptr"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "被定义为删除"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "自动深拷贝"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "按位复制"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "运行时失败"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "class.copy.ctor",
+      "unique.ptr"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "不可复制成员会使宿主类的隐式复制构造函数被删除",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-023",
+    "subjectId": "cpp",
+    "chapterId": "classes-objects",
+    "type": "single",
+    "stem": "通过基类指针删除实际派生对象，基类析构应满足什么？",
+    "code": null,
+    "explanation": "经基类指针删除派生对象时，基类析构函数必须为虚函数，才能按动态类型启动完整销毁链。",
+    "difficulty": 2,
+    "tags": [
+      "析构",
+      "多态"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "private"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "constexpr"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "无成员"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "为虚析构"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "expr.delete",
+      "class.dtor"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "多态删除需要虚析构启动完整动态类型销毁链",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-024",
+    "subjectId": "cpp",
+    "chapterId": "classes-objects",
+    "type": "single",
+    "stem": "纯虚析构函数是否还需要定义？",
+    "code": null,
+    "explanation": "纯虚析构函数仍会在派生对象销毁链中被调用，因此即使它使类保持抽象，也必须提供定义。",
+    "difficulty": 3,
+    "tags": [
+      "纯虚函数",
+      "析构"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "绝不需要"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "需要因析构链会调用"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "无成员时才需"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "必须deleted"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "class.dtor",
+      "class.abstract"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "纯虚只保持类抽象，析构链仍需要可调用的析构定义",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-025",
+    "subjectId": "cpp",
+    "chapterId": "inheritance-polymorphism",
+    "type": "single",
+    "stem": "`dynamic_cast<Derived&>` 检查失败时会怎样？",
+    "code": null,
+    "explanation": "对引用执行 `dynamic_cast` 失败会抛出 `std::bad_cast`；只有相应的指针转换失败才返回空指针。",
+    "difficulty": 2,
+    "tags": [
+      "dynamic_cast",
+      "异常"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "返回空引用"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "行为未定义"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "抛std::bad_cast"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "转回基类"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "expr.dynamic.cast"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "引用转换失败抛 bad_cast，指针转换失败才返回空指针",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-026",
+    "subjectId": "cpp",
+    "chapterId": "inheritance-polymorphism",
+    "type": "single",
+    "stem": "虚继承下最派生对象通常含几个指定虚基类子对象？",
+    "code": null,
+    "explanation": "在最派生对象中，经多条继承路径到达的同一虚基类只保留一个共享子对象，这正是虚继承解决菱形重复基类的机制。",
+    "difficulty": 2,
+    "tags": [
+      "虚继承",
+      "对象模型"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "一个"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "每路径一个"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "零个"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "运行时决定"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "class.mi"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "多条继承路径共享同一个指定虚基类子对象",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-027",
+    "subjectId": "cpp",
+    "chapterId": "operators-templates-exceptions",
+    "type": "single",
+    "stem": "C++ 函数模板是否允许偏特化？",
+    "code": null,
+    "explanation": "C++ 允许类模板偏特化，但不允许函数模板偏特化；函数的部分匹配需求通常用重载或约束表达。",
+    "difficulty": 2,
+    "tags": [
+      "模板",
+      "偏特化"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "允许"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "不允许，应使用重载等"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "仅成员函数允许"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "仅void允许"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "temp.spec",
+      "temp.fct"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "函数模板不能偏特化，部分匹配需求通常通过重载表达",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-028",
+    "subjectId": "cpp",
+    "chapterId": "operators-templates-exceptions",
+    "type": "single",
+    "stem": "依赖模板参数且应解释为类型的限定名称通常需哪个关键字？",
+    "code": null,
+    "explanation": "在需要消除歧义的依赖限定名称前，`typename` 告知解析器该名称表示类型，而不是静态成员等非类型实体。",
+    "difficulty": 2,
+    "tags": [
+      "模板",
+      "typename"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "typename"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "virtual"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "mutable"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "friend"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "temp.res"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "typename 告知解析器依赖限定名称代表类型",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-029",
+    "subjectId": "cpp",
+    "chapterId": "operators-templates-exceptions",
+    "type": "single",
+    "stem": "`noexcept(f())` 运算符主要产生什么？",
+    "code": null,
+    "explanation": "`noexcept(expr)` 的操作数不求值，表达式结果是描述 `expr` 是否被视为不会抛出的布尔常量。",
+    "difficulty": 1,
+    "tags": [
+      "noexcept",
+      "表达式"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "调用f并捕获"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "修改f声明"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "不调用f而产生布尔常量"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "返回异常地址"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "expr.unary.noexcept"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "noexcept 操作数不求值，结果是描述潜在抛出性的布尔常量",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-030",
+    "subjectId": "cpp",
+    "chapterId": "operators-templates-exceptions",
+    "type": "single",
+    "stem": "异常寻找处理器时，已构造的局部自动对象通常怎样？",
+    "code": null,
+    "explanation": "异常传播触发栈展开时，已经完成构造的自动对象会按离开作用域的逆序析构；尚未构造完成的对象不在其中。",
+    "difficulty": 2,
+    "tags": [
+      "异常",
+      "栈展开"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "全部泄漏"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "只销毁基本类型"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "移到全局区"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "按栈展开调用析构"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "except.ctor"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "退出作用域的已构造自动对象会按栈展开规则析构",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-031",
+    "subjectId": "cpp",
+    "chapterId": "c-basics",
+    "type": "multiple",
+    "stem": "哪些情形属于未定义行为？",
+    "code": null,
+    "explanation": "四项操作都会产生未定义行为：有符号溢出、整数除零、解引用尾后指针，以及在生命周期结束后经原指针读取对象数据。一次运行结果不能证明其语义。",
+    "difficulty": 2,
+    "tags": [
+      "未定义行为",
+      "可移植性"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "有符号整数溢出"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "整数除零"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "解引用尾后指针"
+      },
+      {
+        "id": "D",
+        "label": "D",
+      "text": "通过原指针读取已结束生命周期对象的非静态数据成员"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096",
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "J.2",
+      "intro.compliance"
+    ],
+    "dialect": "c23+cpp23",
+    "factSummary": "四项都缺少标准结果，不能依据一次运行输出定答案",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-032",
+    "subjectId": "cpp",
+    "chapterId": "c-basics",
+    "type": "multiple",
+    "stem": "哪些可移植整数说法正确？",
+    "code": null,
+    "explanation": "整数类型的具体宽度可随实现变化；无符号算术按模数运算、`sizeof(char)` 为 1、三种字符类型彼此不同则是标准层面的保证。",
+    "difficulty": 2,
+    "tags": [
+      "整数",
+      "可移植性"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "C",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "普通char有符号性可能由实现选择"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "int必为32位"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "unsigned按模运算"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "sizeof(char)为1"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096",
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "6.2.5",
+      "basic.fundamental"
+    ],
+    "dialect": "c23+cpp23",
+    "factSummary": "整数宽度可变，而无符号模运算与字符一字节有明确保证",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-033",
+    "subjectId": "cpp",
+    "chapterId": "pointers-memory",
+    "type": "multiple",
+    "stem": "关于 C++ 对象生命周期，哪些正确？",
+    "code": null,
+    "explanation": "存储仍存在不等于对象生命周期仍有效；满足规则的直接引用绑定可以延长临时对象生命周期，但普通引用转接不会重新延长。",
+    "difficulty": 3,
+    "tags": [
+      "生命周期",
+      "存储"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "C",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "获得存储不等于对象已开始生命周期"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "析构后可无条件读成员"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "直接绑定const引用可延长临时寿命"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "生命周期结束后访问受限"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "basic.life",
+      "class.temporary"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "存储、对象生命周期和临时延寿是三个不同概念",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-034",
+    "subjectId": "cpp",
+    "chapterId": "struct-file-preprocessor",
+    "type": "multiple",
+    "stem": "构造多语句函数式宏时，哪些做法有助于降低错误？",
+    "code": null,
+    "explanation": "给参数和整体结果加括号、把多语句宏包装成单语句外观，可降低优先级和控制流陷阱；同一参数仍应避免重复求值。",
+    "difficulty": 3,
+    "tags": [
+      "宏",
+      "副作用"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "B",
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "参数引用加括号"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "整体表达式加括号"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "用do-while(0)包裹"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "带副作用参数故意用两次"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "6.10"
+    ],
+    "dialect": "c23",
+    "factSummary": "括号与单语句外观可减小优先级和控制流陷阱，重复求值应避免",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-035",
+    "subjectId": "cpp",
+    "chapterId": "classes-objects",
+    "type": "multiple",
+    "stem": "关于 RAII，哪些描述正确？",
+    "code": null,
+    "explanation": "RAII 把资源所有权交给对象，并利用确定性的析构完成释放；它适用于局部对象，也不要求资源对象一定通过 `new` 创建。",
+    "difficulty": 2,
+    "tags": [
+      "RAII",
+      "资源管理"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "B",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "对象取得资源所有权"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "析构释放资源"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "必须由new创建"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "异常展开时局部对象仍析构"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "class.ctor",
+      "class.dtor",
+      "except.ctor"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "RAII 依赖确定性对象生命周期而不要求动态分配",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-036",
+    "subjectId": "cpp",
+    "chapterId": "inheritance-polymorphism",
+    "type": "multiple",
+    "stem": "哪些操作涉及动态类型或虚分派？",
+    "code": null,
+    "explanation": "经基类引用的虚调用、对多态指针的 `dynamic_cast`，以及对解引用后的多态对象执行 `typeid`，都会使用动态类型信息；普通非虚调用不会。",
+    "difficulty": 2,
+    "tags": [
+      "RTTI",
+      "虚分派"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "B",
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "经基类引用调用虚函数"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "dynamic_cast多态指针"
+      },
+      {
+        "id": "C",
+        "label": "C",
+      "text": "对非空多态基类指针 `p` 执行 `typeid(*p)`"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "普通非虚调用"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "class.virtual",
+      "expr.dynamic.cast",
+      "expr.typeid"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "虚调用、dynamic_cast 与多态 typeid 会使用动态类型信息",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-037",
+    "subjectId": "cpp",
+    "chapterId": "operators-templates-exceptions",
+    "type": "multiple",
+    "stem": "关于 C++ 模板，哪些正确？",
+    "code": null,
+    "explanation": "类模板可以偏特化，函数模板可以重载但不能偏特化；依赖类型名称的解析还可能需要 `typename`。",
+    "difficulty": 3,
+    "tags": [
+      "模板",
+      "实例化"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "B",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "类模板可偏特化"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "函数模板可重载"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "函数模板可偏特化"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "依赖类型名通常需typename"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "temp.spec",
+      "temp.res",
+      "temp.fct"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "类模板偏特化与函数模板重载应区分，函数模板不能偏特化",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-038",
+    "subjectId": "cpp",
+    "chapterId": "operators-templates-exceptions",
+    "type": "multiple",
+    "stem": "哪些情况可能直接触发 `std::terminate`？",
+    "code": null,
+    "explanation": "异常逃出实际生效的 `noexcept` 函数，或在栈展开期间又有析构异常逃逸，都会调用 `std::terminate`；普通未捕获异常并不等于这些选项外的所有情况。",
+    "difficulty": 3,
+    "tags": [
+      "异常",
+      "terminate"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "noexcept函数让异常逃出"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "catch正常处理"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "栈展开析构再次抛出并逃逸"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "仅构造异常对象"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "except.spec",
+      "except.terminate"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "违反生效的 noexcept 或栈展开出现第二个逃逸异常可终止程序",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-039",
+    "subjectId": "cpp",
+    "chapterId": "c-basics",
+    "type": "judge",
+    "stem": "有符号整数溢出与无符号整数回绕具有完全相同的标准语义。",
+    "code": null,
+    "explanation": "有符号整数溢出通常产生未定义行为；无符号整数超出范围则按该类型可表示值数量取模。",
+    "difficulty": 2,
+    "tags": [
+      "溢出",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "6.2.5",
+      "6.5"
+    ],
+    "dialect": "c23",
+    "factSummary": "有符号溢出通常未定义，无符号超范围则按模数回绕",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-040",
+    "subjectId": "cpp",
+    "chapterId": "pointers-memory",
+    "type": "judge",
+    "stem": "数组尾后指针可以形成，但不能作为实际数组元素解引用。",
+    "code": null,
+    "explanation": "尾后指针可以参与范围界定和允许的比较、运算，但它不指向数组元素，因此不能解引用。",
+    "difficulty": 1,
+    "tags": [
+      "尾后指针",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "expr.add",
+      "basic.compound"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "尾后位置可表示范围终点，但不指向可访问的数组元素",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-041",
+    "subjectId": "cpp",
+    "chapterId": "cpp-basics-references",
+    "type": "judge",
+    "stem": "给引用赋另一个对象会使引用重新绑定。",
+    "code": null,
+    "explanation": "引用一旦初始化就不能改绑；后续对引用赋值改变的是原绑定对象，而不是让引用指向另一个对象。",
+    "difficulty": 1,
+    "tags": [
+      "引用",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "dcl.ref",
+      "expr.ass"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "引用初始化后不能重新绑定，赋值作用于原绑定对象",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-042",
+    "subjectId": "cpp",
+    "chapterId": "classes-objects",
+    "type": "judge",
+    "stem": "纯虚析构函数绝对不能提供函数定义。",
+    "code": null,
+    "explanation": "析构函数可以声明为纯虚以保持类抽象，但派生对象销毁时仍会调用它，所以必须提供函数定义。",
+    "difficulty": 2,
+    "tags": [
+      "纯虚析构",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "class.dtor",
+      "class.abstract"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "纯虚析构可定义且通常因销毁链调用而必须定义",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-043",
+    "subjectId": "cpp",
+    "chapterId": "operators-templates-exceptions",
+    "type": "judge",
+    "stem": "`noexcept(expr)` 会执行 expr 一次来观察是否抛出。",
+    "code": null,
+    "explanation": "`noexcept` 运算符的操作数处于不求值语境，运行时不会执行其中的函数调用或副作用。",
+    "difficulty": 1,
+    "tags": [
+      "noexcept",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "expr.unary.noexcept"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "noexcept 的操作数不求值，结果在编译期形成",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-044",
+    "subjectId": "cpp",
+    "chapterId": "c-basics",
+    "type": "fill_blank",
+    "stem": "表示一个字节所含位数的标准宏名称是____。",
+    "code": null,
+    "explanation": "CHAR_BIT 表示每字节位数；正确答案为CHAR_BIT，易错点是把 sizeof(char) 为一字节误解成固定八位。",
+    "difficulty": 1,
+    "tags": [
+      "CHAR_BIT",
+      "填空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [
+      "CHAR_BIT"
+    ],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "7.22.2"
+    ],
+    "dialect": "c23",
+    "factSummary": "CHAR_BIT 表示每字节位数，不能用常数八替代",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-045",
+    "subjectId": "cpp",
+    "chapterId": "struct-file-preprocessor",
+    "type": "fill_blank",
+    "stem": "适合复制可能重叠内存区域的函数名是____。",
+    "code": null,
+    "explanation": "memmove 对重叠区域有定义语义；正确答案为memmove，易错点是把要求不重叠的 memcpy 用在同一缓冲区。",
+    "difficulty": 1,
+    "tags": [
+      "memmove",
+      "填空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [
+      "memmove"
+    ],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [],
+    "sourceIds": [
+      "wg14-n3096"
+    ],
+    "sourceAnchors": [
+      "7.26.2.2"
+    ],
+    "dialect": "c23",
+    "factSummary": "memmove 对重叠区域有定义语义，memcpy 没有",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-046",
+    "subjectId": "cpp",
+    "chapterId": "operators-templates-exceptions",
+    "type": "fill_blank",
+    "stem": "依赖模板参数且表示类型的限定名称前通常写____。",
+    "code": null,
+    "explanation": "typename 消除依赖限定名称的类型解析歧义；正确答案为typename，易错点是遗漏后让解析器按非类型名称处理。",
+    "difficulty": 2,
+    "tags": [
+      "typename",
+      "填空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [
+      "typename"
+    ],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "temp.res"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "typename 消除依赖限定名称的类型解析歧义",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-047",
+    "subjectId": "cpp",
+    "chapterId": "inheritance-polymorphism",
+    "type": "fill_blank",
+    "stem": "引用目标的 `dynamic_cast` 失败会抛出____。",
+    "code": null,
+    "explanation": "引用 dynamic_cast 失败抛出 bad_cast；正确答案为std::bad_cast，易错点是套用指针转换失败返回空指针的规则。",
+    "difficulty": 2,
+    "tags": [
+      "dynamic_cast",
+      "填空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [
+      "std::bad_cast",
+      "bad_cast"
+    ],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "expr.dynamic.cast"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "引用 dynamic_cast 失败抛出 bad_cast",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-048",
+    "subjectId": "cpp",
+    "chapterId": "c-basics",
+    "type": "short_answer",
+    "stem": "为什么不能凭一次运行结果确定含有有符号溢出的表达式答案？",
+    "code": null,
+    "explanation": "有符号整数溢出通常没有标准结果；参考答案应强调单次输出只代表特定实现与构建条件，不能证明可移植语义。",
+    "difficulty": 3,
+    "tags": [
+      "未定义行为",
+      "简答"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": "有符号整数溢出通常属于未定义行为，标准不规定结果；某个编译器和优化级别的一次输出不能成为可移植答案。",
+    "options": [],
+    "sourceIds": [
+      "wg14-n3096",
+      "gcc-c-dialect"
+    ],
+    "sourceAnchors": [
+      "6.5",
+      "C dialect options"
+    ],
+    "dialect": "c23",
+    "factSummary": "未定义行为不能通过一次实测固化为规范答案",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-049",
+    "subjectId": "cpp",
+    "chapterId": "classes-objects",
+    "type": "short_answer",
+    "stem": "为什么多态基类通常需要虚析构函数？",
+    "code": null,
+    "explanation": "虚析构保证多态对象按动态类型正确销毁；参考答案需指出非虚析构会使经基类指针删除派生对象失去标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "虚析构",
+      "简答"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": "虚析构让通过基类指针删除时从实际动态类型开始执行完整析构链；非虚析构可能遗漏派生资源并导致未定义行为。",
+    "options": [],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "expr.delete",
+      "class.dtor"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "虚析构支持多态对象的正确销毁",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-CPP-050",
+    "subjectId": "cpp",
+    "chapterId": "operators-templates-exceptions",
+    "type": "short_answer",
+    "stem": "函数模板遇到“部分匹配”需求时，为何不能写偏特化，应怎样处理？",
+    "code": null,
+    "explanation": "函数模板不能偏特化；参考答案应说明用重载、约束或辅助类模板表达部分匹配，而非伪造偏特化语法。",
+    "difficulty": 3,
+    "tags": [
+      "函数模板",
+      "简答"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": "函数模板不允许偏特化；应使用重载、约束或把差异放入可偏特化的辅助类模板，显式全特化只处理完整实参组合。",
+    "options": [],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "temp.fct",
+      "temp.spec"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "函数模板部分匹配通过重载或辅助类表达",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  }
+]

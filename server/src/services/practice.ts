@@ -1,7 +1,6 @@
 import { Prisma } from "../generated/prisma/client.js";
 import type { DatabaseClient } from "../db.js";
 import { AppError } from "../errors.js";
-import { MODULES, SUBJECTS, isSubjectId } from "../domain/subjects.js";
 import {
   publicQuestion,
   sameAnswer,
@@ -11,6 +10,8 @@ import {
 } from "../domain/questions.js";
 import type { ExamService } from "./exam.js";
 import { GamificationService, unlockedKeys } from "./gamification.js";
+import { normalizeFillAnswer, sameFillAnswer } from "../domain/question-bank.js";
+import type { CatalogService } from "./catalog.js";
 
 const MODE_TO_DATABASE = {
   chapter: "CHAPTER",
@@ -33,21 +34,39 @@ function jsonStrings(value: Prisma.JsonValue): string[] {
   return Array.isArray(value) ? value.map(String) : [];
 }
 
+function jsonNestedStrings(value: Prisma.JsonValue): string[][] {
+  return Array.isArray(value)
+    ? value.map((item) => Array.isArray(item) ? item.map(String) : [String(item)])
+    : [];
+}
+
 function answerResult(answer: {
   questionId: string;
+  answerType: string;
+  textAnswer: string | null;
+  selfAssessment: string | null;
   selectedOptionIds: Prisma.JsonValue;
   correctOptionIds: Prisma.JsonValue;
-  isCorrect: boolean;
+  isCorrect: boolean | null;
   explanation: string;
   submittedAt: Date;
   pointsAwarded: number;
   unlockedAchievements: Prisma.JsonValue;
-}) {
+}, snapshot?: QuestionSnapshot) {
+  const textAnswers = answer.textAnswer
+    ? (() => { try { const parsed = JSON.parse(answer.textAnswer); return Array.isArray(parsed) ? parsed.map(String) : [answer.textAnswer]; } catch { return [answer.textAnswer]; } })()
+    : [];
   return {
     questionId: answer.questionId,
+    answerType: answer.answerType.toLowerCase(),
     selectedOptionIds: jsonStrings(answer.selectedOptionIds),
+    textAnswers,
     correctOptionIds: jsonStrings(answer.correctOptionIds),
     isCorrect: answer.isCorrect,
+    selfAssessment: answer.selfAssessment?.toLowerCase() || null,
+    evaluationRequired: answer.answerType === "SHORT_ANSWER" && answer.isCorrect === null,
+    acceptedAnswers: snapshot?.type === "fill_blank" ? snapshot.acceptedAnswers : [],
+    referenceAnswer: snapshot?.type === "short_answer" ? snapshot.referenceAnswer : "",
     explanation: answer.explanation,
     submittedAt: answer.submittedAt.toISOString(),
     pointsAwarded: answer.pointsAwarded,
@@ -99,6 +118,9 @@ function snapshotFromCandidate(candidate: {
     tags: Prisma.JsonValue;
     images: Prisma.JsonValue;
     correctOptionIds: Prisma.JsonValue;
+    acceptedAnswers: Prisma.JsonValue;
+    answerConfig: Prisma.JsonValue;
+    referenceAnswer: string | null;
     options: Array<{ optionId: string; label: string; text: string; position: number }>;
   } | null;
 }): QuestionSnapshot {
@@ -119,6 +141,11 @@ function snapshotFromCandidate(candidate: {
       text: option.text
     })),
     correctOptionIds: jsonStrings(version.correctOptionIds),
+    acceptedAnswers: jsonNestedStrings(version.acceptedAnswers),
+    answerConfig: version.answerConfig && typeof version.answerConfig === "object" && !Array.isArray(version.answerConfig)
+      ? version.answerConfig as QuestionSnapshot["answerConfig"]
+      : {},
+    referenceAnswer: version.referenceAnswer || "",
     explanation: version.explanation,
     difficulty: version.difficulty,
     tags: jsonStrings(version.tags),
@@ -130,18 +157,23 @@ export class PracticeService {
   constructor(
     private readonly prisma: DatabaseClient,
     private readonly gamification: GamificationService,
-    private readonly examService?: ExamService
+    private readonly examService?: ExamService,
+    private readonly catalogService?: CatalogService
   ) {}
 
-  private async requireSubject(subjectId: string) {
-    if (!isSubjectId(subjectId)) throw new AppError("学科不存在", "SUBJECT_NOT_FOUND", 404);
+  private async requireSubject(subjectId: string): Promise<void> {
+    if (this.catalogService) {
+      const catalog = await this.catalogService.getCatalog();
+      const published = catalog.modules.some((module) => module.subjects.some((subject) => subject.id === subjectId));
+      if (!published) throw new AppError("学科不存在", "SUBJECT_NOT_FOUND", 404);
+      return;
+    }
     const subject = await this.prisma.subject.findFirst({ where: { id: subjectId, active: true } });
     if (!subject) throw new AppError("学科不存在", "SUBJECT_NOT_FOUND", 404);
-    return subject;
   }
 
   async getLearningOverview(userId: string) {
-    const [totalQuestions, answers, attemptedRows, examAnswers, wrongCount, favoriteCount, activeSession, activeExam, questionSubjects] = await Promise.all([
+    const [totalQuestions, answers, attemptedRows, examAnswers, wrongCount, favoriteCount, activeSession, activeExam, questionSubjects, catalogModules] = await Promise.all([
       this.prisma.question.count({ where: { status: "ACTIVE" } }),
       this.prisma.practiceAnswer.findMany({ where: { userId }, select: { isCorrect: true, submittedAt: true } }),
       this.prisma.practiceAnswer.findMany({ where: { userId }, distinct: ["questionId"], select: { questionId: true, question: { select: { subjectId: true } } } }),
@@ -157,7 +189,12 @@ export class PracticeService {
         include: { _count: { select: { questions: true, answers: true } } }
       }),
       this.examService ? this.examService.getActiveExamSummary(userId) : Promise.resolve(null),
-      this.prisma.question.groupBy({ by: ["subjectId"], where: { status: "ACTIVE" }, _count: { _all: true } })
+      this.prisma.question.groupBy({ by: ["subjectId"], where: { status: "ACTIVE" }, _count: { _all: true } }),
+      this.prisma.catalogModule.findMany({
+        where: { active: true },
+        orderBy: { order: "asc" },
+        include: { subjects: { orderBy: { order: "asc" }, include: { subject: true } } }
+      })
     ]);
     const attemptedBySubject = new Map<string, number>();
     const attemptedQuestionSubjects = new Map<string, string>();
@@ -165,16 +202,33 @@ export class PracticeService {
     examAnswers.forEach((row) => attemptedQuestionSubjects.set(row.questionId, row.subjectId));
     attemptedQuestionSubjects.forEach((subjectId) => attemptedBySubject.set(subjectId, (attemptedBySubject.get(subjectId) || 0) + 1));
     const totalsBySubject = new Map(questionSubjects.map((row) => [row.subjectId, row._count._all]));
-    const modules = MODULES.map((module) => {
-      const moduleTotal = module.subjectIds.reduce((sum, id) => sum + (totalsBySubject.get(id) || 0), 0);
-      const moduleAttempted = module.subjectIds.reduce((sum, id) => sum + (attemptedBySubject.get(id) || 0), 0);
-      return Object.assign({}, module, {
-        subjectIds: Array.from(module.subjectIds),
+    const publishedCatalog = this.catalogService ? await this.catalogService.getCatalog() : null;
+    const moduleInputs = publishedCatalog
+      ? publishedCatalog.modules.map((module) => ({ ...module, subjectIds: module.subjects.map((subject) => subject.id) }))
+      : catalogModules.map((module) => ({
+          id: module.id,
+          name: module.name,
+          subtitle: module.subtitle || "",
+          color: module.color,
+          type: module.type.toLowerCase(),
+          subjectIds: module.subjects.filter((link) => link.subject.active).map((link) => link.subjectId)
+        }));
+    const modules = moduleInputs.map((module) => {
+      const subjectIds = module.subjectIds.filter((subjectId) => (totalsBySubject.get(subjectId) || 0) > 0);
+      const moduleTotal = subjectIds.reduce((sum, id) => sum + (totalsBySubject.get(id) || 0), 0);
+      const moduleAttempted = subjectIds.reduce((sum, id) => sum + (attemptedBySubject.get(id) || 0), 0);
+      return {
+        id: module.id,
+        name: module.name,
+        subtitle: module.subtitle || "",
+        color: module.color,
+        type: module.type.toLowerCase(),
+        subjectIds,
         totalQuestions: moduleTotal,
         attemptedCount: moduleAttempted,
         progressPercent: accuracy(moduleAttempted, moduleTotal)
-      });
-    });
+      };
+    }).filter((module) => module.totalQuestions > 0);
     const correct = answers.filter((answer) => answer.isCorrect).length + examAnswers.filter((answer) => answer.isCorrect).length;
     const totalAttempts = answers.length + examAnswers.length;
     const dayStart = startOfShanghaiDay();
@@ -229,9 +283,12 @@ export class PracticeService {
 
   async getChapters(userId: string, subjectId: string) {
     await this.requireSubject(subjectId);
+    const publishedCatalog = this.catalogService ? await this.catalogService.getCatalog() : null;
+    const publishedChapters = publishedCatalog?.chapters.filter((chapter) => chapter.subjectId === subjectId) || null;
+    const publishedChapterById = new Map((publishedChapters || []).map((chapter) => [chapter.id, chapter]));
     const [chapters, answers, examAnswers] = await Promise.all([
       this.prisma.chapter.findMany({
-        where: { subjectId, active: true },
+        where: publishedChapters ? { id: { in: publishedChapters.map((chapter) => chapter.id) } } : { subjectId, active: true },
         orderBy: { order: "asc" },
         include: { questions: { where: { status: "ACTIVE" }, select: { id: true } } }
       }),
@@ -251,8 +308,8 @@ export class PracticeService {
       const correct = chapterAnswers.filter((answer) => answer.isCorrect).length;
       return {
         id: chapter.id,
-        name: chapter.name,
-        order: chapter.order,
+        name: publishedChapterById.get(chapter.id)?.name || chapter.name,
+        order: publishedChapterById.get(chapter.id)?.order ?? chapter.order,
         totalCount: chapter.questions.length,
         attemptedCount: attempted,
         progressPercent: accuracy(attempted, chapter.questions.length),
@@ -293,8 +350,15 @@ export class PracticeService {
         throw new AppError("仅章节练习可以指定 chapterId", "CHAPTER_NOT_ALLOWED", 400);
       }
       if (payload.chapterId) {
-        const chapter = await this.prisma.chapter.findFirst({ where: { id: payload.chapterId, subjectId: payload.subject, active: true } });
-        if (!chapter) throw new AppError("章节不存在", "CHAPTER_NOT_FOUND", 404);
+        if (this.catalogService) {
+          const catalog = await this.catalogService.getCatalog();
+          if (!catalog.chapters.some((chapter) => chapter.id === payload.chapterId && chapter.subjectId === payload.subject)) {
+            throw new AppError("章节不存在", "CHAPTER_NOT_FOUND", 404);
+          }
+        } else {
+          const chapter = await this.prisma.chapter.findFirst({ where: { id: payload.chapterId, subjectId: payload.subject, active: true } });
+          if (!chapter) throw new AppError("章节不存在", "CHAPTER_NOT_FOUND", 404);
+        }
       }
     }
 
@@ -354,20 +418,28 @@ export class PracticeService {
     const questionIds = session.questions.map((item) => item.questionId);
     const favorites = await this.prisma.favorite.findMany({ where: { userId, questionId: { in: questionIds } }, select: { questionId: true } });
     const favoriteIds = new Set(favorites.map((favorite) => favorite.questionId));
-    const answers = Object.fromEntries(session.answers.map((answer) => [answer.questionId, answerResult(answer)]));
+    const snapshotByQuestion = new Map(session.questions.map((item) => [item.questionId, item.snapshot as unknown as QuestionSnapshot]));
+    const answers = Object.fromEntries(session.answers.map((answer) => [answer.questionId, answerResult(answer, snapshotByQuestion.get(answer.questionId))]));
+    const completedAnswerCount = session.answers.filter((answer) => answer.isCorrect !== null).length;
     return {
       ...sessionSummary({ ...session, _count: { questions: session.questions.length, answers: session.answers.length } }),
       subject: session.subjectId,
       chapterId: session.chapterId || "",
       status: statusFromDatabase(session.status),
       createdAt: session.createdAt.toISOString(),
-      currentIndex: Math.min(session.answers.length, Math.max(0, session.questions.length - 1)),
+      currentIndex: Math.min(completedAnswerCount, Math.max(0, session.questions.length - 1)),
       questions: session.questions.map((item) => publicQuestion(item.snapshot as unknown as QuestionSnapshot, favoriteIds.has(item.questionId))),
       answers
     };
   }
 
-  async submitAnswer(userId: string, sessionId: string, payload: { questionId: string; selectedOptionIds: string[]; clientAnswerId: string }) {
+  async submitAnswer(userId: string, sessionId: string, payload: {
+    questionId: string;
+    selectedOptionIds?: string[];
+    textAnswer?: string | string[];
+    answer?: { kind: "choice"; optionIds: string[] } | { kind: "fill"; values: string[] } | { kind: "short"; value: string };
+    clientAnswerId: string;
+  }) {
     const result = await this.prisma.$transaction(async (tx) => {
       const idempotent = await tx.practiceAnswer.findUnique({
         where: { userId_clientAnswerId: { userId, clientAnswerId: payload.clientAnswerId } }
@@ -376,7 +448,8 @@ export class PracticeService {
         if (idempotent.sessionId !== sessionId || idempotent.questionId !== payload.questionId) {
           throw new AppError("clientAnswerId 已用于其他答题请求", "IDEMPOTENCY_KEY_REUSED", 409);
         }
-        return idempotent;
+        const savedQuestion = await tx.practiceSessionQuestion.findUnique({ where: { sessionId_questionId: { sessionId, questionId: payload.questionId } } });
+        return { answer: idempotent, snapshot: savedQuestion?.snapshot as unknown as QuestionSnapshot };
       }
       const session = await tx.practiceSession.findFirst({
         where: { id: sessionId, userId },
@@ -389,34 +462,52 @@ export class PracticeService {
       const existing = await tx.practiceAnswer.findUnique({ where: { sessionId_questionId: { sessionId, questionId: payload.questionId } } });
       if (existing) throw new AppError("该题已经提交，不能修改答案", "ANSWER_ALREADY_SUBMITTED", 409);
       const snapshot = sessionQuestion.snapshot as unknown as QuestionSnapshot;
-      let selected: string[];
-      try {
-        selected = validateSelection(snapshot, payload.selectedOptionIds || []);
-      } catch (error) {
-        const code = error instanceof Error ? error.message : "INVALID_OPTION";
-        throw new AppError(code === "ANSWER_REQUIRED" ? "请先选择答案" : "提交的选项不存在或数量不合法", code, 400);
+      let selected: string[] = [];
+      let textAnswers: string[] = [];
+      let isCorrect: boolean | null;
+      if (["single", "multiple", "judge"].includes(snapshot.type)) {
+        try {
+          selected = validateSelection(snapshot, payload.answer?.kind === "choice" ? payload.answer.optionIds : (payload.selectedOptionIds || []));
+        } catch (error) {
+          const code = error instanceof Error ? error.message : "INVALID_OPTION";
+          throw new AppError(code === "ANSWER_REQUIRED" ? "请先选择答案" : "提交的选项不存在或数量不合法", code, 400);
+        }
+        isCorrect = sameAnswer(selected, snapshot.correctOptionIds);
+      } else if (snapshot.type === "fill_blank") {
+        const raw = payload.answer?.kind === "fill" ? payload.answer.values : (Array.isArray(payload.textAnswer) ? payload.textAnswer : [payload.textAnswer || ""]);
+        textAnswers = raw.map((item) => String(item).normalize("NFKC").trim());
+        if (textAnswers.some((item) => !item)) throw new AppError("请完成全部填空", "ANSWER_REQUIRED", 400);
+        isCorrect = sameFillAnswer(textAnswers, snapshot.acceptedAnswers, snapshot.answerConfig);
+      } else {
+        const value = payload.answer?.kind === "short" ? payload.answer.value : (Array.isArray(payload.textAnswer) ? payload.textAnswer[0] : payload.textAnswer);
+        const normalized = String(value || "").normalize("NFKC").trim();
+        if (!normalized) throw new AppError("请先填写简答内容", "ANSWER_REQUIRED", 400);
+        textAnswers = [normalized];
+        isCorrect = null;
       }
-      const isCorrect = sameAnswer(selected, snapshot.correctOptionIds);
       const answer = await tx.practiceAnswer.create({
         data: {
           sessionId,
           questionId: payload.questionId,
           userId,
           clientAnswerId: payload.clientAnswerId,
+          answerType: snapshot.type.toUpperCase() as never,
           selectedOptionIds: selected,
+          textAnswer: textAnswers.length ? JSON.stringify(textAnswers) : null,
+          normalizedTextAnswer: snapshot.type === "fill_blank" ? JSON.stringify(textAnswers.map((item) => normalizeFillAnswer(item, snapshot.answerConfig))) : null,
           correctOptionIds: snapshot.correctOptionIds,
           explanation: snapshot.explanation,
           isCorrect,
           unlockedAchievements: []
         }
       });
-      if (!isCorrect) {
+      if (isCorrect === false) {
         await tx.wrongQuestionRecord.upsert({
           where: { userId_questionId: { userId, questionId: payload.questionId } },
           update: { wrongCount: { increment: 1 }, mastered: false, lastWrongAt: answer.submittedAt, masteredAt: null },
           create: { userId, questionId: payload.questionId, firstWrongAt: answer.submittedAt, lastWrongAt: answer.submittedAt }
         });
-      } else if (session.mode === "WRONG") {
+      } else if (isCorrect === true && session.mode === "WRONG") {
         await tx.wrongQuestionRecord.updateMany({
           where: { userId, questionId: payload.questionId },
           data: { mastered: true, masteredAt: answer.submittedAt }
@@ -424,20 +515,56 @@ export class PracticeService {
       }
       const reward = await this.gamification.awardAnswers(tx, userId, [{
         questionId: payload.questionId,
-        isCorrect,
+        isCorrect: Boolean(isCorrect),
+        allowCorrectReward: snapshot.type !== "short_answer",
         occurredAt: answer.submittedAt,
         sourceType: "practice",
         sourceId: answer.id
       }]);
-      return tx.practiceAnswer.update({
+      const updated = await tx.practiceAnswer.update({
         where: { id: answer.id },
         data: {
           pointsAwarded: reward.pointsAwarded,
           unlockedAchievements: reward.unlockedAchievements.map((achievement) => achievement.key)
         }
       });
+      return { answer: updated, snapshot };
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
-    return answerResult(result);
+    return answerResult(result.answer, result.snapshot);
+  }
+
+  async assessShortAnswer(userId: string, sessionId: string, questionId: string, assessment: "mastered" | "unmastered") {
+    if (!["mastered", "unmastered"].includes(assessment)) throw new AppError("自评结果无效", "INVALID_SELF_ASSESSMENT", 400);
+    const result = await this.prisma.$transaction(async (tx) => {
+      const session = await tx.practiceSession.findFirst({
+        where: { id: sessionId, userId, status: "ACTIVE" },
+        include: { questions: { where: { questionId } } }
+      });
+      if (!session) throw new AppError("练习不存在或已经结束", "SESSION_NOT_FOUND", 404);
+      const item = session.questions[0];
+      if (!item) throw new AppError("题目不属于当前练习", "QUESTION_NOT_IN_SESSION", 400);
+      const snapshot = item.snapshot as unknown as QuestionSnapshot;
+      if (snapshot.type !== "short_answer") throw new AppError("只有简答题需要自评", "SELF_ASSESSMENT_NOT_ALLOWED", 400);
+      const answer = await tx.practiceAnswer.findUnique({ where: { sessionId_questionId: { sessionId, questionId } } });
+      if (!answer) throw new AppError("请先提交简答内容", "ANSWER_REQUIRED", 409);
+      if (answer.isCorrect !== null) return { answer, snapshot };
+      const mastered = assessment === "mastered";
+      const updated = await tx.practiceAnswer.update({
+        where: { id: answer.id },
+        data: { selfAssessment: mastered ? "MASTERED" : "UNMASTERED", isCorrect: mastered }
+      });
+      if (!mastered) {
+        await tx.wrongQuestionRecord.upsert({
+          where: { userId_questionId: { userId, questionId } },
+          update: { wrongCount: { increment: 1 }, mastered: false, lastWrongAt: updated.submittedAt, masteredAt: null },
+          create: { userId, questionId, firstWrongAt: updated.submittedAt, lastWrongAt: updated.submittedAt }
+        });
+      } else if (session.mode === "WRONG") {
+        await tx.wrongQuestionRecord.updateMany({ where: { userId, questionId }, data: { mastered: true, masteredAt: new Date() } });
+      }
+      return { answer: updated, snapshot };
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    return answerResult(result.answer, result.snapshot);
   }
 
   private async buildResult(userId: string, sessionId: string) {
@@ -483,8 +610,11 @@ export class PracticeService {
       correctCount,
       wrongCount: session.questions.length - correctCount,
       accuracy: accuracy(correctCount, session.questions.length),
-      subjects: Object.values(SUBJECTS)
-        .sort((left, right) => left.order - right.order)
+      subjects: (await this.prisma.subject.findMany({
+        where: { active: true },
+        orderBy: { order: "asc" },
+        select: { id: true }
+      }))
         .map((registered) => subjects.get(registered.id))
         .filter((subject): subject is { subjectId: string; totalCount: number; correctCount: number } => Boolean(subject))
         .map((subject) => Object.assign(subject, {
@@ -502,12 +632,16 @@ export class PracticeService {
     await this.prisma.$transaction(async (tx) => {
       const session = await tx.practiceSession.findFirst({
         where: { id: sessionId, userId },
-        include: { _count: { select: { questions: true, answers: true } } }
+        include: {
+          _count: { select: { questions: true, answers: true } },
+          answers: { where: { isCorrect: null }, select: { id: true } }
+        }
       });
       if (!session) throw new AppError("练习不存在或无权访问", "SESSION_NOT_FOUND", 404);
       if (session.status === "COMPLETED") return;
       if (session.status !== "ACTIVE") throw new AppError("当前练习已结束", "SESSION_FINISHED", 409);
       if (session._count.answers !== session._count.questions) throw new AppError("仍有题目未完成", "SESSION_INCOMPLETE", 409);
+      if (session.answers.length) throw new AppError("仍有简答题尚未完成自评", "SELF_ASSESSMENT_REQUIRED", 409);
       await tx.practiceSession.update({
         where: { id: sessionId },
         data: { status: "COMPLETED", completedAt: new Date() }
@@ -534,6 +668,8 @@ export class PracticeService {
       const snapshot = snapshotFromCandidate(record.question);
       return Object.assign({}, publicQuestion(snapshot, false), {
         correctOptionIds: snapshot.correctOptionIds,
+        acceptedAnswers: snapshot.acceptedAnswers,
+        referenceAnswer: snapshot.referenceAnswer,
         explanation: snapshot.explanation,
         wrong: {
           wrongCount: record.wrongCount,
@@ -545,6 +681,30 @@ export class PracticeService {
     });
   }
 
+  private async attemptedCurrentVersions(userId: string, questionIds: string[]): Promise<Set<string>> {
+    if (!questionIds.length) return new Set();
+    const rows = await this.prisma.$queryRaw<Array<{ questionId: string }>>(Prisma.sql`
+      SELECT DISTINCT attempted.question_id AS questionId
+      FROM questions q
+      JOIN (
+        SELECT psq.question_id, psq.question_version_id
+        FROM practice_session_questions psq
+        JOIN practice_answers pa
+          ON pa.session_id = psq.session_id AND pa.question_id = psq.question_id
+        WHERE pa.user_id = ${userId}
+        UNION DISTINCT
+        SELECT eq.question_id, eq.question_version_id
+        FROM exam_questions eq
+        JOIN exams e ON e.id = eq.exam_id
+        WHERE e.user_id = ${userId} AND e.status = 'COMPLETED'
+      ) attempted
+        ON attempted.question_id = q.id
+       AND attempted.question_version_id = q.current_version_id
+      WHERE q.id IN (${Prisma.join(questionIds)})
+    `);
+    return new Set(rows.map((row) => row.questionId));
+  }
+
   async getFavorites(userId: string, subjectId?: string) {
     if (subjectId) await this.requireSubject(subjectId);
     const favorites = await this.prisma.favorite.findMany({
@@ -552,11 +712,21 @@ export class PracticeService {
       orderBy: { createdAt: "desc" },
       include: { question: { include: { currentVersion: { include: { options: true } }, chapter: true } } }
     });
+    const attempted = await this.attemptedCurrentVersions(userId, favorites.map((favorite) => favorite.questionId));
     return favorites.map((favorite) => {
       const snapshot = snapshotFromCandidate(favorite.question);
+      if (!attempted.has(favorite.questionId)) {
+        return Object.assign({}, publicQuestion(snapshot, true), {
+          answersAvailable: false,
+          wrong: null
+        });
+      }
       return Object.assign({}, publicQuestion(snapshot, true), {
         correctOptionIds: snapshot.correctOptionIds,
+        acceptedAnswers: snapshot.acceptedAnswers,
+        referenceAnswer: snapshot.referenceAnswer,
         explanation: snapshot.explanation,
+        answersAvailable: true,
         wrong: null
       });
     });
@@ -567,6 +737,10 @@ export class PracticeService {
     const question = await this.prisma.question.findFirst({ where: { id: questionId, subjectId, status: "ACTIVE" } });
     if (!question) throw new AppError("题目不存在", "QUESTION_NOT_FOUND", 404);
     if (favorite) {
+      const attempted = await this.attemptedCurrentVersions(userId, [questionId]);
+      if (!attempted.has(questionId)) {
+        throw new AppError("完成当前题目作答后才能收藏", "QUESTION_NOT_ANSWERED", 409);
+      }
       await this.prisma.favorite.upsert({
         where: { userId_questionId: { userId, questionId } },
         update: {},

@@ -1,5 +1,6 @@
 const createSubjectRepository = require('../../../../services/subjectRepository');
 const registry = require('../../../../config/subjectRegistry');
+const { answerText } = require('../../../../utils/questionAnswerPresentation');
 
 Page({
   data: {
@@ -37,7 +38,7 @@ Page({
   },
 
   decorateQuestion(question) {
-    const correctText = question.correctOptionIds.map((id) => question.options.find((option) => option.id === id)).filter(Boolean).map((option) => `${option.label}. ${option.text}`).join('；');
+    const correctText = answerText(question);
     return Object.assign({}, question, { correctText, masteredText: question.wrong && question.wrong.mastered ? '已掌握' : '未掌握' });
   },
 

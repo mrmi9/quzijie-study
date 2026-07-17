@@ -11,6 +11,7 @@ type Period = "daily" | "weekly" | "all";
 export interface AwardAnswerInput {
   questionId: string;
   isCorrect: boolean;
+  allowCorrectReward?: boolean;
   occurredAt: Date;
   sourceType: "practice" | "exam";
   sourceId: string;
@@ -196,7 +197,8 @@ export class GamificationService {
           sourceId: input.sourceId
         });
       }
-      if (input.isCorrect && !correct.has(input.questionId)) {
+      const rewardCorrect = input.isCorrect && input.allowCorrectReward !== false;
+      if (rewardCorrect && !correct.has(input.questionId)) {
         correct.add(input.questionId);
         correctIncrement += 1;
         events.push({
@@ -209,7 +211,7 @@ export class GamificationService {
           sourceType: input.sourceType,
           sourceId: input.sourceId
         });
-      } else if (input.isCorrect && hadCorrectBefore) {
+      } else if (rewardCorrect && hadCorrectBefore) {
         const dayKey = shanghaiDayKey(input.occurredAt);
         const daily = dayPeriods.get(dayKey)!;
         const eventKey = `review:${dayKey}:${input.questionId}`;

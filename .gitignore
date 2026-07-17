@@ -5,8 +5,12 @@ server/.env*
 server/src/generated/prisma/
 server/coverage/
 server/dist/
+admin/dist/
 .DS_Store
 *.log
 project.private.config.json
 .release/
 backups/
+.question-bank-storage/
+outputs/
+/miniprogram/assets/project-avatar.png

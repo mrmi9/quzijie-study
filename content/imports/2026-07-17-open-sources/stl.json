@@ -1,0 +1,2919 @@
+[
+  {
+    "externalCode": "WEB-20260717-STL-001",
+    "subjectId": "stl",
+    "chapterId": "stl-generic",
+    "type": "single",
+    "stem": "半开区间 `[first,last)` 中的 `last` 表示什么？",
+    "code": null,
+    "explanation": "尾后迭代器界定范围但不可解引用；正确答案为B，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "迭代器",
+      "区间"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "最后元素"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "尾后位置"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "首元素副本"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "空指针"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "iterator.requirements"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "尾后迭代器界定范围但不可解引用",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-002",
+    "subjectId": "stl",
+    "chapterId": "stl-generic",
+    "type": "single",
+    "stem": "哪个迭代器类别保证支持常数时间 `it+n`？",
+    "code": null,
+    "explanation": "随机访问迭代器支持常数时间跳转；正确答案为C，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "迭代器",
+      "复杂度"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "输入"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "双向"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "随机访问"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "输出"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "random.access.iterators"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "随机访问迭代器支持常数时间跳转",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-003",
+    "subjectId": "stl",
+    "chapterId": "stl-generic",
+    "type": "single",
+    "stem": "`std::reverse_iterator<It>::base()` 返回的位置与反向迭代器所指元素有何关系？",
+    "code": null,
+    "explanation": "反向迭代器的 base 指向其所代表元素的后继位置；正确答案为D，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 3,
+    "tags": [
+      "反向迭代器",
+      "base"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "同一元素"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "前两个元素"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "容器开头"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "正向迭代器位于该元素之后"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "reverse.iterators"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "反向迭代器的 base 指向其所代表元素的后继位置",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-004",
+    "subjectId": "stl",
+    "chapterId": "stl-generic",
+    "type": "single",
+    "stem": "Ranges 的 view 通常具有什么特征？",
+    "code": null,
+    "explanation": "view 通常非拥有并在迭代时延迟产生结果；正确答案为A，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "Ranges",
+      "view"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "轻量且常延迟计算"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "总拥有全部元素副本"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "只能读数组"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "创建即排序"
+      }
+    ],
+    "sourceIds": [
+      "eel-ranges"
+    ],
+    "sourceAnchors": [
+      "range.view"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "view 通常非拥有并在迭代时延迟产生结果",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-005",
+    "subjectId": "stl",
+    "chapterId": "stl-generic",
+    "type": "single",
+    "stem": "算法从临时非 borrowed range 返回迭代器时，标准常用什么类型避免悬空误用？",
+    "code": null,
+    "explanation": "dangling 类型显式表示无法安全返回临时范围迭代器；正确答案为C，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 3,
+    "tags": [
+      "Ranges",
+      "悬空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "std::nullptr_t"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "std::optional"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "std::ranges::dangling"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "std::monostate"
+      }
+    ],
+    "sourceIds": [
+      "eel-ranges"
+    ],
+    "sourceAnchors": [
+      "range.dangling"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "dangling 类型显式表示无法安全返回临时范围迭代器",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-006",
+    "subjectId": "stl",
+    "chapterId": "stl-generic",
+    "type": "single",
+    "stem": "Ranges 算法中的 projection 主要做什么？",
+    "code": null,
+    "explanation": "投影允许比较器作用于元素经成员或函数映射后的值；正确答案为B，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "Ranges",
+      "投影"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "分配容器"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "比较前先提取或变换元素"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "并行执行"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "捕获异常"
+      }
+    ],
+    "sourceIds": [
+      "eel-algorithms"
+    ],
+    "sourceAnchors": [
+      "algorithms.parallel.overloads",
+      "ranges"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "投影允许比较器作用于元素经成员或函数映射后的值",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-007",
+    "subjectId": "stl",
+    "chapterId": "stl-sequence",
+    "type": "single",
+    "stem": "`vector::reserve(n)` 在容量不足时主要改变什么？",
+    "code": null,
+    "explanation": "reserve 预留容量但不创建新元素；正确答案为A，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "vector",
+      "reserve"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "容量而非元素数量"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "元素数量"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "排序顺序"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "分配器类型"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "vector.capacity"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "reserve 预留容量但不创建新元素",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-008",
+    "subjectId": "stl",
+    "chapterId": "stl-sequence",
+    "type": "single",
+    "stem": "`vector::resize(n)` 扩大尺寸时会怎样？",
+    "code": null,
+    "explanation": "resize 扩大时会创建新元素并改变 size；正确答案为C，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "vector",
+      "resize"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "只改capacity"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "只移动指针"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "追加构造元素"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "保持size不变"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "vector.capacity"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "resize 扩大时会创建新元素并改变 size",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-009",
+    "subjectId": "stl",
+    "chapterId": "stl-sequence",
+    "type": "single",
+    "stem": "`vector` 插入导致重新分配后，旧迭代器通常怎样？",
+    "code": null,
+    "explanation": "重新分配会搬迁元素并使指向旧存储的句柄失效；正确答案为D，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "vector",
+      "失效"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "仅end失效"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "全部保持"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "仅反向迭代器失效"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "迭代器、指针和引用均失效"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "vector.modifiers"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "重新分配会搬迁元素并使指向旧存储的句柄失效",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-010",
+    "subjectId": "stl",
+    "chapterId": "stl-sequence",
+    "type": "single",
+    "stem": "`list::splice` 在分配器兼容等前提下主要如何转移元素？",
+    "code": null,
+    "explanation": "splice 通过节点重连转移元素并保留其对象身份；正确答案为B，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "list",
+      "splice"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "逐元素复制"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "重连节点而不复制元素"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "先排序"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "序列化后恢复"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "list.ops"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "splice 通过节点重连转移元素并保留其对象身份",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-011",
+    "subjectId": "stl",
+    "chapterId": "stl-sequence",
+    "type": "single",
+    "stem": "下列哪个成员函数不属于 `std::forward_list` 的接口？",
+    "code": null,
+    "explanation": "forward_list 的标准接口不提供 size 成员；正确答案为A，易错点是把其他顺序容器的容量接口直接套到单向链表。",
+    "difficulty": 3,
+    "tags": [
+      "forward_list",
+      "接口"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "size()"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "cbegin()"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "before_begin()"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "insert_after()"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "forwardlist.overview"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "forward_list 的接口设计不提供常规 size 成员",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-012",
+    "subjectId": "stl",
+    "chapterId": "stl-sequence",
+    "type": "single",
+    "stem": "关于 `std::string` 的字符存储，C++23 保证什么？",
+    "code": null,
+    "explanation": "basic_string 元素连续存储并可用于连续字符访问；正确答案为C，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "string",
+      "连续存储"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "一定链表"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "字符地址互不相邻"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "字符连续存储"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "每字符独立分配"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "basic.string"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "basic_string 元素连续存储并可用于连续字符访问",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-013",
+    "subjectId": "stl",
+    "chapterId": "stl-sequence",
+    "type": "single",
+    "stem": "`std::vector<bool>::reference` 为什么不能总当作 `bool&`？",
+    "code": null,
+    "explanation": "vector<bool> 可按位压缩并使用代理引用而非真实 bool 引用；正确答案为D，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 3,
+    "tags": [
+      "vector<bool>",
+      "代理引用"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "bool无地址"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "容器只读"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "引用总为const"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "其可为位代理对象"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "vector.bool"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "vector<bool> 可按位压缩并使用代理引用而非真实 bool 引用",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-014",
+    "subjectId": "stl",
+    "chapterId": "stl-associative",
+    "type": "single",
+    "stem": "访问不存在的 `map` 键时，`operator[]` 通常会怎样？",
+    "code": null,
+    "explanation": "map下标访问缺失键会插入并值初始化映射值；正确答案为B，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "map",
+      "operator[]"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "抛out_of_range"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "插入带默认映射值的元素"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "返回空引用"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "保持容器不变"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "map.access"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "map下标访问缺失键会插入并值初始化映射值",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-015",
+    "subjectId": "stl",
+    "chapterId": "stl-associative",
+    "type": "single",
+    "stem": "访问不存在的 `map` 键时，`at` 会怎样？",
+    "code": null,
+    "explanation": "map::at 不插入缺失键而抛出 out_of_range；正确答案为C，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "map",
+      "at"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "插入元素"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "返回end"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "抛std::out_of_range"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "清空容器"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "map.access"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "map::at 不插入缺失键而抛出 out_of_range",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-016",
+    "subjectId": "stl",
+    "chapterId": "stl-associative",
+    "type": "single",
+    "stem": "`set` 迭代器所见的键为何不能直接修改？",
+    "code": null,
+    "explanation": "关联容器键通过迭代器表现为不可修改以维护次序；正确答案为A，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "set",
+      "键不可变"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "修改会破坏排序不变量"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "键存于只读内存"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "set没有迭代器"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "仅整数不可改"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "associative.reqmts"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "关联容器键通过迭代器表现为不可修改以维护次序",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-017",
+    "subjectId": "stl",
+    "chapterId": "stl-associative",
+    "type": "single",
+    "stem": "`multiset` 与 `set` 的关键差别是什么？",
+    "code": null,
+    "explanation": "multiset 允许多个等价键而 set 保持键唯一；正确答案为D，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "multiset",
+      "重复键"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "不排序"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "只能存指针"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "没有查找"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "允许等价键重复"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "multiset.overview"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "multiset 允许多个等价键而 set 保持键唯一",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-018",
+    "subjectId": "stl",
+    "chapterId": "stl-associative",
+    "type": "single",
+    "stem": "无序容器发生 `rehash` 时，已有迭代器怎样？",
+    "code": null,
+    "explanation": "rehash 重组桶并使迭代器失效但不搬毁元素对象；正确答案为B，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 3,
+    "tags": [
+      "unordered",
+      "rehash"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "全部保证有效"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "迭代器失效但元素引用通常保持"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "仅const迭代器有效"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "元素全部删除"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "unord.req"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "rehash 重组桶并使迭代器失效但不搬毁元素对象",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-019",
+    "subjectId": "stl",
+    "chapterId": "stl-associative",
+    "type": "single",
+    "stem": "无序容器的迭代顺序具有什么保证？",
+    "code": null,
+    "explanation": "无序容器不提供可依赖的排序或插入顺序；正确答案为C，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "unordered",
+      "顺序"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "按键升序"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "按插入顺序"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "不保证稳定业务顺序"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "按哈希值严格升序"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "unord.req"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "无序容器不提供可依赖的排序或插入顺序",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-020",
+    "subjectId": "stl",
+    "chapterId": "stl-associative",
+    "type": "single",
+    "stem": "有序关联容器比较器必须满足什么关系？",
+    "code": null,
+    "explanation": "比较器必须建立严格弱序以维持关联容器结构；正确答案为A，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "比较器",
+      "严格弱序"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "严格弱序"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "任意布尔函数"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "全序且必须用小于号"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "哈希等价"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "associative.reqmts"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "比较器必须建立严格弱序以维持关联容器结构",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-021",
+    "subjectId": "stl",
+    "chapterId": "stl-algorithms",
+    "type": "single",
+    "stem": "对 `vector` 调用 `std::remove` 后，容器尺寸怎样？",
+    "code": null,
+    "explanation": "remove 只重排并返回新逻辑尾端，不执行容器 erase；正确答案为D，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "remove",
+      "擦除"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "自动缩小"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "变为零"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "增大"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "不自动改变"
+      }
+    ],
+    "sourceIds": [
+      "eel-algorithms"
+    ],
+    "sourceAnchors": [
+      "alg.remove"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "remove 只重排并返回新逻辑尾端，不执行容器 erase",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-022",
+    "subjectId": "stl",
+    "chapterId": "stl-algorithms",
+    "type": "single",
+    "stem": "`std::sort` 对迭代器最低需要什么能力？",
+    "code": null,
+    "explanation": "sort 要求随机访问迭代器而不要求必须连续；正确答案为C，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "sort",
+      "迭代器"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "输出"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "前向"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "随机访问"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "仅连续"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "sort"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "sort 要求随机访问迭代器而不要求必须连续",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-023",
+    "subjectId": "stl",
+    "chapterId": "stl-algorithms",
+    "type": "single",
+    "stem": "`std::stable_sort` 的“stable”指什么？",
+    "code": null,
+    "explanation": "稳定排序保持比较等价元素的原有相对顺序；正确答案为B，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "stable_sort",
+      "稳定性"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "永不抛异常"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "等价元素相对次序保持"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "地址不变"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "复杂度恒定"
+      }
+    ],
+    "sourceIds": [
+      "eel-algorithms"
+    ],
+    "sourceAnchors": [
+      "stable.sort"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "稳定排序保持比较等价元素的原有相对顺序",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-024",
+    "subjectId": "stl",
+    "chapterId": "stl-algorithms",
+    "type": "single",
+    "stem": "使用 `lower_bound` 前，范围对给定比较关系至少应满足什么？",
+    "code": null,
+    "explanation": "lower_bound 依赖范围按目标比较条件形成正确分区；正确答案为A，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 3,
+    "tags": [
+      "lower_bound",
+      "前置条件"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "按查找条件分区"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "元素唯一"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "随机打乱"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "容量已满"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "lower.bound"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "lower_bound 依赖范围按目标比较条件形成正确分区",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-025",
+    "subjectId": "stl",
+    "chapterId": "stl-algorithms",
+    "type": "single",
+    "stem": "`nth_element(first,nth,last)` 完成后主要保证什么？",
+    "code": null,
+    "explanation": "nth_element 定位第n元素并分区而不保证两侧内部有序；正确答案为C，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 3,
+    "tags": [
+      "nth_element",
+      "选择"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "全部有序"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "仅nth后有序"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "nth处为排序后应在元素且两侧分区"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "稳定排序"
+      }
+    ],
+    "sourceIds": [
+      "eel-algorithms"
+    ],
+    "sourceAnchors": [
+      "alg.nth.element"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "nth_element 定位第n元素并分区而不保证两侧内部有序",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-026",
+    "subjectId": "stl",
+    "chapterId": "stl-algorithms",
+    "type": "single",
+    "stem": "传统 `std::accumulate` 按什么方向结合操作？",
+    "code": null,
+    "explanation": "accumulate 依次从范围起点向终点更新累积值；正确答案为B，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "accumulate",
+      "折叠"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "随机"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "从左向右累积"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "从右向左"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "平衡树并行"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "accumulate"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "accumulate 依次从范围起点向终点更新累积值",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-027",
+    "subjectId": "stl",
+    "chapterId": "stl-adapters",
+    "type": "single",
+    "stem": "默认 `std::priority_queue<int>` 的 `top()` 通常是什么？",
+    "code": null,
+    "explanation": "默认 less 比较使 priority_queue 顶部为最大元素；正确答案为A，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "priority_queue",
+      "堆"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "最大元素"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "最小元素"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "最早插入元素"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "随机元素"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "priqueue.overview"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "默认 less 比较使 priority_queue 顶部为最大元素",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-028",
+    "subjectId": "stl",
+    "chapterId": "stl-adapters",
+    "type": "single",
+    "stem": "`std::stack::pop()` 为什么不直接返回被移除元素？",
+    "code": null,
+    "explanation": "标准容器适配器接口把访问与移除分开：先用 `top()` 取得栈顶元素，再用 `pop()` 移除；`pop()` 本身没有返回值。",
+    "difficulty": 2,
+    "tags": [
+      "stack",
+      "pop"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "元素不可复制"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "栈无顶部"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "接口将访问与移除分离"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "pop只做查看"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "stack.defn"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "stack 接口使用 top 访问栈顶、使用 pop 移除栈顶，两个操作彼此分离",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-029",
+    "subjectId": "stl",
+    "chapterId": "stl-adapters",
+    "type": "single",
+    "stem": "`std::queue` 是否提供遍历全部元素的迭代器接口？",
+    "code": null,
+    "explanation": "queue 只暴露队列操作并隐藏底层容器的遍历接口；正确答案为D，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "queue",
+      "适配器"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "提供随机访问"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "只提供const迭代器"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "提供反向迭代器"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "不提供通用迭代接口"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "queue.defn"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "queue 只暴露队列操作并隐藏底层容器的遍历接口",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-030",
+    "subjectId": "stl",
+    "chapterId": "stl-adapters",
+    "type": "single",
+    "stem": "值捕获 lambda 加 `mutable` 后主要允许什么？",
+    "code": null,
+    "explanation": "mutable 允许非const调用运算符修改值捕获副本；正确答案为B，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "lambda",
+      "mutable"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "修改外部原变量"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "修改闭包内捕获副本"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "捕获引用失效"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "自动变线程安全"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "expr.prim.lambda"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "mutable 允许非const调用运算符修改值捕获副本",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-031",
+    "subjectId": "stl",
+    "chapterId": "stl-generic",
+    "type": "multiple",
+    "stem": "哪些操作通常不得对尾后迭代器执行？",
+    "code": null,
+    "explanation": "尾后迭代器可比较和界定范围，但不表示可访问元素；正确答案为A、C，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "迭代器",
+      "尾后"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "解引用读取"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "与同范围迭代器比较"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "通过operator->访问元素"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "作为算法last参数"
+      }
+    ],
+    "sourceIds": [
+      "eel-iterators"
+    ],
+    "sourceAnchors": [
+      "iterator.requirements"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "尾后迭代器可比较和界定范围，但不表示可访问元素",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-032",
+    "subjectId": "stl",
+    "chapterId": "stl-sequence",
+    "type": "multiple",
+    "stem": "哪些操作可能使 `vector` 重新分配存储？",
+    "code": null,
+    "explanation": "需要超过现有容量的增长操作可能重新分配；正确答案为A、B、D，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "vector",
+      "重分配"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "B",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "超过容量的push_back"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "增大reserve超过当前容量"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "读取operator[]"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "扩大resize超过容量"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "vector.capacity",
+      "vector.modifiers"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "需要超过现有容量的增长操作可能重新分配",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-033",
+    "subjectId": "stl",
+    "chapterId": "stl-sequence",
+    "type": "multiple",
+    "stem": "关于 `list::splice`，哪些正确？",
+    "code": null,
+    "explanation": "splice 通过节点操作转移元素并受分配器兼容等前提约束；正确答案为A、C、D，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 3,
+    "tags": [
+      "list",
+      "splice"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "C",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "可在链表间转移节点"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "必定逐元素复制"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "通常保留被转移元素引用有效"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "需满足分配器等前提"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "list.ops"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "splice 通过节点操作转移元素并受分配器兼容等前提约束",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-034",
+    "subjectId": "stl",
+    "chapterId": "stl-associative",
+    "type": "multiple",
+    "stem": "哪些容器允许多个等价键？",
+    "code": null,
+    "explanation": "multi 关联容器允许等价键重复，普通 set 和 map 保持唯一；正确答案为B、D，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "关联容器",
+      "重复键"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "set"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "multiset"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "map"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "unordered_multimap"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "associative.reqmts",
+      "unord.req"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "multi 关联容器允许等价键重复，普通 set 和 map 保持唯一",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-035",
+    "subjectId": "stl",
+    "chapterId": "stl-associative",
+    "type": "multiple",
+    "stem": "关于无序容器，哪些正确？",
+    "code": null,
+    "explanation": "无序容器依赖哈希与等价关系，不能依赖迭代顺序；正确答案为A、C、D，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 3,
+    "tags": [
+      "unordered",
+      "哈希"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "C",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "平均查找可为常数复杂度"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "迭代顺序按键排序"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "rehash会重组桶"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "哈希等价需与键等价规则一致"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "unord.req"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "无序容器依赖哈希与等价关系，不能依赖迭代顺序",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-036",
+    "subjectId": "stl",
+    "chapterId": "stl-algorithms",
+    "type": "multiple",
+    "stem": "哪些算法要求或利用已分区/有序范围前提？",
+    "code": null,
+    "explanation": "二分查找族依赖相应比较关系下的分区或有序性质；正确答案为A、B、D，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "算法",
+      "前置条件"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "B",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "lower_bound"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "binary_search"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "shuffle"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "equal_range"
+      }
+    ],
+    "sourceIds": [
+      "eel-algorithms"
+    ],
+    "sourceAnchors": [
+      "alg.binary.search"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "二分查找族依赖相应比较关系下的分区或有序性质",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-037",
+    "subjectId": "stl",
+    "chapterId": "stl-algorithms",
+    "type": "multiple",
+    "stem": "关于算法复杂度，哪些说法正确？",
+    "code": null,
+    "explanation": "复杂度需按标准计数模型解释，单次基准不能替代证明；正确答案为A、C，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 3,
+    "tags": [
+      "复杂度",
+      "规范"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "C"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "复杂度是标准接口要求的一部分"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "某次耗时即可证明复杂度"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "比较次数与迭代器操作可能分别受限"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "所有算法都是常数时间"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "algorithms.requirements"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "复杂度需按标准计数模型解释，单次基准不能替代证明",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-038",
+    "subjectId": "stl",
+    "chapterId": "stl-adapters",
+    "type": "multiple",
+    "stem": "关于容器适配器，哪些正确？",
+    "code": null,
+    "explanation": "适配器按抽象结构限制接口，默认优先队列顶部为最大元素；正确答案为A、B、D，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 2,
+    "tags": [
+      "适配器",
+      "接口"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A",
+      "B",
+      "D"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "stack隐藏底层遍历接口"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "queue提供front与back"
+      },
+      {
+        "id": "C",
+        "label": "C",
+        "text": "priority_queue默认顶部最小"
+      },
+      {
+        "id": "D",
+        "label": "D",
+        "text": "pop与元素访问分离"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "container.adaptors"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "适配器按抽象结构限制接口，默认优先队列顶部为最大元素",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-039",
+    "subjectId": "stl",
+    "chapterId": "stl-generic",
+    "type": "judge",
+    "stem": "任何合法迭代器都支持常数时间 `it + n`。",
+    "code": null,
+    "explanation": "只有随机访问等更强类别保证这种跳转，输入或前向迭代器不支持；正确答案为B，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "迭代器",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "eel-iterators"
+    ],
+    "sourceAnchors": [
+      "iterator.requirements"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "只有随机访问等更强类别保证这种跳转，输入或前向迭代器不支持",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-040",
+    "subjectId": "stl",
+    "chapterId": "stl-sequence",
+    "type": "judge",
+    "stem": "`vector::reserve` 会把 size 直接改成请求的容量。",
+    "code": null,
+    "explanation": "reserve 只影响容量并不构造元素，所以 size 保持不变；正确答案为B，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "vector",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "vector.capacity"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "reserve 只影响容量并不构造元素，所以 size 保持不变",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-041",
+    "subjectId": "stl",
+    "chapterId": "stl-associative",
+    "type": "judge",
+    "stem": "`map::operator[]` 查找缺失键时可能修改容器。",
+    "code": null,
+    "explanation": "下标运算对缺失键执行插入并值初始化映射值；正确答案为A，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "map",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "map.access"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "下标运算对缺失键执行插入并值初始化映射值",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-042",
+    "subjectId": "stl",
+    "chapterId": "stl-algorithms",
+    "type": "judge",
+    "stem": "`std::remove` 会自动调用容器的 `erase` 缩小尺寸。",
+    "code": null,
+    "explanation": "remove 是算法重排而不是容器成员擦除，需配合 erase；正确答案为B，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "remove",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "B"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "eel-algorithms"
+    ],
+    "sourceAnchors": [
+      "alg.remove"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "remove 是算法重排而不是容器成员擦除，需配合 erase",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-043",
+    "subjectId": "stl",
+    "chapterId": "stl-algorithms",
+    "type": "judge",
+    "stem": "`stable_sort` 保证比较等价元素的相对次序不变。",
+    "code": null,
+    "explanation": "稳定排序的核心保证就是维持等价元素的原相对顺序；正确答案为A，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "stable_sort",
+      "判断"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [
+      "A"
+    ],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [
+      {
+        "id": "A",
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "sourceIds": [
+      "eel-algorithms"
+    ],
+    "sourceAnchors": [
+      "stable.sort"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "稳定排序的核心保证就是维持等价元素的原相对顺序",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-044",
+    "subjectId": "stl",
+    "chapterId": "stl-generic",
+    "type": "fill_blank",
+    "stem": "表示范围尾后位置的常用成员函数名是____。",
+    "code": null,
+    "explanation": "end 返回尾后迭代器而不是最后元素；正确答案为end，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "end",
+      "填空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [
+      "end"
+    ],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "iterator.requirements"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "end 返回尾后迭代器而不是最后元素",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-045",
+    "subjectId": "stl",
+    "chapterId": "stl-sequence",
+    "type": "fill_blank",
+    "stem": "只预留 `vector` 容量而不改变元素数量的成员函数是____。",
+    "code": null,
+    "explanation": "reserve 改变容量策略但不改变 size；正确答案为reserve，易错点是忽略操作前提、迭代器类别或把实现现象当成标准保证。",
+    "difficulty": 1,
+    "tags": [
+      "reserve",
+      "填空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [
+      "reserve"
+    ],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "vector.capacity"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "reserve 改变容量策略但不改变 size",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-046",
+    "subjectId": "stl",
+    "chapterId": "stl-associative",
+    "type": "fill_blank",
+    "stem": "若希望用返回迭代器判断 `map` 键是否存在且不插入，应使用成员函数____。",
+    "code": null,
+    "explanation": "find 不插入元素，并以返回 end() 表示未找到；at 虽不插入，但键缺失时会抛出异常，不符合用迭代器判断的题设。",
+    "difficulty": 2,
+    "tags": [
+      "map",
+      "填空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [
+      "find"
+    ],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "map.ops"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "map::find 不插入，并以迭代器结果表示是否找到",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-047",
+    "subjectId": "stl",
+    "chapterId": "stl-algorithms",
+    "type": "fill_blank",
+    "stem": "“移除—擦除”惯用法中，算法 `remove` 返回新的逻辑____。",
+    "code": null,
+    "explanation": "remove 返回新逻辑尾端，随后 erase 删除该位置到真实末尾；正确答案为尾端，易错点是误认为算法已缩小容器。",
+    "difficulty": 2,
+    "tags": [
+      "remove",
+      "填空"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [
+      "尾端",
+      "末尾",
+      "逻辑尾端"
+    ],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": null,
+    "options": [],
+    "sourceIds": [
+      "eel-algorithms"
+    ],
+    "sourceAnchors": [
+      "alg.remove"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "remove 返回新逻辑尾端，随后 erase 删除该位置到真实末尾",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-048",
+    "subjectId": "stl",
+    "chapterId": "stl-sequence",
+    "type": "short_answer",
+    "stem": "解释 `reserve` 与 `resize` 的差别以及它们何时可能使迭代器失效。",
+    "code": null,
+    "explanation": "`reserve` 只调整容量；发生重分配时，全部旧迭代器、指针和引用失效。`resize` 改变元素数：扩容若重分配会使全部旧句柄失效，缩小时被删除元素的句柄和旧尾后迭代器失效。",
+    "difficulty": 2,
+    "tags": [
+      "vector",
+      "简答"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": "reserve 只调整容量而不改变 size；若 reserve 导致重分配，全部旧迭代器、指针和引用失效。resize 会改变 size：增长时可能构造元素并因重分配使全部旧句柄失效；缩小时销毁尾部元素，指向被删除元素的句柄以及旧的尾后迭代器失效。",
+    "options": [],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "vector.capacity"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "reserve 管理容量，resize 管理元素数量，重分配决定广泛失效",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-049",
+    "subjectId": "stl",
+    "chapterId": "stl-associative",
+    "type": "short_answer",
+    "stem": "为什么有序关联容器的比较器必须满足严格弱序？",
+    "code": null,
+    "explanation": "严格弱序让容器能一致地划分先后关系与等价类，从而维护有序结构、查找和键唯一性；不满足该前置条件的比较器会破坏容器操作所依赖的关系。",
+    "difficulty": 3,
+    "tags": [
+      "比较器",
+      "简答"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": "严格弱序让容器能够一致判断先后与等价类，从而维护树结构、查找和唯一性；若比较自相矛盾，容器操作不再满足前置条件。",
+    "options": [],
+    "sourceIds": [
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "associative.reqmts"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "严格弱序维持有序容器的等价关系与结构不变量",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  },
+  {
+    "externalCode": "WEB-20260717-STL-050",
+    "subjectId": "stl",
+    "chapterId": "stl-algorithms",
+    "type": "short_answer",
+    "stem": "说明 `std::remove` 为什么不会真正缩小 `vector`，以及完整删除流程。",
+    "code": null,
+    "explanation": "`std::remove` 只重排范围并返回新逻辑尾端，不会调用容器的擦除接口；还需执行 `v.erase(newEnd, v.end())` 才会真正缩小 `vector`。",
+    "difficulty": 2,
+    "tags": [
+      "remove",
+      "简答"
+    ],
+    "examScopes": [],
+    "correctOptionIds": [],
+    "acceptedAnswers": [],
+    "answerConfig": {
+      "caseSensitive": false,
+      "punctuationSensitive": false
+    },
+    "referenceAnswer": "std::remove 只把保留元素前移并返回新逻辑尾端，因为泛型算法不了解容器擦除接口。随后对 vector 调用 erase(newEnd,end()) 才会缩小尺寸。",
+    "options": [],
+    "sourceIds": [
+      "eel-algorithms",
+      "wg21-n4950"
+    ],
+    "sourceAnchors": [
+      "alg.remove",
+      "vector.modifiers"
+    ],
+    "dialect": "cpp23",
+    "factSummary": "remove 重排范围，容器 erase 才改变尺寸",
+    "review": {
+      "factChecked": true,
+      "answerChecked": true,
+      "copyrightChecked": true,
+      "duplicateChecked": true,
+      "reviewedBy": "sources_core_cs"
+    },
+    "authoredBy": "sources_cpp_linux"
+  }
+]

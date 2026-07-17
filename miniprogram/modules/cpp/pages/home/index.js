@@ -1,5 +1,6 @@
 const auth = require('../../../../utils/auth');
 const createSubjectRepository = require('../../../../services/subjectRepository');
+const repository = require('../../../../services/practiceRepository');
 const registry = require('../../../../config/subjectRegistry');
 
 Page({
@@ -12,10 +13,19 @@ Page({
   },
 
   onLoad(options) {
-    const subject = registry.getSubject(options.subjectId) || registry.getSubject('cpp');
+    const subjectId = options.subjectId || 'cpp';
+    const subject = registry.getSubject(subjectId) || { id: subjectId, name: subjectId, shortName: subjectId, color: '#2563eb', description: '' };
     this.repository = createSubjectRepository(subject.id);
     this.setData({ subjectId: subject.id, subject });
     wx.setNavigationBarTitle({ title: `${subject.name} 刷题` });
+    repository.getCatalog().then((catalog) => {
+      registry.applyCatalog(catalog);
+      const current = registry.getSubject(subjectId);
+      if (current) {
+        this.setData({ subject: current });
+        wx.setNavigationBarTitle({ title: `${current.name} 刷题` });
+      }
+    }).catch(() => {});
   },
 
   onShow() {

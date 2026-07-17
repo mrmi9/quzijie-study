@@ -19,12 +19,19 @@ function delayed(action) {
 }
 
 module.exports = {
+  getCatalog: () => delayed(() => ({
+    version: 'mock',
+    modules: registry.MODULES.map((module) => Object.assign({}, module, {
+      subjects: module.subjectIds.map((subjectId) => registry.getSubject(subjectId)).filter(Boolean)
+    }))
+  })),
   getLearningOverview: () => delayed(() => core.getLearningOverview()),
   getSubjectOverview: (subjectId) => delayed(() => core.getSubjectOverview(subjectId)),
   getChapters: (subjectId) => delayed(() => core.getChapters(subjectId)),
   createSession: (payload) => delayed(() => core.createSession(payload)),
   getSession: (sessionId) => delayed(() => core.getSession(sessionId)),
   submitAnswer: (sessionId, payload) => delayed(() => core.submitAnswer(sessionId, payload)),
+  assessShortAnswer: (sessionId, questionId, assessment) => delayed(() => core.assessShortAnswer(sessionId, questionId, assessment)),
   finishSession: (sessionId) => delayed(() => core.finishSession(sessionId)),
   getResult: (sessionId) => delayed(() => core.getResult(sessionId)),
   getWrongQuestions: (subjectId, mastered) => delayed(() => core.getWrongQuestions(subjectId, mastered)),

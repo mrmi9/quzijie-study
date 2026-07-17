@@ -2,7 +2,7 @@ const repository = require('./practiceRepository');
 const registry = require('../config/subjectRegistry');
 
 function subjectRepository(subjectId) {
-  if (!registry.getSubject(subjectId)) throw new Error(`未知学科：${subjectId}`);
+  if (!subjectId) throw new Error('缺少学科 ID');
   return {
     getOverview: () => repository.getSubjectOverview(subjectId),
     getChapters: () => repository.getChapters(subjectId),

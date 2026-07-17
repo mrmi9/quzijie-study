@@ -1,81 +1,65 @@
-# 趣字节刷题 API 部署说明
+# 趣字节刷题部署说明
 
-> 本文后续内容保留旧的自建 PostgreSQL 部署方案用于追溯。当前微信云托管版本请以 [WXCLOUDRUN_DEPLOYMENT.md](WXCLOUDRUN_DEPLOYMENT.md) 为准。
+当前正式环境为微信云托管 + MySQL 8。部署参数、控制台步骤和验收方法以 [微信云托管部署说明](WXCLOUDRUN_DEPLOYMENT.md) 为准；旧的自建 PostgreSQL 方案已经退役，不得用于当前环境的迁移、备份或恢复。
 
-## 1. 部署边界
+## 1. 发布前
 
-`Dockerfile` 只构建 API 和独立迁移镜像；`compose.api.yaml` 不包含 PostgreSQL。开发机继续使用已安装的数据库，正式环境应连接独立 PostgreSQL 17 服务。
+1. 在腾讯云控制台确认生产 MySQL 自动备份和保留策略正常。
+2. 从能访问云数据库的受信运维环境执行 `ops/backup-mysql.sh`，并保留生成的 `.sql.gz` 文件。
+3. 运行 `npm run verify:all` 和 `npm run check:release`。
+4. 记录当前健康云托管版本、Git 提交、数据库迁移状态和题库发布 ID。
 
-## 2. 生产环境变量
+运维环境文件必须使用 `mysql://` 的 `DATABASE_URL`，或平台提供的 `MYSQL_ADDRESS`、`MYSQL_USERNAME`、`MYSQL_PASSWORD`、`MYSQL_DATABASE`。文件权限设为 `600`，不得把凭据放入 Git、命令参数、日志或工单。
 
-从 `server/.env.example` 创建一个不会提交 Git 的环境文件，例如 `server/.env.production`，至少设置：
+## 2. 迁移、基线与启动
 
-```text
-NODE_ENV=production
-HOST=0.0.0.0
-PORT=3000
-DATABASE_URL=postgresql://USER:PASSWORD@DB_HOST:5432/DB_NAME?schema=public
-DATABASE_ADMIN_URL=postgresql://USER:PASSWORD@127.0.0.1:5432/DB_NAME
-JWT_ACCESS_SECRET=不少于32字符且不可使用示例值
-WECHAT_AUTH_MODE=real
-WECHAT_APP_ID=正式小程序AppID
-WECHAT_APP_SECRET=正式AppSecret
-```
+云托管容器执行 `start:cloud`：先监听健康检查端口，让 `/health` 报告进程存活；在创建目标库、执行 `prisma migrate deploy`、空库基线检查和系统回填完成前，`/ready` 以及所有业务和管理后台接口统一返回 `503 SERVICE_BOOTSTRAPPING`。全部启动任务成功后 `/ready` 才返回 `200` 并解除业务门禁。已有用户、题目、发布记录、目录或管理员中的任一数据存在时，基线导入都会拒绝。
 
-Windows Docker 连接本机 PostgreSQL 时，`DB_HOST` 使用 `host.docker.internal`，并确保 PostgreSQL 已允许来自 Docker 网络的连接。正式部署使用内网数据库地址，不使用该 Windows 专用主机名。
+云托管存活探针可以使用 `/health`，但就绪探针或流量健康检查必须使用 `/ready`。`/health=200` 不能证明数据库 Schema 已迁移完成，也不能作为放行业务流量的条件。
 
-当 PostgreSQL 运行在同一台 Linux 宿主机上时，API 的 `DATABASE_URL` 使用专用 Docker 网桥网关；宿主机备份和恢复使用仅回环访问的 `DATABASE_ADMIN_URL`。首次部署先创建隔离网桥，再叠加 `compose.host-postgres.yaml`，避免把 PostgreSQL 暴露到公网。
-
-体验版和正式版的 API 地址填写在 `miniprogram/config/release.js`。该地址必须是已备案的 HTTPS 业务域名，不使用 IP、`localhost` 或路径；开发版仍可通过本地 Storage 指向 `http://127.0.0.1:3000`。当前腾讯云部署使用 `https://api.qushuati.cloud:8443`：服务器 443 继续供既有 Xray 使用，微信后台的 `request` 合法域名也必须填写完全相同且包含端口的地址。部署和微信后台域名配置完成后执行：
+确需在本地新建空数据库时，必须显式确认：
 
 ```powershell
-npm run verify:release
+$env:QUIZIJIE_ALLOW_EMPTY_BASELINE_IMPORT='IMPORT_EMPTY_BASELINE'
+npm run server:db:bootstrap-baseline
+Remove-Item Env:QUIZIJIE_ALLOW_EMPTY_BASELINE_IMPORT
 ```
 
-该门禁还会检查运营主体、隐私联系渠道和 500 题人工交叉复核记录，未完成时会明确失败，不能绕过后上传审核。
+该命令只能用于新空库。已有数据库的新增、修订和停用必须通过 `/admin/` 的“草稿 → 复核 → 发布”流程，不能再次执行基线导入。
 
-## 3. 构建、迁移和启动
+## 3. 备份
 
-```powershell
-$env:QUIZIJIE_API_ENV_FILE='server/.env.production'
-docker compose -f compose.api.yaml build api migrate
-docker compose -f compose.api.yaml --profile tools run --rm migrate
-docker compose -f compose.api.yaml run --rm api npm run db:seed:compiled --workspace server
-docker compose -f compose.api.yaml up -d api
+```bash
+export QUIZIJIE_API_ENV_FILE=/secure/quzijie-mysql.env
+export QUIZIJIE_BACKUP_DIR=/secure/backups
+bash ops/backup-mysql.sh
 ```
 
-迁移必须在新 API 启动前独立执行；API 容器不会在启动时修改数据库。题库导入是幂等操作，但生产发布只有题库内容或版本变化时才需要执行。
+脚本使用权限为 `600` 的临时 MySQL 客户端配置，密码不会出现在进程参数中；使用一致性快照导出并检查完整结束标记和 gzip 完整性，最后原子生成 `quzijie-YYYYMMDDTHHMMSSZ.sql.gz`。
 
-## 4. 健康检查
+## 4. 恢复演练
 
-```powershell
-Invoke-RestMethod http://127.0.0.1:3000/health
-Invoke-RestMethod http://127.0.0.1:3000/ready
+先在一次性数据库演练，不得把生产库伪装成 staging：
+
+```bash
+export QUIZIJIE_API_ENV_FILE=/secure/quzijie-mysql.env
+export QUIZIJIE_RESTORE_FILE=/secure/backups/quzijie-YYYYMMDDTHHMMSSZ.sql.gz
+export QUIZIJIE_RESTORE_DATABASE=quzijie_restore_test
+export QUIZIJIE_RESTORE_DATABASE_CONFIRM=quzijie_restore_test
+export QUIZIJIE_TARGET_ENVIRONMENT=staging
+export QUIZIJIE_ALLOW_RESTORE=YES
+export QUIZIJIE_ALLOW_DATABASE_REPLACE=YES
+bash ops/restore-mysql.sh
 ```
 
-`/health` 只证明进程存活，`/ready` 同时验证数据库连接。反向代理和编排平台应使用 `/ready` 决定是否接收流量。
+脚本会删除并重建指定目标库。生产恢复还必须把 `QUIZIJIE_TARGET_ENVIRONMENT` 设为 `production`，并额外设置 `QUIZIJIE_ALLOW_PRODUCTION_RESTORE=YES`；执行前必须停写、完成变更审批并再生成一份当前库备份。
 
-## 5. 发布和回滚
+## 5. 发布后
 
-1. 发布前备份数据库并验证备份文件可读取。
-2. 构建带提交 SHA 的不可变镜像标签。
-3. 先运行迁移镜像，再启动新 API 镜像。
-4. 验证健康检查、登录、普通练习和一场408考试。
-5. 应用回滚使用上一版本镜像；数据库 Schema 采用向前兼容迁移，不自动执行破坏性回滚。
-
-任何日志、CI变量、镜像层和故障截图都不得包含数据库密码、JWT、微信 code、OpenID 或 AppSecret。
-
-## 6. 生产自动化入口
-
-- `compose.release.yaml`：只运行已发布的不可变 API/迁移镜像，API 仅绑定 `127.0.0.1`。
-- `ops/deploy.sh`：环境预检、拉取、迁移、可选题库导入、启动和就绪检查。
-- `ops/rollback.sh`：恢复上一应用镜像，不执行破坏性数据库回滚。
-- `ops/backup-postgres.sh`：生成 PostgreSQL 自定义格式备份并用 `pg_restore --list` 验证。
-- `ops/restore-postgres.sh`：带双重确认的恢复演练入口。
-- `tools/verify-deployment.js`：从公网验证 HTTPS、存活和数据库就绪。
-- `ops/upload-miniprogram.ps1`：发布门禁通过后调用微信开发者工具上传代码。
-- `ops/nginx/quzijie-api.conf`：当前域名的 80/8443 Nginx 反向代理与 TLS 基线。
-- `ops/bootstrap-acme.sh`：首次签发证书前安装仅用于 ACME HTTP-01 的 80 端口站点。
-- `ops/install-https-proxy.sh`：证书签发后安装并验证 Nginx 配置，不修改既有 443 监听。
-
-完整操作步骤见 [预发布与生产运行手册](OPERATIONS_RUNBOOK.md)。
+- 第一阶段以 `ADMIN_ENABLED=false` 部署迁移，等待 `/ready=200/database ok` 后先完成现有小程序业务冒烟；
+- 第二阶段仅在稳定 `ADMIN_ENCRYPTION_KEY`、私有 COS 最小权限凭据和两个独立管理员均已准备后设置 `ADMIN_ENABLED=true`，再次等待 `/ready=200/database ok` 并验证 `/admin/`；
+- `/health` 返回 200 仅证明进程存活；云托管就绪探针确认指向 `/ready`，启动期业务和后台接口曾保持 `503`；
+- 目录数量、随机练习、填空/简答、408 组卷和题图抽查通过；
+- 管理后台发布快照哈希与对象存储回读一致；
+- 日志没有持续 5xx、迁移失败、容器重启或敏感值；
+- 保留部署前数据库备份和上一健康云托管版本作为回滚基线。

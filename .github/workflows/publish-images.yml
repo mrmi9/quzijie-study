@@ -17,23 +17,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      DATABASE_URL: postgresql://quzijie:Ci-Db-74_Battery@localhost:5432/quzijie_dev?schema=public
-      TEST_DATABASE_URL: postgresql://quzijie:Ci-Db-74_Battery@localhost:5432/quzijie_test?schema=public
+      DATABASE_URL: mysql://quzijie:Ci-Db-74_Battery@127.0.0.1:3306/quzijie_dev
+      TEST_DATABASE_URL: mysql://quzijie:Ci-Db-74_Battery@127.0.0.1:3306/quzijie_test
+      MIGRATION_TEST_DATABASE_URL: mysql://quzijie:Ci-Db-74_Battery@127.0.0.1:3306/quzijie_migration_test
       JWT_ACCESS_SECRET: ci-access-secret-with-at-least-thirty-two-characters
       WECHAT_AUTH_MODE: stub
       WECHAT_DEV_OPENID: ci-openid
       NODE_ENV: test
     services:
-      postgres:
-        image: postgres:17-alpine
+      mysql:
+        image: mysql:8.4
         env:
-          POSTGRES_USER: quzijie
-          POSTGRES_PASSWORD: Ci-Db-74_Battery
-          POSTGRES_DB: quzijie_dev
+          MYSQL_USER: quzijie
+          MYSQL_PASSWORD: Ci-Db-74_Battery
+          MYSQL_ROOT_PASSWORD: Ci-Root-74_Battery
+          MYSQL_DATABASE: quzijie_dev
         ports:
-          - 5432:5432
+          - 3306:3306
         options: >-
-          --health-cmd "pg_isready -U quzijie -d quzijie_dev"
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -uroot -pCi-Root-74_Battery"
           --health-interval 5s
           --health-timeout 3s
           --health-retries 20
@@ -46,9 +48,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Create integration database
-        env:
-          PGPASSWORD: Ci-Db-74_Battery
-        run: psql -h localhost -U quzijie -d quzijie_dev -c 'CREATE DATABASE quzijie_test'
+        run: node --input-type=module -e "import mariadb from 'mariadb'; const c=await mariadb.createConnection({host:'127.0.0.1',user:'root',password:'Ci-Root-74_Battery'}); for (const db of ['quzijie_test','quzijie_migration_test']) await c.query('CREATE DATABASE '+db+' CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci'); await c.query(\"GRANT ALL PRIVILEGES ON quzijie_test.* TO 'quzijie'@'%'\"); await c.query(\"GRANT ALL PRIVILEGES ON quzijie_migration_test.* TO 'quzijie'@'%'\"); await c.end();"
       - name: Verify source before publishing
         run: npm run verify:release
       - name: Resolve immutable image references

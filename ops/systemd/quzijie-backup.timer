@@ -1,5 +1,5 @@
 [Unit]
-Description=Run Quzijie PostgreSQL backup daily
+Description=Run Quzijie MySQL backup daily
 
 [Timer]
 OnCalendar=*-*-* 03:20:00 Asia/Shanghai
