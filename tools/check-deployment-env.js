@@ -54,6 +54,35 @@ function validateValues(values, expectedAppId) {
   const port = Number(values.PORT || 3000);
   if (!Number.isInteger(port) || port < 1 || port > 65535) errors.push('PORT 必须是有效端口');
   if (values.HOST && values.HOST !== '0.0.0.0') errors.push('容器内 HOST 必须为 0.0.0.0');
+
+  if (values.ADMIN_ENABLED && !['true', 'false'].includes(values.ADMIN_ENABLED)) {
+    errors.push('ADMIN_ENABLED 只能为 true 或 false');
+  }
+  if (values.ADMIN_ENABLED === 'true') {
+    if (weakSecret(values.ADMIN_ENCRYPTION_KEY)) {
+      errors.push('ADMIN_ENCRYPTION_KEY 必须是至少 32 位的高强度稳定密钥');
+    }
+    const reviewPolicy = values.ADMIN_REVIEW_POLICY || 'two-person';
+    if (!['two-person', 'single-owner'].includes(reviewPolicy)) {
+      errors.push('ADMIN_REVIEW_POLICY 只能为 two-person 或 single-owner');
+    }
+    const sessionHours = Number(values.ADMIN_SESSION_TTL_HOURS || 12);
+    if (!Number.isInteger(sessionHours) || sessionHours < 1 || sessionHours > 168) {
+      errors.push('ADMIN_SESSION_TTL_HOURS 必须是 1 到 168 之间的整数');
+    }
+    if (values.QUESTION_BANK_STORAGE !== 'cos') {
+      errors.push('生产环境启用管理后台时 QUESTION_BANK_STORAGE 必须为 cos');
+    }
+    ['COS_SECRET_ID', 'COS_SECRET_KEY', 'COS_BUCKET', 'COS_REGION'].forEach((name) => {
+      if (!String(values[name] || '').trim()) errors.push(`${name} 缺失`);
+    });
+    if (values.COS_PUBLIC_BASE_URL) {
+      errors.push('私有 COS 桶的 COS_PUBLIC_BASE_URL 必须留空并由服务端代理读取');
+    }
+    if (values.ADMIN_BOOTSTRAP_TOKEN_HASH && !/^[a-f0-9]{64}$/i.test(values.ADMIN_BOOTSTRAP_TOKEN_HASH)) {
+      errors.push('ADMIN_BOOTSTRAP_TOKEN_HASH 必须是 32 字节随机令牌的 SHA-256 十六进制值');
+    }
+  }
   return errors;
 }
 

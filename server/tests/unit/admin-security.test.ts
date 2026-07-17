@@ -6,8 +6,9 @@ import type { AppConfig } from "../../src/config.js";
 import type { DatabaseClient } from "../../src/db.js";
 import type { DraftQuestionInput } from "../../src/domain/question-bank.js";
 import { AppError } from "../../src/errors.js";
-import { AdminSecurity, recordFailedAdminLogin, registerAdminAuthRoutes } from "../../src/routes/admin-auth.js";
-import { updateAdministrator } from "../../src/routes/admin-question-bank.js";
+import { createTotpToken, encryptAdminSecret, generateTotpSecret, sha256 } from "../../src/auth/admin.js";
+import { AdminSecurity, recordFailedAdminLogin, recordFailedAdminStepUp, registerAdminAuthRoutes } from "../../src/routes/admin-auth.js";
+import { registerAdminQuestionBankRoutes, updateAdministrator } from "../../src/routes/admin-question-bank.js";
 import { requireInteractiveSecretTerminal } from "../../src/scripts/admin-cli-security.js";
 import { catalogPayloadHash, QuestionBankService } from "../../src/services/question-bank.js";
 import type { QuestionBankStorage } from "../../src/services/question-bank-storage.js";
@@ -84,6 +85,172 @@ describe("administrator concurrency controls", () => {
     assert.equal(state.lockedUntil?.toISOString(), "2026-07-16T00:15:00.000Z");
   });
 
+  it("revokes a session after five database-backed step-up failures", async () => {
+    const now = new Date("2026-07-17T00:00:00.000Z");
+    const state = { revokedAt: null as Date | null, stepUpFailedCount: 0, stepUpLockedUntil: null as Date | null };
+    const prisma = mockDatabase({
+      adminSession: {
+        findUnique: async () => ({ ...state }),
+        updateMany: async ({ where, data }: { where: { stepUpFailedCount: number }; data: { stepUpFailedCount: number | { increment: number }; stepUpLockedUntil: Date | null; revokedAt?: Date } }) => {
+          if (state.revokedAt || state.stepUpFailedCount !== where.stepUpFailedCount) return { count: 0 };
+          state.stepUpFailedCount = typeof data.stepUpFailedCount === "number" ? data.stepUpFailedCount : state.stepUpFailedCount + 1;
+          state.stepUpLockedUntil = data.stepUpLockedUntil;
+          state.revokedAt = data.revokedAt || null;
+          return { count: 1 };
+        }
+      }
+    });
+    await Promise.all(Array.from({ length: 5 }, () => recordFailedAdminStepUp(prisma, "session-1", now)));
+    assert.equal(state.revokedAt?.toISOString(), now.toISOString());
+    assert.equal(state.stepUpLockedUntil?.toISOString(), "2026-07-17T00:15:00.000Z");
+  });
+
+  it("prepares a local TOTP QR code only with the bootstrap token", async () => {
+    const bootstrapToken = "a".repeat(32);
+    const prisma = mockDatabase({
+      adminUser: { count: async () => 0 },
+      adminBootstrapState: { count: async () => 0 }
+    });
+    const config = {
+      adminEnabled: true,
+      adminSessionTtlHours: 8,
+      adminEncryptionKey: "unit-test-admin-encryption-key-at-least-32-characters",
+      adminBootstrapTokenHash: sha256(bootstrapToken),
+      adminReviewPolicy: "two-person",
+      nodeEnv: "test"
+    } as AppConfig;
+    const app = Fastify();
+    await app.register(rateLimit, { global: false });
+    registerAdminAuthRoutes(app, prisma, config, new AdminSecurity(prisma, config));
+    try {
+      const response = await app.inject({ method: "POST", url: "/api/v1/admin/setup/prepare", payload: { bootstrapToken, username: "owner_01" } });
+      assert.equal(response.statusCode, 200, response.body);
+      const data = response.json().data;
+      assert.match(data.setupToken, /^v1\./);
+      assert.match(data.totpUri, /owner_01/);
+      assert.match(data.qrCodeDataUrl, /^data:image\/png;base64,/);
+      const rejected = await app.inject({ method: "POST", url: "/api/v1/admin/setup/prepare", payload: { bootstrapToken: "b".repeat(32) } });
+      assert.equal(rejected.statusCode, 401);
+    } finally {
+      await app.close();
+    }
+  });
+
+  it("creates exactly one owner, rejects a wrong setup TOTP and permanently closes setup", async () => {
+    const bootstrapToken = "bootstrap-token-for-unit-tests-32-bytes";
+    let initialized = false;
+    let transactionQueue = Promise.resolve();
+    const createdUsers: Array<Record<string, unknown>> = [];
+    const tx = {
+      adminUser: {
+        count: async () => initialized ? 1 : 0,
+        create: async ({ data }: { data: Record<string, unknown> }) => {
+          const user = { id: "owner-created", ...data };
+          createdUsers.push(user);
+          return user;
+        }
+      },
+      adminBootstrapState: {
+        count: async () => initialized ? 1 : 0,
+        create: async () => { initialized = true; return { id: 1 }; }
+      },
+      adminAuditLog: { create: async () => ({}) }
+    };
+    const prisma = mockDatabase({
+      adminUser: { count: async () => initialized ? 1 : 0 },
+      adminBootstrapState: { count: async () => initialized ? 1 : 0 },
+      $transaction: async (callback: (client: typeof tx) => Promise<unknown>) => {
+        const run = transactionQueue.then(() => callback(tx));
+        transactionQueue = run.then(() => undefined, () => undefined);
+        return run;
+      }
+    });
+    const config = {
+      adminEnabled: true,
+      adminSessionTtlHours: 8,
+      adminEncryptionKey: "unit-test-admin-encryption-key-at-least-32-characters",
+      adminBootstrapTokenHash: sha256(bootstrapToken),
+      adminReviewPolicy: "single-owner",
+      nodeEnv: "test"
+    } as AppConfig;
+    const app = Fastify();
+    await app.register(rateLimit, { global: false });
+    registerAdminAuthRoutes(app, prisma, config, new AdminSecurity(prisma, config));
+    try {
+      const prepared = await app.inject({
+        method: "POST",
+        url: "/api/v1/admin/setup/prepare",
+        payload: { bootstrapToken, username: "owner_01" }
+      });
+      assert.equal(prepared.statusCode, 200, prepared.body);
+      const challenge = prepared.json().data as { setupToken: string; totpSecret: string };
+      const validTotp = createTotpToken(challenge.totpSecret);
+      const payload = {
+        bootstrapToken,
+        setupToken: challenge.setupToken,
+        username: "owner_01",
+        displayName: "唯一所有者",
+        password: "Secure-Owner-Password-2026",
+        totp: validTotp
+      };
+      const wrongTotp = validTotp === "000000" ? "000001" : "000000";
+      const rejected = await app.inject({ method: "POST", url: "/api/v1/admin/setup/complete", payload: { ...payload, totp: wrongTotp } });
+      assert.equal(rejected.statusCode, 401, rejected.body);
+      assert.equal(initialized, false);
+
+      const results = await Promise.all([
+        app.inject({ method: "POST", url: "/api/v1/admin/setup/complete", payload }),
+        app.inject({ method: "POST", url: "/api/v1/admin/setup/complete", payload: { ...payload, username: "owner_02" } })
+      ]);
+      assert.deepEqual(results.map((response) => response.statusCode).sort((a, b) => a - b), [200, 404]);
+      assert.equal(createdUsers.length, 1);
+      assert.deepEqual(createdUsers[0]?.roles, ["OWNER", "EDITOR", "REVIEWER", "PUBLISHER"]);
+
+      const closed = await app.inject({ method: "GET", url: "/api/v1/admin/setup/status" });
+      assert.equal(closed.statusCode, 404, closed.body);
+    } finally {
+      await app.close();
+    }
+  });
+
+  it("persists failed step-up verification and clears it after a valid TOTP", async () => {
+    const secret = generateTotpSecret();
+    const config = {
+      adminEncryptionKey: "unit-test-admin-encryption-key-at-least-32-characters",
+      adminReviewPolicy: "two-person"
+    } as AppConfig;
+    const state = { stepUpFailedCount: 0, stepUpLockedUntil: null as Date | null, revokedAt: null as Date | null };
+    const session = {
+      id: "session-step-up",
+      expiresAt: new Date(Date.now() + 60_000),
+      adminUser: { totpSecretEncrypted: encryptAdminSecret(secret, config.adminEncryptionKey) }
+    };
+    const prisma = mockDatabase({
+      adminSession: {
+        findUnique: async () => ({ ...session, ...state }),
+        updateMany: async ({ data }: { data: { stepUpFailedCount?: number | { increment: number }; stepUpLockedUntil?: Date | null; revokedAt?: Date } }) => {
+          if (typeof data.stepUpFailedCount === "number") state.stepUpFailedCount = data.stepUpFailedCount;
+          else if (data.stepUpFailedCount) state.stepUpFailedCount += data.stepUpFailedCount.increment;
+          if ("stepUpLockedUntil" in data) state.stepUpLockedUntil = data.stepUpLockedUntil || null;
+          if (data.revokedAt) state.revokedAt = data.revokedAt;
+          return { count: 1 };
+        }
+      }
+    });
+    const security = new AdminSecurity(prisma, config);
+    const request = { adminUser: { sessionId: session.id } } as Parameters<AdminSecurity["verifyStepUp"]>[0];
+    const validTotp = createTotpToken(secret);
+    const invalidTotp = validTotp === "000000" ? "000001" : "000000";
+    await assert.rejects(
+      security.verifyStepUp(request, invalidTotp),
+      (error: unknown) => error instanceof AppError && error.code === "ADMIN_STEP_UP_FAILED"
+    );
+    assert.equal(state.stepUpFailedCount, 1);
+    await security.verifyStepUp(request, validTotp);
+    assert.equal(state.stepUpFailedCount, 0);
+    assert.equal(state.stepUpLockedUntil, null);
+  });
+
   it("updates roles, revokes sessions and writes the audit record in one Serializable transaction", async () => {
     const events: string[] = [];
     let isolationLevel = "";
@@ -144,7 +311,54 @@ describe("secret-emitting administrator CLI commands", () => {
     assert.doesNotThrow(() => requireInteractiveSecretTerminal("create", { isTTY: true }, { isTTY: true }));
     assert.throws(() => requireInteractiveSecretTerminal("create", { isTTY: true }, { isTTY: false }), /\u4ea4\u4e92\u7ec8\u7aef/);
     assert.throws(() => requireInteractiveSecretTerminal("reset-totp", { isTTY: false }, { isTTY: true }), /\u4ea4\u4e92\u7ec8\u7aef/);
+    assert.throws(() => requireInteractiveSecretTerminal("bootstrap-token", { isTTY: true }, { isTTY: false }), /\u4ea4\u4e92\u7ec8\u7aef/);
     assert.doesNotThrow(() => requireInteractiveSecretTerminal("disable", { isTTY: false }, { isTTY: false }));
+  });
+});
+
+describe("release step-up routes", () => {
+  it("requires a current TOTP for publish and rollback in every review policy", async () => {
+    let stepUpCalls = 0;
+    const authorize = () => async (request: Parameters<AdminSecurity["authenticate"]>[0]) => {
+      request.adminUser = { id: "owner-1", username: "owner", displayName: "Owner", roles: ["OWNER", "PUBLISHER"], sessionId: "session-1" };
+    };
+    const security = {
+      authenticate: authorize(),
+      requireRole: authorize,
+      verifyStepUp: async (_request: unknown, token: string) => {
+        stepUpCalls += 1;
+        assert.match(token, /^[0-9]{6}$/);
+      }
+    } as unknown as AdminSecurity;
+    const bank = {
+      previewRelease: async () => ({ candidateHash: "a".repeat(64), confirmationText: "发布新增1题、修订0题、停用0题" }),
+      publish: async () => ({ id: "release-new" }),
+      previewRollback: async () => ({ candidateHash: "b".repeat(64), confirmationText: "回滚到基线（500题）" }),
+      rollback: async () => ({ id: "release-rollback" })
+    };
+    const app = Fastify();
+    registerAdminQuestionBankRoutes(app, mockDatabase({}), security, bank as never, {} as never, {} as never);
+    try {
+      const publishPayload = {
+        name: "小批发布",
+        draftIds: ["draft-1"],
+        candidateHash: "a".repeat(64),
+        confirmationText: "发布新增1题、修订0题、停用0题"
+      };
+      const missingPublishTotp = await app.inject({ method: "POST", url: "/api/v1/admin/releases", payload: publishPayload });
+      assert.equal(missingPublishTotp.statusCode, 400, missingPublishTotp.body);
+      const published = await app.inject({ method: "POST", url: "/api/v1/admin/releases", payload: { ...publishPayload, confirmationTotp: "123456" } });
+      assert.equal(published.statusCode, 200, published.body);
+
+      const rollbackPayload = { candidateHash: "b".repeat(64), confirmationText: "回滚到基线（500题）" };
+      const missingRollbackTotp = await app.inject({ method: "POST", url: "/api/v1/admin/releases/release-old/rollback", payload: rollbackPayload });
+      assert.equal(missingRollbackTotp.statusCode, 400, missingRollbackTotp.body);
+      const rolledBack = await app.inject({ method: "POST", url: "/api/v1/admin/releases/release-old/rollback", payload: { ...rollbackPayload, confirmationTotp: "654321" } });
+      assert.equal(rolledBack.statusCode, 200, rolledBack.body);
+      assert.equal(stepUpCalls, 2);
+    } finally {
+      await app.close();
+    }
   });
 });
 
@@ -171,6 +385,39 @@ function questionService(prisma: DatabaseClient): QuestionBankService {
     {} as QuestionBankStorage
   );
 }
+
+describe("single-owner review policy", () => {
+  const owner = { status: "ACTIVE", roles: ["OWNER", "EDITOR", "REVIEWER", "PUBLISHER"] };
+  const service = (policy: "two-person" | "single-owner") => new QuestionBankService(
+    mockDatabase({ adminUser: { findUnique: async () => owner } }),
+    { databaseUrl: "mysql://unused:unused@localhost:3306/unused", adminReviewPolicy: policy } as AppConfig,
+    {} as QuestionBankStorage
+  );
+
+  it("keeps two-person mode as the default safety behavior", async () => {
+    await assert.rejects(
+      service("two-person").reviewMetadata("owner-1", "owner-1", "APPROVED", { checklist: ["DIFF", "CONTENT", "WARNINGS"], selfReviewNote: "已逐项检查" }),
+      (error: unknown) => error instanceof AppError && error.code === "SELF_REVIEW_FORBIDDEN"
+    );
+  });
+
+  it("allows only an owner with the fixed checklist and note to self-approve", async () => {
+    const metadata = await service("single-owner").reviewMetadata("owner-1", "owner-1", "APPROVED", {
+      checklist: ["DIFF", "CONTENT", "WARNINGS"],
+      selfReviewNote: "已经核对差异、内容和全部警告"
+    });
+    assert.equal(metadata.reviewMode, "SELF_APPROVED");
+    assert.equal(metadata.selfReviewNote, "已经核对差异、内容和全部警告");
+    await assert.rejects(
+      service("single-owner").reviewMetadata("owner-1", "owner-1", "APPROVED", { checklist: ["one", "two", "three"], selfReviewNote: "已经检查" }),
+      (error: unknown) => error instanceof AppError && error.code === "SELF_REVIEW_CHECKLIST_REQUIRED"
+    );
+    await assert.rejects(
+      service("single-owner").reviewMetadata("owner-1", "owner-1", "REJECTED", { checklist: ["DIFF", "CONTENT", "WARNINGS"], selfReviewNote: "已经检查" }),
+      (error: unknown) => error instanceof AppError && error.code === "SELF_REVIEW_REJECTION_FORBIDDEN"
+    );
+  });
+});
 
 describe("question draft compare-and-swap", () => {
   it("submits and audits a draft atomically with revision compare-and-swap", async () => {

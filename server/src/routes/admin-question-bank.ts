@@ -82,6 +82,16 @@ export async function updateAdministrator(
   }
 }
 
+export function registerPublicMediaRoutes(app: FastifyInstance, media: MediaService): void {
+  app.get<{ Params: { id: string } }>("/api/v1/media/:id", async (request, reply) => {
+    const result = await media.readPublic(request.params.id);
+    reply.header("Content-Type", result.asset.mimeType);
+    reply.header("Cache-Control", "public, max-age=31536000, immutable");
+    reply.header("ETag", `\"${result.asset.sha256}\"`);
+    return reply.send(result.body);
+  });
+}
+
 export function registerAdminQuestionBankRoutes(
   app: FastifyInstance,
   prisma: DatabaseClient,
@@ -90,14 +100,6 @@ export function registerAdminQuestionBankRoutes(
   imports: QuestionImportService,
   media: MediaService
 ): void {
-  app.get<{ Params: { id: string } }>("/api/v1/media/:id", async (request, reply) => {
-    const result = await media.readPublic(request.params.id);
-    reply.header("Content-Type", result.asset.mimeType);
-    reply.header("Cache-Control", "public, max-age=31536000, immutable");
-    reply.header("ETag", `\"${result.asset.sha256}\"`);
-    return reply.send(result.body);
-  });
-
   app.get("/api/v1/admin/dashboard", { preHandler: security.authenticate }, async () => ({ data: await bank.dashboard() }));
   app.get<{ Querystring: { catalogDraftId?: string } }>("/api/v1/admin/catalog", { preHandler: security.authenticate }, async (request) => ({ data: await bank.adminCatalog(request.query.catalogDraftId) }));
 
@@ -106,10 +108,11 @@ export function registerAdminQuestionBankRoutes(
   app.get<{ Params: { id: string } }>("/api/v1/admin/catalog-drafts/:id", { preHandler: security.authenticate }, async (request) => ({ data: await bank.getCatalogDraft(request.params.id) }));
   app.patch<{ Params: { id: string }; Body: { revision: number; payload: unknown } }>("/api/v1/admin/catalog-drafts/:id", { preHandler: security.requireRole("OWNER", "EDITOR") }, async (request) => ({ data: await bank.updateCatalogDraft(request.adminUser!.id, request.params.id, request.body.revision, request.body.payload, request.id) }));
   app.post<{ Params: { id: string }; Body: { acknowledgeWarnings?: boolean } }>("/api/v1/admin/catalog-drafts/:id/submit", { preHandler: security.requireRole("OWNER", "EDITOR") }, async (request) => ({ data: await bank.submitCatalogDraft(request.adminUser!.id, request.params.id, Boolean(request.body?.acknowledgeWarnings), request.id) }));
-  app.post<{ Params: { id: string }; Body: { decision: "APPROVED" | "REJECTED"; comment?: string } }>("/api/v1/admin/catalog-drafts/:id/review", { preHandler: security.requireRole("OWNER", "REVIEWER") }, async (request) => {
+  app.post<{ Params: { id: string }; Body: { decision: "APPROVED" | "REJECTED"; comment?: string; checklist?: string[]; selfReviewNote?: string } }>("/api/v1/admin/catalog-drafts/:id/review", { preHandler: security.requireRole("OWNER", "REVIEWER") }, async (request) => {
     if (!["APPROVED", "REJECTED"].includes(request.body.decision)) throw new AppError("复核结论无效", "INVALID_REVIEW_DECISION", 400);
-    return { data: await bank.reviewCatalogDraft(request.adminUser!.id, request.params.id, request.body.decision, request.body.comment, request.id) };
+    return { data: await bank.reviewCatalogDraft(request.adminUser!.id, request.params.id, request.body.decision, request.body.comment, request.id, { checklist: request.body.checklist, selfReviewNote: request.body.selfReviewNote }) };
   });
+  app.post<{ Params: { id: string } }>("/api/v1/admin/catalog-drafts/:id/withdraw", { preHandler: security.requireRole("OWNER", "EDITOR") }, async (request) => ({ data: await bank.withdrawCatalogDraft(request.adminUser!.id, request.params.id, request.id) }));
 
   app.post<{ Body: { id: string; name: string; shortName: string; color?: string; description?: string; iconKey?: string; qualityPolicy?: unknown } }>("/api/v1/admin/subjects", {
     preHandler: security.requireRole("OWNER", "EDITOR")
@@ -151,21 +154,38 @@ export function registerAdminQuestionBankRoutes(
     preHandler: security.requireRole("OWNER", "EDITOR")
   }, async (request) => ({ data: await bank.submitDraft(request.adminUser!.id, request.params.id, Boolean(request.body?.acknowledgeWarnings), request.id) }));
 
-  app.post<{ Params: { id: string }; Body: { decision: "APPROVED" | "REJECTED"; comment?: string } }>("/api/v1/admin/drafts/:id/review", {
+  app.post<{ Params: { id: string }; Body: { decision: "APPROVED" | "REJECTED"; comment?: string; checklist?: string[]; selfReviewNote?: string } }>("/api/v1/admin/drafts/:id/review", {
     preHandler: security.requireRole("OWNER", "REVIEWER")
   }, async (request) => {
     if (!["APPROVED", "REJECTED"].includes(request.body.decision)) throw new AppError("复核结论无效", "INVALID_REVIEW_DECISION", 400);
-    return { data: await bank.reviewDraft(request.adminUser!.id, request.params.id, request.body.decision, request.body.comment, request.id) };
+    return { data: await bank.reviewDraft(request.adminUser!.id, request.params.id, request.body.decision, request.body.comment, request.id, { checklist: request.body.checklist, selfReviewNote: request.body.selfReviewNote }) };
+  });
+  app.post<{ Params: { id: string } }>("/api/v1/admin/drafts/:id/withdraw", { preHandler: security.requireRole("OWNER", "EDITOR") }, async (request) => ({ data: await bank.withdrawDraft(request.adminUser!.id, request.params.id, request.id) }));
+
+  type ReleaseBody = { name: string; draftIds: string[]; catalogDraftId?: string; importBatchIds?: string[]; candidateHash?: string; confirmationText?: string; confirmationTotp?: string };
+  app.post<{ Body: ReleaseBody }>("/api/v1/admin/releases/preview", {
+    preHandler: security.requireRole("OWNER", "PUBLISHER")
+  }, async (request) => ({ data: await bank.previewRelease(request.body) }));
+
+  app.post<{ Body: ReleaseBody }>("/api/v1/admin/releases", {
+    preHandler: security.requireRole("OWNER", "PUBLISHER")
+  }, async (request) => {
+    if (!request.body.confirmationTotp) throw new AppError("发布需要动态验证码", "ADMIN_STEP_UP_REQUIRED", 400);
+    await security.verifyStepUp(request, request.body.confirmationTotp);
+    return { data: await bank.publish(request.adminUser!.id, request.body.name, request.body.draftIds || [], request.body.catalogDraftId, request.body.importBatchIds || [], request.id, { candidateHash: request.body.candidateHash, confirmationText: request.body.confirmationText }) };
   });
 
-  app.post<{ Body: { name: string; draftIds: string[]; catalogDraftId?: string; importBatchIds?: string[] } }>("/api/v1/admin/releases", {
-    preHandler: security.requireRole("OWNER", "PUBLISHER")
-  }, async (request) => ({ data: await bank.publish(request.adminUser!.id, request.body.name, request.body.draftIds || [], request.body.catalogDraftId, request.body.importBatchIds || [], request.id) }));
-
   app.get<{ Querystring: { page?: number; pageSize?: number; status?: string; kind?: string } }>("/api/v1/admin/releases", { preHandler: security.authenticate }, async (request) => ({ data: await bank.listReleases(request.query) }));
-  app.post<{ Params: { id: string } }>("/api/v1/admin/releases/:id/rollback", {
+  app.post<{ Params: { id: string } }>("/api/v1/admin/releases/:id/rollback/preview", {
     preHandler: security.requireRole("OWNER", "PUBLISHER")
-  }, async (request) => ({ data: await bank.rollback(request.adminUser!.id, request.params.id, request.id) }));
+  }, async (request) => ({ data: await bank.previewRollback(request.params.id) }));
+  app.post<{ Params: { id: string }; Body: { candidateHash?: string; confirmationText?: string; confirmationTotp?: string } }>("/api/v1/admin/releases/:id/rollback", {
+    preHandler: security.requireRole("OWNER", "PUBLISHER")
+  }, async (request) => {
+    if (!request.body?.confirmationTotp) throw new AppError("回滚需要动态验证码", "ADMIN_STEP_UP_REQUIRED", 400);
+    await security.verifyStepUp(request, request.body.confirmationTotp);
+    return { data: await bank.rollback(request.adminUser!.id, request.params.id, request.id, { candidateHash: request.body?.candidateHash, confirmationText: request.body?.confirmationText }) };
+  });
 
   app.post<{ Params: { id: string } }>("/api/v1/admin/releases/:id/retry-verification", {
     preHandler: security.requireRole("OWNER")
@@ -184,19 +204,29 @@ export function registerAdminQuestionBankRoutes(
   });
 
   app.get<{ Querystring: { page?: number; pageSize?: number; status?: string } }>("/api/v1/admin/imports", { preHandler: security.authenticate }, async (request) => ({ data: await imports.listBatches(request.query) }));
-  app.get<{ Params: { id: string } }>("/api/v1/admin/imports/:id", { preHandler: security.authenticate }, async (request) => ({ data: await imports.getBatch(request.params.id) }));
+  app.get<{ Params: { id: string }; Querystring: { includeRows?: string } }>("/api/v1/admin/imports/:id", { preHandler: security.authenticate }, async (request) => ({
+    data: request.query.includeRows === "false"
+      ? await imports.getBatchSummary(request.params.id)
+      : await imports.getBatch(request.params.id)
+  }));
+  app.get<{ Params: { id: string }; Querystring: { page?: number; pageSize?: number; status?: string; entityType?: string } }>("/api/v1/admin/imports/:id/rows", { preHandler: security.authenticate }, async (request) => ({ data: await imports.listBatchRows(request.params.id, request.query) }));
+  app.get<{ Params: { id: string } }>("/api/v1/admin/imports/:id/report.xlsx", { preHandler: security.authenticate }, async (request, reply) => {
+    attachment(reply, `题库导入校验报告-${request.params.id}.xlsx`);
+    return reply.send(await imports.validationReport(request.params.id));
+  });
   app.post<{ Params: { id: string } }>("/api/v1/admin/imports/:id/revalidate", {
     preHandler: security.requireRole("OWNER", "EDITOR")
   }, async (request) => ({ data: await imports.revalidateBatch(request.params.id, request.adminUser!.id, request.id) }));
   app.post<{ Params: { id: string }; Body: { acknowledgeWarnings?: boolean } }>("/api/v1/admin/imports/:id/submit", {
     preHandler: security.requireRole("OWNER", "EDITOR")
   }, async (request) => ({ data: await imports.submitBatch(request.adminUser!.id, request.params.id, Boolean(request.body?.acknowledgeWarnings), request.id) }));
-  app.post<{ Params: { id: string }; Body: { decision: "APPROVED" | "REJECTED"; comment?: string } }>("/api/v1/admin/imports/:id/review", {
+  app.post<{ Params: { id: string }; Body: { decision: "APPROVED" | "REJECTED"; comment?: string; checklist?: string[]; selfReviewNote?: string } }>("/api/v1/admin/imports/:id/review", {
     preHandler: security.requireRole("OWNER", "REVIEWER")
   }, async (request) => {
     if (!["APPROVED", "REJECTED"].includes(request.body.decision)) throw new AppError("复核结论无效", "INVALID_REVIEW_DECISION", 400);
-    return { data: await imports.reviewBatch(request.adminUser!.id, request.params.id, request.body.decision, request.body.comment, request.id) };
+    return { data: await imports.reviewBatch(request.adminUser!.id, request.params.id, request.body.decision, request.body.comment, request.id, { checklist: request.body.checklist, selfReviewNote: request.body.selfReviewNote }) };
   });
+  app.post<{ Params: { id: string } }>("/api/v1/admin/imports/:id/withdraw", { preHandler: security.requireRole("OWNER", "EDITOR") }, async (request) => ({ data: await imports.withdrawBatch(request.adminUser!.id, request.params.id, request.id) }));
   app.get("/api/v1/admin/exports/current.xlsx", { preHandler: security.authenticate }, async (_request, reply) => {
     attachment(reply, "趣刷题喽当前发布题库.xlsx");
     return reply.send(await imports.exportPublished());

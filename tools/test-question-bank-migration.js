@@ -12,6 +12,7 @@ const migrationNames = [
   '20260716150000_gamification'
 ];
 const managementMigration = '20260717100000_question_bank_management';
+const adminSecurityMigration = '20260717150000_admin_single_owner_security';
 
 function connectionOptions(value) {
   const url = new URL(value);
@@ -133,6 +134,7 @@ async function main() {
       pointEvents: Number((await connection.query('SELECT COUNT(*) count FROM point_events'))[0].count)
     };
     await connection.query(sql(managementMigration));
+    await connection.query(sql(adminSecurityMigration));
     const after = {
       subjects: Number((await connection.query('SELECT COUNT(*) count FROM subjects'))[0].count),
       chapters: Number((await connection.query('SELECT COUNT(*) count FROM chapters'))[0].count),
@@ -152,7 +154,10 @@ async function main() {
     assert.deepStrictEqual(jsonValue(migratedVersion.accepted_answers), []);
     assert.deepStrictEqual(jsonValue(migratedVersion.answer_config), {});
     assert.equal(Number((await connection.query("SELECT COUNT(*) count FROM information_schema.statistics WHERE table_schema=DATABASE() AND index_name='question_versions_stem_fulltext_idx'"))[0].count), 1);
-    console.log('Question-bank migration preserved 7 subjects, 45 chapters, 500 questions and all representative user/history relations.');
+    assert.equal(Number((await connection.query("SELECT COUNT(*) count FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='draft_reviews' AND column_name='review_mode'"))[0].count), 1);
+    assert.equal(Number((await connection.query("SELECT COUNT(*) count FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='admin_sessions' AND column_name='step_up_failed_count'"))[0].count), 1);
+    assert.equal(Number((await connection.query("SELECT COUNT(*) count FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name='admin_bootstrap_state'"))[0].count), 1);
+    console.log('Question-bank and admin-security migrations preserved 7 subjects, 45 chapters, 500 questions and all representative user/history relations.');
   } finally {
     await connection.end();
   }

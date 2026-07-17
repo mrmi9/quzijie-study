@@ -57,7 +57,7 @@ bash ops/restore-mysql.sh
 ## 5. 发布后
 
 - 第一阶段以 `ADMIN_ENABLED=false` 部署迁移，等待 `/ready=200/database ok` 后先完成现有小程序业务冒烟；
-- 第二阶段仅在稳定 `ADMIN_ENCRYPTION_KEY`、私有 COS 最小权限凭据和两个独立管理员均已准备后设置 `ADMIN_ENABLED=true`，再次等待 `/ready=200/database ok` 并验证 `/admin/`；
+- 第二阶段仅在稳定 `ADMIN_ENCRYPTION_KEY`、私有 COS 最小权限凭据和明确的 `ADMIN_REVIEW_POLICY` 均已准备后设置 `ADMIN_ENABLED=true`，再次等待 `/ready=200/database ok` 并验证 `/admin/`；单管理员通过一次性设置页建号，双人模式使用独立复核账号；
 - `/health` 返回 200 仅证明进程存活；云托管就绪探针确认指向 `/ready`，启动期业务和后台接口曾保持 `503`；
 - 目录数量、随机练习、填空/简答、408 组卷和题图抽查通过；
 - 管理后台发布快照哈希与对象存储回读一致；

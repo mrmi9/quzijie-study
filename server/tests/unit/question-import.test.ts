@@ -21,7 +21,12 @@ import type { QuestionBankStorage } from "../../src/services/question-bank-stora
 
 const contentDirectory = fileURLToPath(new URL("../../../../content", import.meta.url));
 
-function importService(prisma: unknown = {}, bank: unknown = {}, storage: unknown = {}) {
+function importService(prisma: unknown = {}, bank: unknown = {
+  reviewMetadata: async (adminUserId: string, submittedById: string | null) => {
+    if (adminUserId === submittedById) throw Object.assign(new Error("self review forbidden"), { code: "SELF_REVIEW_FORBIDDEN" });
+    return { reviewMode: "INDEPENDENT", checklist: null, selfReviewNote: null };
+  }
+}, storage: unknown = {}) {
   return new QuestionImportService(
     prisma as DatabaseClient,
     bank as QuestionBankService,
@@ -301,6 +306,7 @@ describe("题库导入源", () => {
     ];
     const rowUpdates = new Map<string, Record<string, unknown>>();
     let batchUpdate: Record<string, unknown> = {};
+    let batchState = { id: "batch-revalidate", createdById: "admin-1", status: "STAGING", revision: 2, rows: storedRows };
     const transactionClient = {
       questionImportRow: {
         update: async ({ where, data }: { where: { id: string }; data: Record<string, unknown> }) => {
@@ -309,10 +315,13 @@ describe("题库导入源", () => {
         }
       },
       questionImportBatch: {
-        update: async ({ data }: { data: Record<string, unknown> }) => {
+        updateMany: async ({ where, data }: { where: { id: string; status: string; revision: number }; data: Record<string, unknown> }) => {
+          if (where.id !== batchState.id || where.status !== batchState.status || where.revision !== batchState.revision) return { count: 0 };
           batchUpdate = data;
-          return { id: "batch-revalidate", ...data };
-        }
+          batchState = { ...batchState, status: String(data.status), revision: batchState.revision + 1 };
+          return { count: 1 };
+        },
+        findUniqueOrThrow: async () => ({ ...batchState, ...batchUpdate })
       }
     };
     const prisma = {
@@ -325,7 +334,7 @@ describe("题库导入源", () => {
       questionDraft: { findMany: async () => [] },
       mediaAsset: { findMany: async () => [] },
       questionImportBatch: {
-        findUnique: async () => ({ id: "batch-revalidate", createdById: "admin-1", status: "STAGING", rows: storedRows })
+        findUnique: async () => batchState
       },
       $transaction: async (callback: (tx: typeof transactionClient) => unknown) => callback(transactionClient)
     };
@@ -339,5 +348,39 @@ describe("题库导入源", () => {
     assert.equal(batchUpdate.validRows, 3);
     assert.equal(batchUpdate.warningRows, 1);
     assert.equal(result.status, "STAGING");
+  });
+
+  it("驳回且已关联草稿的批次可重新校验回到 VALID", async () => {
+    const storedRows = [
+      { id: "row-subject", entityType: "subject", rowNumber: 2, rawData: { subject_id: "cpp", name: "C/C++", short_name: "C/C++", color: "#2563eb", description: "Language basics", active: "yes" }, normalizedData: null, draftId: null, errors: [], warnings: [] },
+      { id: "row-chapter", entityType: "chapter", rowNumber: 2, rawData: { chapter_id: "cpp-basic", subject_id: "cpp", name: "Basics", description: "Basic chapter", active: "yes" }, normalizedData: null, draftId: null, errors: [], warnings: [] },
+      { id: "row-question", entityType: "question", rowNumber: 2, rawData: { question_id: "", external_code: "CPP-FILL-REJECTED", subject_id: "cpp", chapter_id: "cpp-basic", type: "fill_blank", stem: "A rejected import can be checked again", code: "", explanation: "Complete explanation for the rejected import revalidation test.", difficulty: "1", tags: "fill", exam_scopes: "", correct_option_ids: "", accepted_answers_json: "[[\"answer\"]]", case_sensitive: "no", punctuation_sensitive: "no", reference_answer: "", images_json: "[]" }, normalizedData: { questionId: "q_rejected" }, draftId: "draft-rejected", errors: [], warnings: [] }
+    ];
+    let state = { id: "batch-rejected", createdById: "admin-1", status: "REJECTED", revision: 4, rows: storedRows };
+    const rowUpdates = new Map<string, Record<string, unknown>>();
+    const transactionClient = {
+      questionImportRow: { update: async ({ where, data }: { where: { id: string }; data: Record<string, unknown> }) => { rowUpdates.set(where.id, data); return {}; } },
+      questionImportBatch: {
+        updateMany: async ({ where, data }: { where: { id: string; status: string; revision: number }; data: { status: string } }) => {
+          if (where.id !== state.id || where.status !== state.status || where.revision !== state.revision) return { count: 0 };
+          state = { ...state, status: data.status, revision: state.revision + 1 };
+          return { count: 1 };
+        },
+        findUniqueOrThrow: async () => state
+      }
+    };
+    const prisma = {
+      subject: { findMany: async () => [{ id: "cpp", active: false }] },
+      chapter: { findMany: async () => [{ id: "cpp-basic", subjectId: "cpp", active: false }] },
+      question: { findMany: async () => [] },
+      questionDraft: { findMany: async () => [{ id: "draft-rejected", questionId: "q_rejected", validationErrors: [], validationWarnings: [] }] },
+      mediaAsset: { findMany: async () => [] },
+      questionImportBatch: { findUnique: async () => state },
+      $transaction: async (callback: (tx: typeof transactionClient) => unknown) => callback(transactionClient)
+    };
+
+    const result = await importService(prisma).revalidateBatch(state.id);
+    assert.equal(result.status, "VALID", JSON.stringify(Object.fromEntries(rowUpdates)));
+    assert.equal(state.revision, 5);
   });
 });

@@ -1,6 +1,7 @@
 import { resolveDatabaseUrl } from "./database-url.js";
 
 export type WechatAuthMode = "stub" | "real" | "cloud";
+export type AdminReviewPolicy = "two-person" | "single-owner";
 
 export interface AppConfig {
   nodeEnv: "development" | "test" | "production";
@@ -17,6 +18,8 @@ export interface AppConfig {
   adminEnabled: boolean;
   adminEncryptionKey: string;
   adminSessionTtlHours: number;
+  adminReviewPolicy: AdminReviewPolicy;
+  adminBootstrapTokenHash: string;
   questionBankStorage: "local" | "cos";
   questionBankStorageDir: string;
   cosSecretId: string;
@@ -72,6 +75,17 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
   if (adminEnabled && adminEncryptionKey.length < 32) {
     throw new Error("启用管理后台时 ADMIN_ENCRYPTION_KEY 至少需要 32 个字符");
   }
+  if (nodeEnv === "production" && adminEnabled && weakProductionSecret(adminEncryptionKey)) {
+    throw new Error("生产环境 ADMIN_ENCRYPTION_KEY 强度不足");
+  }
+  const adminReviewPolicy = (source.ADMIN_REVIEW_POLICY || "two-person") as AdminReviewPolicy;
+  if (!["two-person", "single-owner"].includes(adminReviewPolicy)) {
+    throw new Error("ADMIN_REVIEW_POLICY 只能是 two-person 或 single-owner");
+  }
+  const adminBootstrapTokenHash = (source.ADMIN_BOOTSTRAP_TOKEN_HASH || "").trim().toLowerCase();
+  if (adminBootstrapTokenHash && !/^[a-f0-9]{64}$/.test(adminBootstrapTokenHash)) {
+    throw new Error("ADMIN_BOOTSTRAP_TOKEN_HASH 必须是 SHA-256 十六进制哈希");
+  }
   const questionBankStorage = (source.QUESTION_BANK_STORAGE || "local") as "local" | "cos";
   if (!['local', 'cos'].includes(questionBankStorage)) throw new Error("QUESTION_BANK_STORAGE 只能是 local 或 cos");
   if (nodeEnv === "production" && adminEnabled && questionBankStorage !== "cos") {
@@ -81,8 +95,12 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
   const cosSecretKey = source.COS_SECRET_KEY || "";
   const cosBucket = source.COS_BUCKET || "";
   const cosRegion = source.COS_REGION || "";
+  const cosPublicBaseUrl = source.COS_PUBLIC_BASE_URL || "";
   if (questionBankStorage === "cos" && (!cosSecretId || !cosSecretKey || !cosBucket || !cosRegion)) {
     throw new Error("COS 题库存储缺少 COS_SECRET_ID/COS_SECRET_KEY/COS_BUCKET/COS_REGION");
+  }
+  if (nodeEnv === "production" && adminEnabled && cosPublicBaseUrl) {
+    throw new Error("生产题库必须使用私有 COS，COS_PUBLIC_BASE_URL 必须留空");
   }
 
   return {
@@ -100,13 +118,15 @@ export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
     adminEnabled,
     adminEncryptionKey,
     adminSessionTtlHours: positiveInteger(source.ADMIN_SESSION_TTL_HOURS, 12, "ADMIN_SESSION_TTL_HOURS"),
+    adminReviewPolicy,
+    adminBootstrapTokenHash,
     questionBankStorage,
     questionBankStorageDir: source.QUESTION_BANK_STORAGE_DIR || ".question-bank-storage",
     cosSecretId,
     cosSecretKey,
     cosBucket,
     cosRegion,
-    cosPublicBaseUrl: source.COS_PUBLIC_BASE_URL || "",
+    cosPublicBaseUrl,
     questionBankMaxSnapshotBytes: positiveInteger(source.QUESTION_BANK_MAX_SNAPSHOT_BYTES, 256 * 1024 * 1024, "QUESTION_BANK_MAX_SNAPSHOT_BYTES")
   };
 }

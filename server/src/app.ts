@@ -23,7 +23,7 @@ import { registerCatalogRoutes } from "./routes/catalog.js";
 import { createAuthenticate } from "./auth/tokens.js";
 import { isDatabaseBootstrapPending } from "./bootstrap-state.js";
 import { AdminSecurity, registerAdminAuthRoutes } from "./routes/admin-auth.js";
-import { registerAdminQuestionBankRoutes } from "./routes/admin-question-bank.js";
+import { registerAdminQuestionBankRoutes, registerPublicMediaRoutes } from "./routes/admin-question-bank.js";
 import { createQuestionBankStorage } from "./services/question-bank-storage.js";
 import { QuestionBankService } from "./services/question-bank.js";
 import { QuestionImportService } from "./services/question-import.js";
@@ -47,6 +47,9 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
         "req.body.refreshToken",
         "req.body.password",
         "req.body.totp",
+        "req.body.bootstrapToken",
+        "req.body.setupToken",
+        "req.body.confirmationTotp",
         "req.headers.cookie",
         "req.headers.x-csrf-token",
         "res.headers.set-cookie"
@@ -81,6 +84,17 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
 
   app.addHook("onRequest", async (request, reply) => {
     const requestPath = request.raw.url?.split("?", 1)[0];
+    if (requestPath?.startsWith("/admin") || requestPath?.startsWith("/api/v1/admin/")) {
+      reply.header("Cache-Control", "no-store");
+      reply.header("X-Content-Type-Options", "nosniff");
+      reply.header("X-Frame-Options", "DENY");
+      reply.header("Referrer-Policy", "no-referrer");
+      reply.header("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+      reply.header(
+        "Content-Security-Policy",
+        "default-src 'self'; img-src 'self' data: blob:; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
+      );
+    }
     if (requestPath === "/health" || requestPath === "/ready") return;
     if (!isDatabaseBootstrapPending()) return;
     return reply.code(503).send({
@@ -88,6 +102,17 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
       message: "数据初始化尚未完成",
       details: null
     });
+  });
+
+  app.addHook("onSend", async (request, reply, payload) => {
+    const requestPath = request.raw.url?.split("?", 1)[0];
+    if (requestPath?.startsWith("/admin") || requestPath?.startsWith("/api/v1/admin/")) {
+      // @fastify/static applies its own cache header after onRequest. Reassert
+      // no-store at the final response boundary so admin HTML, assets and APIs
+      // can never be retained by a browser or intermediary cache.
+      reply.header("Cache-Control", "no-store");
+    }
+    return payload;
   });
 
   app.addHook("onResponse", async (request, reply) => {
@@ -106,19 +131,21 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
   const authenticate = createAuthenticate(deps.prisma, deps.config);
   const catalogService = new CatalogService(deps.prisma);
   registerCatalogRoutes(app, catalogService);
+  const questionBankStorage = createQuestionBankStorage(deps.config);
+  const questionBank = new QuestionBankService(deps.prisma, deps.config, questionBankStorage);
+  const media = new MediaService(deps.prisma, questionBankStorage, questionBank);
+  registerPublicMediaRoutes(app, media);
   if (deps.config.adminEnabled) {
     await app.register(fastifyMultipart, { limits: { files: 1, fileSize: 12 * 1024 * 1024 } });
     const adminSecurity = new AdminSecurity(deps.prisma, deps.config);
     registerAdminAuthRoutes(app, deps.prisma, deps.config, adminSecurity);
-    const storage = createQuestionBankStorage(deps.config);
-    const questionBank = new QuestionBankService(deps.prisma, deps.config, storage);
     registerAdminQuestionBankRoutes(
       app,
       deps.prisma,
       adminSecurity,
       questionBank,
-      new QuestionImportService(deps.prisma, questionBank, storage),
-      new MediaService(deps.prisma, storage, questionBank)
+      new QuestionImportService(deps.prisma, questionBank, questionBankStorage),
+      media
     );
     const moduleDirectory = dirname(fileURLToPath(import.meta.url));
     const adminRoot = [
@@ -130,6 +157,7 @@ export async function buildApp(deps: AppDependencies): Promise<FastifyInstance> 
     if (adminRoot) {
       await app.register(fastifyStatic, { root: adminRoot, prefix: "/admin/", wildcard: false });
       app.get("/admin", async (_request, reply) => reply.redirect("/admin/"));
+      app.get("/admin/setup", async (_request, reply) => reply.sendFile("index.html"));
     }
   }
   const gamificationService = new GamificationService(deps.prisma);

@@ -293,14 +293,49 @@
 
 简答提交后响应 `evaluationRequired=true` 并展示参考答案，再调用 `POST /api/v1/practice-sessions/:id/answers/:questionId/self-assessment`，请求体为 `{ "assessment": "mastered" | "unmastered" }`。待答题响应绝不返回 `correctOptionIds`、`acceptedAnswers`、`referenceAnswer` 或 `explanation`。
 
-管理 API 统一位于 `/api/v1/admin/*`，只供同源 `/admin/` 后台使用；完整流程、环境变量和接口用途见 `docs/QUESTION_BANK_MANAGEMENT.md`。
+管理 API 统一位于 `/api/v1/admin/*`，只供同源 `/admin/` 后台使用。登录后使用 HttpOnly 管理会话 Cookie；所有写请求还必须携带登录响应中的 CSRF Token。管理响应禁止缓存，密码、一次性启动令牌和 TOTP 不得进入日志或审计正文。完整流程、环境变量和接口用途见 `docs/QUESTION_BANK_MANAGEMENT.md`。
 
 目录变更集或 Excel 学科行可携带 `qualityPolicy`，规范结构为 `{ questionTypes?, difficulties?, chapters? }`，各目标项仅允许整数 `min`/`max`。未知字段、跨学科/停用章节引用或非法范围会阻止提交。`GET /api/v1/admin/releases` 的每条记录包含不可变的 `qualityWarnings` 和 `qualitySummary`，分别记录候选发布的普通质量偏差及逐学科策略/实际计数；这些警告不阻止发布，结构与 408 题池约束仍会阻断。
 
 ## 管理端目录、导入与发布
 
-- 目录调整必须通过 `POST /api/v1/admin/catalog-drafts` 创建完整目录变更集，使用带 `revision` 的 PATCH 更新，随后提交并由非提交人复核。旧学科、章节和首页模块直写接口固定返回 `CATALOG_DRAFT_REQUIRED`。
-- Excel 批次通过 `POST /api/v1/admin/imports/:id/submit` 冻结内容哈希，再由非提交人调用 `POST /api/v1/admin/imports/:id/review` 整批批准或驳回；导入题目不能绕过批次单独提交或复核。只包含学科/章节的目录型工作簿同样支持该流程。
-- `POST /api/v1/admin/releases` 请求体为 `{ name, draftIds, catalogDraftId?, importBatchIds? }`。目录变更集、题目草稿和 Excel 目录批次在同一事务中生效，任一内容哈希、revision、复核记录或活动基线不一致都会阻止发布。
+- 目录调整必须通过 `POST /api/v1/admin/catalog-drafts` 创建完整目录变更集，使用带 `revision` 的 PATCH 更新，随后提交复核。旧学科、章节和首页模块直写接口固定返回 `CATALOG_DRAFT_REQUIRED`。
+- Excel 批次通过 `POST /api/v1/admin/imports/:id/submit` 冻结内容哈希，再调用 `POST /api/v1/admin/imports/:id/review` 整批批准或驳回；导入题目不能绕过批次单独提交或复核。只包含学科/章节的目录型工作簿同样支持该流程。
+- `ADMIN_REVIEW_POLICY=two-person` 时提交人不得复核自己的目录、题目或导入批次；`single-owner` 时只有同时具有 `OWNER` 权限的提交人可以自审。自审批准必须提交 `checklist` 和非空 `selfReviewNote`，返回及审计记录中的 `reviewMode` 为 `SELF_APPROVED`；独立复核为 `INDEPENDENT`。
+- 处于 `IN_REVIEW` 的目录、题目和导入批次，可由原提交人分别调用 `POST /api/v1/admin/catalog-drafts/:id/withdraw`、`POST /api/v1/admin/drafts/:id/withdraw`、`POST /api/v1/admin/imports/:id/withdraw` 撤回。目录/题目回到 `DRAFT`，导入批次回到 `VALID`；批准后再修改会使既有批准失效，必须重新提交。
+- 发布先调用 `POST /api/v1/admin/releases/preview`，再把预览返回的 `candidateHash`、`confirmationText` 与当前 `confirmationTotp` 原样提交给 `POST /api/v1/admin/releases`。目录变更集、题目草稿和 Excel 目录批次在同一事务中生效，任一内容哈希、revision、复核记录或活动基线不一致都会阻止发布。
 - 发布切换后立即执行快照、目录投影、题目版本、题型内容、媒体和 408 题池自检。失败时返回 `RELEASE_VERIFICATION_FAILED` 并冻结新发布；所有者可调用 `POST /api/v1/admin/releases/:id/retry-verification`，回滚接口在冻结期间仍可用。
 - `GET /api/v1/admin/questions`、`/drafts`、`/catalog-drafts`、`/imports`、`/releases`、`/media` 和 `/audit-logs` 使用 `page`/`pageSize` 分页；列表响应统一包含 `{ page, pageSize, total, items }`。题目列表还支持 `search`、`subjectId`、`chapterId`、`type`、`difficulty`、`status`、`publishedFrom` 和 `publishedTo`。
+
+## 管理员首次建号与认证
+
+`ADMIN_ENABLED=true`、数据库中不存在管理员且设置了 `ADMIN_BOOTSTRAP_TOKEN_HASH` 时，才开放一次性网页初始化；任一条件不满足时以下 setup 接口统一返回 404。原始启动令牌至少 32 字节，只在操作者本地保存，服务端配置和数据库只使用其 SHA-256。
+
+- `GET /api/v1/admin/setup/status`：可初始化时返回 `{ "data": { "available": true } }`；完成首次建号后永久返回 404。
+- `POST /api/v1/admin/setup/prepare`：请求 `{ "bootstrapToken": "...", "username": "owner" }`。成功返回有效期 10 分钟的 `setupToken`、`totpSecret`、`totpUri`、`qrCodeDataUrl` 和 `expiresAt`；令牌错误返回 `ADMIN_BOOTSTRAP_TOKEN_INVALID`。
+- `POST /api/v1/admin/setup/complete`：请求 `{ "bootstrapToken", "setupToken", "username", "displayName", "password", "totp" }`。密码至少 12 位，`totp` 为 6 位；成功原子创建具有 `OWNER/EDITOR/REVIEWER/PUBLISHER` 全部权限的首个账号和一次性完成标记，返回 `{ user, completed: true }`。并发重复初始化或初始化完成后返回 404。
+- `POST /api/v1/admin/auth/login`：请求 `{ username, password, totp }`，成功设置安全会话 Cookie，并返回 `{ user, csrfToken, expiresAt }`。
+- `GET /api/v1/admin/auth/me`：返回当前管理员摘要、兼容字段 `user` 和 `reviewPolicy: "two-person" | "single-owner"`。
+- `POST /api/v1/admin/auth/logout`：撤销当前会话并返回 `{ "loggedOut": true }`。
+
+## 自审、导入报告与高风险确认
+
+三类复核接口的批准请求结构相同：
+
+```json
+{
+  "decision": "APPROVED",
+  "comment": "可选的普通复核说明",
+  "checklist": ["DIFF", "CONTENT", "WARNINGS"],
+  "selfReviewNote": "单所有者模式下的自检说明"
+}
+```
+
+`single-owner` 自审时三个检查项必须齐全且说明不少于 4 个规范化字符；`two-person` 独立复核无需 `selfReviewNote`。驳回仍使用 `decision="REJECTED"` 和原因说明。
+
+- `GET /api/v1/admin/imports/:id/rows?page=1&pageSize=50&status=error&entityType=question` 返回 `{ page, pageSize, total, items }`。`pageSize` 最大 200；`status` 为 `all|error|warning|valid`，`entityType` 可省略。
+- `GET /api/v1/admin/imports/:id/report.xlsx` 下载包含实体类型、行号、状态、错误、警告和原始数据的完整校验报告。
+- `POST /api/v1/admin/releases/preview` 的选择请求为 `{ name, draftIds, catalogDraftId?, importBatchIds? }`，返回 `{ candidateHash, confirmationText, summary, name }`；`summary` 包含新增、修订、停用、目录变化、导入批次数和质量警告数。
+- `POST /api/v1/admin/releases` 请求为 `{ name, draftIds, catalogDraftId?, importBatchIds?, candidateHash, confirmationText, confirmationTotp }`。候选已变化返回 `409 RELEASE_CANDIDATE_STALE`；缺少动态码返回 `ADMIN_STEP_UP_REQUIRED`。
+- `POST /api/v1/admin/releases/:id/rollback/preview` 返回目标版本摘要、`candidateHash` 和 `confirmationText`；随后调用 `POST /api/v1/admin/releases/:id/rollback`，请求 `{ candidateHash, confirmationText, confirmationTotp }`。活动版本或目标快照发生变化时返回 `409 ROLLBACK_CANDIDATE_STALE`。
+- 发布/回滚 TOTP 失败计数会持久化到数据库；达到失败阈值后当前管理会话立即被撤销。客户端必须重新登录，不得自动重放高风险操作。

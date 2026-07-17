@@ -29,6 +29,39 @@ assert.match(errors, /WECHAT_AUTH_MODE/);
 assert.match(errors, /MYSQL_ADDRESS/);
 assert.match(errors, /MYSQL_PASSWORD/);
 
+const validAdmin = Object.assign({}, valid, {
+  ADMIN_ENABLED: 'true',
+  ADMIN_ENCRYPTION_KEY: 'Admin-Key-2026_Random-Strong_7x9Qp',
+  ADMIN_REVIEW_POLICY: 'single-owner',
+  ADMIN_SESSION_TTL_HOURS: '12',
+  ADMIN_BOOTSTRAP_TOKEN_HASH: 'a'.repeat(64),
+  QUESTION_BANK_STORAGE: 'cos',
+  COS_SECRET_ID: 'AKIDEXAMPLE',
+  COS_SECRET_KEY: 'example-secret-kept-outside-git',
+  COS_BUCKET: 'quzijie-private-1234567890',
+  COS_REGION: 'ap-shanghai',
+  COS_PUBLIC_BASE_URL: ''
+});
+assert.deepEqual(validateValues(validAdmin, appId), []);
+
+const invalidAdmin = Object.assign({}, validAdmin, {
+  ADMIN_ENCRYPTION_KEY: 'weak',
+  ADMIN_REVIEW_POLICY: 'everyone',
+  ADMIN_SESSION_TTL_HOURS: '0',
+  ADMIN_BOOTSTRAP_TOKEN_HASH: 'plain-token',
+  QUESTION_BANK_STORAGE: 'local',
+  COS_SECRET_ID: '',
+  COS_PUBLIC_BASE_URL: 'https://public.example.com'
+});
+const adminErrors = validateValues(invalidAdmin, appId).join('\n');
+assert.match(adminErrors, /ADMIN_ENCRYPTION_KEY/);
+assert.match(adminErrors, /ADMIN_REVIEW_POLICY/);
+assert.match(adminErrors, /ADMIN_SESSION_TTL_HOURS/);
+assert.match(adminErrors, /ADMIN_BOOTSTRAP_TOKEN_HASH/);
+assert.match(adminErrors, /QUESTION_BANK_STORAGE/);
+assert.match(adminErrors, /COS_SECRET_ID/);
+assert.match(adminErrors, /COS_PUBLIC_BASE_URL/);
+
 assert.deepEqual(validateBaseUrl('https://api.quzijie.test').errors, []);
 assert.deepEqual(validateBaseUrl('https://api.qushuati.cloud:8443').errors, []);
 assert.match(validateBaseUrl('http://api.quzijie.test').errors.join('\n'), /HTTPS/);
@@ -56,6 +89,7 @@ const acmeBootstrap = fs.readFileSync(path.join(root, 'ops/bootstrap-acme.sh'), 
 const acmeSite = fs.readFileSync(path.join(root, 'ops/nginx/quzijie-acme-bootstrap.conf'), 'utf8');
 const questionImport = fs.readFileSync(path.join(root, 'server/src/scripts/import-questions.ts'), 'utf8');
 const adminManager = fs.readFileSync(path.join(root, 'server/src/scripts/manage-admin.ts'), 'utf8');
+const appSource = fs.readFileSync(path.join(root, 'server/src/app.ts'), 'utf8');
 assert.equal(fs.existsSync(path.join(root, 'ops/backup-postgres.sh')), false);
 assert.equal(fs.existsSync(path.join(root, 'ops/restore-postgres.sh')), false);
 assert.match(deployScript, /QUIZIJIE_COMPOSE_OVERRIDE_FILE/);
@@ -79,6 +113,12 @@ assert.match(questionImport, /assertEmptyBaselineDatabase/);
 assert.match(adminManager, /不能停用最后一个 OWNER/);
 assert.match(adminManager, /输入不回显/);
 assert.match(adminManager, /emitKeypressEvents/);
+['req.body.password', 'req.body.totp', 'req.body.bootstrapToken', 'req.body.setupToken', 'req.body.confirmationTotp'].forEach((secretPath) => {
+  assert.match(appSource, new RegExp(secretPath.replaceAll('.', '\\.')));
+});
+assert.match(appSource, /Cache-Control/);
+assert.match(appSource, /frame-ancestors 'none'/);
+assert.match(appSource, /base-uri 'none'/);
 assert.match(backupInstaller, /systemctl enable --now quzijie-backup.timer/);
 assert.match(backupService, /NoNewPrivileges=true/);
 assert.match(backupService, /ReadWritePaths=\/opt\/quzijie-study\/backups/);

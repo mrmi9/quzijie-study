@@ -101,6 +101,47 @@ describe("配置与微信适配器", () => {
     assert.equal(config.databaseUrl, "mysql://root:p%40ss%2Fword@10.0.0.8:3306/quzijie");
     assert.equal(config.jwtAccessSecret, "");
   });
+
+  it("管理后台复核策略默认双人且拒绝非法策略和非法启动哈希", () => {
+    assert.equal(loadConfig(baseEnv()).adminReviewPolicy, "two-person");
+    assert.equal(loadConfig({ ...baseEnv(), ADMIN_REVIEW_POLICY: "single-owner" }).adminReviewPolicy, "single-owner");
+    assert.throws(() => loadConfig({ ...baseEnv(), ADMIN_REVIEW_POLICY: "everyone" }), /ADMIN_REVIEW_POLICY/);
+    assert.throws(() => loadConfig({ ...baseEnv(), ADMIN_BOOTSTRAP_TOKEN_HASH: "not-a-sha256" }), /ADMIN_BOOTSTRAP_TOKEN_HASH/);
+  });
+
+  it("生产管理后台强制使用稳定密钥和私有 COS", () => {
+    const productionAdmin = {
+      NODE_ENV: "production",
+      WECHAT_AUTH_MODE: "cloud",
+      MYSQL_ADDRESS: "10.0.0.8:3306",
+      MYSQL_USERNAME: "root",
+      MYSQL_PASSWORD: "strong-database-secret",
+      MYSQL_DATABASE: "quzijie",
+      ADMIN_ENABLED: "true",
+      ADMIN_REVIEW_POLICY: "single-owner",
+      ADMIN_ENCRYPTION_KEY: "Admin-Key-2026_Random-Strong_7x9Qp"
+    } satisfies NodeJS.ProcessEnv;
+    assert.throws(() => loadConfig(productionAdmin), /必须使用 COS/);
+    assert.throws(() => loadConfig({ ...productionAdmin, ADMIN_ENCRYPTION_KEY: "change-me-change-me-change-me-change-me" }), /强度不足/);
+    assert.throws(() => loadConfig({
+      ...productionAdmin,
+      QUESTION_BANK_STORAGE: "cos",
+      COS_SECRET_ID: "AKIDEXAMPLE",
+      COS_SECRET_KEY: "private-secret",
+      COS_BUCKET: "private-bucket-1234567890",
+      COS_REGION: "ap-shanghai",
+      COS_PUBLIC_BASE_URL: "https://public.example.test"
+    }), /必须使用私有 COS/);
+    assert.doesNotThrow(() => loadConfig({
+      ...productionAdmin,
+      QUESTION_BANK_STORAGE: "cos",
+      COS_SECRET_ID: "AKIDEXAMPLE",
+      COS_SECRET_KEY: "private-secret",
+      COS_BUCKET: "private-bucket-1234567890",
+      COS_REGION: "ap-shanghai",
+      COS_PUBLIC_BASE_URL: ""
+    }));
+  });
 });
 
 describe("题库管理领域规则", () => {

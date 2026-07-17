@@ -108,7 +108,8 @@ class LocalQuestionBankStorage implements QuestionBankStorage {
   }
 
   publicUrl(objectKey: string): string {
-    return `/api/v1/admin/media/local/${encodeURIComponent(objectKey)}`;
+    void objectKey;
+    return "";
   }
 }
 

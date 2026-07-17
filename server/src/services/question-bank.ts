@@ -5,6 +5,7 @@ import type { AppConfig } from "../config.js";
 import type { DatabaseClient } from "../db.js";
 import { parseMysqlDatabaseUrl } from "../database-url.js";
 import { AppError } from "../errors.js";
+import { normalizeAdminRoles } from "../auth/admin.js";
 import {
   generateQuestionId,
   normalizeDraftQuestion,
@@ -39,6 +40,7 @@ type AuditInput = {
 
 type PreparedDraft = {
   id: string;
+  revision: number;
   action: "UPSERT" | "DISABLE";
   questionId: string;
   baseVersionId: string | null;
@@ -64,6 +66,11 @@ type PreparedDraft = {
 type PreparedVersion = { draft: PreparedDraft; versionId: string; version: number };
 type ImportStatusClient = Pick<DatabaseClient, "questionImportRow" | "questionImportBatch">;
 
+export type AdminReviewContext = {
+  checklist?: string[];
+  selfReviewNote?: string;
+};
+
 type ImportSubjectCandidate = {
   id: string;
   name: string;
@@ -82,7 +89,7 @@ type ImportChapterCandidate = {
 
 type ImportCatalogCandidates = {
   batchIds: string[];
-  batches: Array<{ id: string; revision: number; contentHash: string }>;
+  batches: Array<{ id: string; revision: number; contentHash: string; warningRows: number }>;
   subjects: ImportSubjectCandidate[];
   chapters: ImportChapterCandidate[];
 };
@@ -332,6 +339,36 @@ export class QuestionBankService {
     });
   }
 
+  async reviewMetadata(adminUserId: string, submittedById: string | null, decision: "APPROVED" | "REJECTED", context: AdminReviewContext = {}) {
+    const selfReview = submittedById === adminUserId;
+    const checklist = Array.from(new Set((Array.isArray(context.checklist) ? context.checklist : [])
+      .map((item) => String(item).normalize("NFKC").trim())
+      .filter(Boolean)))
+      .slice(0, 20);
+    const selfReviewNote = String(context.selfReviewNote || "").normalize("NFKC").trim().slice(0, 2000);
+    if (!selfReview) {
+      return { reviewMode: "INDEPENDENT" as const, checklist: checklist.length ? inputJson(checklist) : Prisma.JsonNull, selfReviewNote: null };
+    }
+    if (this.config.adminReviewPolicy !== "single-owner") {
+      throw new AppError("提交人不能复核自己的内容", "SELF_REVIEW_FORBIDDEN", 403);
+    }
+    if (decision !== "APPROVED") {
+      throw new AppError("提交人不能驳回自己的内容，请先退回编辑状态", "SELF_REVIEW_REJECTION_FORBIDDEN", 403);
+    }
+    const administrator = await this.prisma.adminUser.findUnique({ where: { id: adminUserId }, select: { status: true, roles: true } });
+    if (!administrator || administrator.status !== "ACTIVE" || !normalizeAdminRoles(administrator.roles).includes("OWNER")) {
+      throw new AppError("只有所有者可以执行单管理员自检", "SELF_REVIEW_OWNER_REQUIRED", 403);
+    }
+    const checklistSet = new Set(checklist);
+    if (!["DIFF", "CONTENT", "WARNINGS"].every((item) => checklistSet.has(item))) {
+      throw new AppError("自检必须完成内容、答案和展示检查项", "SELF_REVIEW_CHECKLIST_REQUIRED", 400);
+    }
+    if (selfReviewNote.length < 4) {
+      throw new AppError("自检说明至少需要 4 个字符", "SELF_REVIEW_NOTE_REQUIRED", 400);
+    }
+    return { reviewMode: "SELF_APPROVED" as const, checklist: inputJson(checklist), selfReviewNote };
+  }
+
   private async syncImportBatchStatus(db: ImportStatusClient, draftIds: string[]): Promise<void> {
     if (!draftIds.length) return;
     const rows = await db.questionImportRow.findMany({
@@ -446,7 +483,7 @@ export class QuestionBankService {
     }
     return {
       batchIds,
-      batches: batches.map((batch) => ({ id: batch.id, revision: batch.revision, contentHash: batch.contentHash! })),
+      batches: batches.map((batch) => ({ id: batch.id, revision: batch.revision, contentHash: batch.contentHash!, warningRows: batch.warningRows })),
       subjects: Array.from(subjects.values()).sort((left, right) => left.id.localeCompare(right.id)),
       chapters: Array.from(chapters.values()).sort((left, right) => left.id.localeCompare(right.id))
     };
@@ -735,11 +772,11 @@ export class QuestionBankService {
     });
   }
 
-  async reviewCatalogDraft(adminUserId: string, id: string, decision: "APPROVED" | "REJECTED", comment?: string, requestId?: string) {
+  async reviewCatalogDraft(adminUserId: string, id: string, decision: "APPROVED" | "REJECTED", comment?: string, requestId?: string, context: AdminReviewContext = {}) {
     const before = await this.prisma.catalogDraft.findUnique({ where: { id } });
     if (!before) throw new AppError("目录草稿不存在", "CATALOG_DRAFT_NOT_FOUND", 404);
     if (before.status !== "IN_REVIEW") throw new AppError("目录草稿不在复核状态", "CATALOG_DRAFT_NOT_IN_REVIEW", 409);
-    if (before.submittedById === adminUserId) throw new AppError("提交人不能复核自己的目录草稿", "SELF_REVIEW_FORBIDDEN", 403);
+    const review = await this.reviewMetadata(adminUserId, before.submittedById, decision, context);
     const contentHash = catalogPayloadHash(normalizeCatalogDraftPayload(before.payload));
     if (contentHash !== before.contentHash) throw new AppError("目录草稿冻结内容校验失败", "CATALOG_DRAFT_HASH_MISMATCH", 409);
     return this.prisma.$transaction(async (tx) => {
@@ -748,9 +785,38 @@ export class QuestionBankService {
         data: { status: decision, revision: { increment: 1 } }
       });
       if (claimed.count !== 1) throw new AppError("目录草稿已被其他复核者处理，请刷新后重试", "CATALOG_DRAFT_REVIEW_CONFLICT", 409);
-      await tx.catalogDraftReview.create({ data: { catalogDraftId: id, reviewerId: adminUserId, decision, contentHash, comment: comment?.normalize("NFKC").trim() || null } });
+      await tx.catalogDraftReview.create({ data: { catalogDraftId: id, reviewerId: adminUserId, decision, contentHash, comment: comment?.normalize("NFKC").trim() || null, ...review } });
       const updated = await tx.catalogDraft.findUniqueOrThrow({ where: { id } });
-      await tx.adminAuditLog.create({ data: this.auditData({ adminUserId, action: `catalog_draft.review.${decision.toLowerCase()}`, entityType: "catalog_draft", entityId: id, beforeState: { status: before.status, contentHash }, afterState: { status: updated.status, contentHash }, requestId }) });
+      await tx.adminAuditLog.create({ data: this.auditData({ adminUserId, action: `catalog_draft.review.${decision.toLowerCase()}`, entityType: "catalog_draft", entityId: id, beforeState: { status: before.status, contentHash }, afterState: { status: updated.status, contentHash, reviewMode: review.reviewMode, selfReviewNote: review.selfReviewNote }, requestId }) });
+      return {
+        ...updated,
+        reviewMode: review.reviewMode,
+        selfReviewNote: review.selfReviewNote,
+        checklist: review.checklist
+      };
+    });
+  }
+
+  async withdrawCatalogDraft(adminUserId: string, id: string, requestId?: string) {
+    const before = await this.prisma.catalogDraft.findUnique({ where: { id } });
+    if (!before) throw new AppError("目录草稿不存在", "CATALOG_DRAFT_NOT_FOUND", 404);
+    if (!["IN_REVIEW", "APPROVED"].includes(before.status) || before.submittedById !== adminUserId) {
+      throw new AppError("只能撤回自己待复核或已批准且尚未发布的目录草稿", "CATALOG_DRAFT_NOT_WITHDRAWABLE", 409);
+    }
+    return this.prisma.$transaction(async (tx) => {
+      const claimed = await tx.catalogDraft.updateMany({
+        where: { id, status: before.status, revision: before.revision, submittedById: adminUserId },
+        data: {
+          status: "DRAFT",
+          submittedById: null,
+          submittedAt: null,
+          warningsAcknowledgedAt: null,
+          revision: { increment: 1 }
+        }
+      });
+      if (claimed.count !== 1) throw new AppError("目录草稿撤回时发生变化", "CATALOG_DRAFT_WITHDRAW_CONFLICT", 409);
+      const updated = await tx.catalogDraft.findUniqueOrThrow({ where: { id } });
+      await tx.adminAuditLog.create({ data: this.auditData({ adminUserId, action: "catalog_draft.withdraw", entityType: "catalog_draft", entityId: id, beforeState: { status: before.status }, afterState: { status: updated.status }, requestId }) });
       return updated;
     });
   }
@@ -934,16 +1000,42 @@ export class QuestionBankService {
   }
 
   async dashboard() {
-    const [subjects, chapters, questions, drafts, imports, releases, media] = await Promise.all([
+    const [
+      subjects, chapters, questions, drafts, imports, releases, media,
+      pendingValidation, pendingQuestionReview, pendingCatalogReview, pendingImportReview,
+      pendingQuestionPublish, pendingCatalogPublish, pendingImportPublish, failedRelease
+    ] = await Promise.all([
       this.prisma.subject.count({ where: { active: true } }),
       this.prisma.chapter.count({ where: { active: true } }),
       this.prisma.question.count({ where: { status: "ACTIVE" } }),
       this.prisma.questionDraft.groupBy({ by: ["status"], _count: { _all: true } }),
       this.prisma.questionImportBatch.findMany({ orderBy: { createdAt: "desc" }, take: 5 }),
       this.prisma.questionRelease.findMany({ orderBy: { createdAt: "desc" }, take: 5 }),
-      this.prisma.mediaAsset.groupBy({ by: ["status"], _count: { _all: true } })
+      this.prisma.mediaAsset.groupBy({ by: ["status"], _count: { _all: true } }),
+      this.prisma.questionImportBatch.count({ where: { status: "STAGING" } }),
+      this.prisma.questionDraft.count({ where: { status: "IN_REVIEW", importRows: { none: {} } } }),
+      this.prisma.catalogDraft.count({ where: { status: "IN_REVIEW" } }),
+      this.prisma.questionImportBatch.count({ where: { status: "IN_REVIEW" } }),
+      this.prisma.questionDraft.count({ where: { status: "APPROVED", importRows: { none: {} } } }),
+      this.prisma.catalogDraft.count({ where: { status: "APPROVED" } }),
+      this.prisma.questionImportBatch.count({ where: { status: "APPROVED" } }),
+      this.prisma.questionRelease.count({ where: { OR: [{ status: "FAILED" }, { verificationStatus: "FAILED" }] } })
     ]);
-    return { subjects, chapters, questions, drafts, imports, releases, media };
+    return {
+      subjects,
+      chapters,
+      questions,
+      drafts,
+      imports,
+      releases,
+      media,
+      todoCounts: {
+        pendingValidation,
+        pendingReview: pendingQuestionReview + pendingCatalogReview + pendingImportReview,
+        pendingPublish: pendingQuestionPublish + pendingCatalogPublish + pendingImportPublish,
+        failedRelease
+      }
+    };
   }
 
   async listQuestions(query: { page?: number; pageSize?: number; search?: string; subjectId?: string; chapterId?: string; type?: string; difficulty?: number; status?: string; publishedFrom?: string; publishedTo?: string }) {
@@ -1175,7 +1267,7 @@ export class QuestionBankService {
     });
   }
 
-  async reviewDraft(adminUserId: string, draftId: string, decision: "APPROVED" | "REJECTED", comment?: string, requestId?: string) {
+  async reviewDraft(adminUserId: string, draftId: string, decision: "APPROVED" | "REJECTED", comment?: string, requestId?: string, context: AdminReviewContext = {}) {
     const imported = await this.prisma.questionImportRow.findFirst({ where: { draftId }, select: { batchId: true } });
     if (imported) {
       throw new AppError("Excel 导入题目必须通过整批复核", "IMPORT_BATCH_REVIEW_REQUIRED", 409, { importBatchId: imported.batchId });
@@ -1183,7 +1275,7 @@ export class QuestionBankService {
     const draft = await this.prisma.questionDraft.findUnique({ where: { id: draftId } });
     if (!draft) throw new AppError("草稿不存在", "DRAFT_NOT_FOUND", 404);
     if (draft.status !== "IN_REVIEW") throw new AppError("草稿不在复核状态", "DRAFT_NOT_IN_REVIEW", 409);
-    if (draft.submittedById === adminUserId) throw new AppError("提交人不能复核自己的草稿", "SELF_REVIEW_FORBIDDEN", 403);
+    const review = await this.reviewMetadata(adminUserId, draft.submittedById, decision, context);
     const updated = await this.prisma.$transaction(async (tx) => {
       const claimed = await tx.questionDraft.updateMany({
         where: { id: draftId, status: "IN_REVIEW", revision: draft.revision },
@@ -1192,16 +1284,47 @@ export class QuestionBankService {
       if (claimed.count !== 1) {
         throw new AppError("草稿已被其他复核者处理，请刷新后重试", "DRAFT_REVIEW_CONFLICT", 409);
       }
-      await tx.draftReview.create({ data: { draftId, reviewerId: adminUserId, decision, comment: comment?.trim() || null } });
+      await tx.draftReview.create({ data: { draftId, reviewerId: adminUserId, decision, comment: comment?.trim() || null, ...review } });
       const result = await tx.questionDraft.findUnique({ where: { id: draftId } });
       if (!result) throw new AppError("草稿不存在", "DRAFT_NOT_FOUND", 404);
       await tx.adminAuditLog.create({
-        data: this.auditData({ adminUserId, action: `draft.review.${decision.toLowerCase()}`, entityType: "question_draft", entityId: draftId, beforeState: draft, afterState: result, requestId })
+        data: this.auditData({ adminUserId, action: `draft.review.${decision.toLowerCase()}`, entityType: "question_draft", entityId: draftId, beforeState: draft, afterState: { ...result, reviewMode: review.reviewMode, selfReviewNote: review.selfReviewNote }, requestId })
       });
       await this.syncImportBatchStatus(tx, [draftId]);
-      return result;
+      return {
+        ...result,
+        reviewMode: review.reviewMode,
+        selfReviewNote: review.selfReviewNote,
+        checklist: review.checklist
+      };
     });
     return updated;
+  }
+
+  async withdrawDraft(adminUserId: string, draftId: string, requestId?: string) {
+    const imported = await this.prisma.questionImportRow.findFirst({ where: { draftId }, select: { batchId: true } });
+    if (imported) throw new AppError("Excel 导入题目必须通过整批撤回", "IMPORT_BATCH_WITHDRAW_REQUIRED", 409, { importBatchId: imported.batchId });
+    const before = await this.prisma.questionDraft.findUnique({ where: { id: draftId } });
+    if (!before) throw new AppError("草稿不存在", "DRAFT_NOT_FOUND", 404);
+    if (!["IN_REVIEW", "APPROVED"].includes(before.status) || before.submittedById !== adminUserId) {
+      throw new AppError("只能撤回自己待复核或已批准且尚未发布的草稿", "DRAFT_NOT_WITHDRAWABLE", 409);
+    }
+    return this.prisma.$transaction(async (tx) => {
+      const claimed = await tx.questionDraft.updateMany({
+        where: { id: draftId, status: before.status, revision: before.revision, submittedById: adminUserId },
+        data: {
+          status: "DRAFT",
+          submittedById: null,
+          submittedAt: null,
+          warningsAcknowledgedAt: null,
+          revision: { increment: 1 }
+        }
+      });
+      if (claimed.count !== 1) throw new AppError("草稿撤回时发生变化", "DRAFT_WITHDRAW_CONFLICT", 409);
+      const updated = await tx.questionDraft.findUniqueOrThrow({ where: { id: draftId } });
+      await tx.adminAuditLog.create({ data: this.auditData({ adminUserId, action: "draft.withdraw", entityType: "question_draft", entityId: draftId, beforeState: { status: before.status }, afterState: { status: updated.status }, requestId }) });
+      return updated;
+    });
   }
 
   private async withReleaseLock<T>(callback: () => Promise<T>): Promise<T> {
@@ -1872,8 +1995,64 @@ export class QuestionBankService {
     });
   }
 
-  async publish(adminUserId: string, name: string, draftIds: string[], catalogDraftId?: string, importBatchIds: string[] = [], requestId?: string) {
+  async previewRelease(input: { name?: string; draftIds?: string[]; catalogDraftId?: string; importBatchIds?: string[] }) {
+    const explicitImportBatchIds = Array.from(new Set((input.importBatchIds || []).map((id) => String(id).trim()).filter(Boolean))).sort();
+    const importedDraftRows = explicitImportBatchIds.length ? await this.prisma.questionImportRow.findMany({
+      where: { batchId: { in: explicitImportBatchIds }, entityType: "question" },
+      select: { draftId: true }
+    }) : [];
+    const releaseDraftIds = Array.from(new Set([
+      ...(input.draftIds || []).map((id) => String(id).trim()).filter(Boolean),
+      ...importedDraftRows.map((row) => row.draftId).filter((id): id is string => Boolean(id))
+    ])).sort();
+    const [drafts, importCandidates, catalogDraft, state] = await Promise.all([
+      this.prisma.questionDraft.findMany({
+        where: { id: { in: releaseDraftIds } },
+        select: { id: true, questionId: true, action: true, status: true, revision: true, contentHash: true, baseVersionId: true, validationWarnings: true }
+      }),
+      this.resolveImportCatalogCandidates(releaseDraftIds, explicitImportBatchIds),
+      input.catalogDraftId ? this.prisma.catalogDraft.findUnique({
+        where: { id: input.catalogDraftId },
+        select: { id: true, status: true, revision: true, contentHash: true, baseCatalogHash: true, validationWarnings: true }
+      }) : Promise.resolve(null),
+      this.prisma.catalogState.findUnique({ where: { id: 1 }, select: { activeReleaseId: true } })
+    ]);
+    if (drafts.length !== releaseDraftIds.length) throw new AppError("部分草稿不存在", "DRAFT_NOT_FOUND", 404);
+    if (drafts.some((draft) => draft.status !== "APPROVED")) throw new AppError("只有复核通过的草稿可以发布", "DRAFT_NOT_APPROVED", 409);
+    if (input.catalogDraftId && !catalogDraft) throw new AppError("目录草稿不存在", "CATALOG_DRAFT_NOT_FOUND", 404);
+    if (catalogDraft && catalogDraft.status !== "APPROVED") throw new AppError("只有复核通过的目录草稿可以发布", "CATALOG_DRAFT_NOT_APPROVED", 409);
+    if (!drafts.length && !importCandidates.batches.length && !catalogDraft) throw new AppError("没有可发布的变更", "RELEASE_NO_CHANGES", 409);
+    const importedCatalogChanged = importCandidates.subjects.length > 0 || importCandidates.chapters.length > 0;
+    const summary = {
+      added: drafts.filter((draft) => draft.action === "UPSERT" && !draft.baseVersionId).length,
+      revised: drafts.filter((draft) => draft.action === "UPSERT" && Boolean(draft.baseVersionId)).length,
+      disabled: drafts.filter((draft) => draft.action === "DISABLE").length,
+      catalogChanged: Boolean(catalogDraft) || importedCatalogChanged,
+      catalogSubjectChanges: importCandidates.subjects.length,
+      catalogChapterChanges: importCandidates.chapters.length,
+      importBatchCount: importCandidates.batches.length,
+      qualityWarningCount: drafts.reduce((sum, draft) => sum + jsonArray(draft.validationWarnings).length, 0)
+        + importCandidates.batches.reduce((sum, batch) => sum + batch.warningRows, 0)
+        + (catalogDraft ? jsonArray(catalogDraft.validationWarnings).length : 0)
+    };
+    const candidate = {
+      activeReleaseId: state?.activeReleaseId || null,
+      drafts: drafts.map(({ id, questionId, action, revision, contentHash }) => ({ id, questionId, action, revision, contentHash })).sort((a, b) => a.id.localeCompare(b.id)),
+      batches: importCandidates.batches.map(({ id, revision, contentHash }) => ({ id, revision, contentHash })).sort((a, b) => a.id.localeCompare(b.id)),
+      catalogDraft: catalogDraft ? { id: catalogDraft.id, revision: catalogDraft.revision, contentHash: catalogDraft.contentHash, baseCatalogHash: catalogDraft.baseCatalogHash } : null
+    };
+    const candidateHash = createHash("sha256").update(stableStringify(candidate)).digest("hex");
+    const confirmationText = `发布新增${summary.added}题、修订${summary.revised}题、停用${summary.disabled}题${summary.catalogChanged ? "及目录变更" : ""}`;
+    return { candidateHash, confirmationText, summary, name: String(input.name || "").normalize("NFKC").trim().slice(0, 128) };
+  }
+
+  async publish(adminUserId: string, name: string, draftIds: string[], catalogDraftId?: string, importBatchIds: string[] = [], requestId?: string, confirmation?: { candidateHash?: string; confirmationText?: string }) {
     return this.withReleaseLock(async () => {
+      const preview = await this.previewRelease({ name, draftIds, catalogDraftId, importBatchIds });
+      if (!confirmation?.candidateHash || confirmation.candidateHash !== preview.candidateHash
+        || !confirmation.confirmationText || confirmation.confirmationText !== preview.confirmationText) {
+        throw new AppError("发布候选内容已变化，请重新预览并确认", "RELEASE_CANDIDATE_STALE", 409, preview);
+      }
       const gate = await this.prisma.catalogState.findUnique({ where: { id: 1 }, include: { activeRelease: { select: { verificationStatus: true } } } });
       assertReleasePublishingAllowed(gate);
       const explicitImportBatchIds = Array.from(new Set(importBatchIds.map((id) => String(id).trim()).filter(Boolean)));
@@ -2031,7 +2210,18 @@ export class QuestionBankService {
                 data: { releaseId: release.id, draftId: item.draft.id, questionId: item.draft.questionId, action: "UPSERT", previousVersionId: current.currentVersionId, publishedVersionId: version.id }
               });
             }
-            await tx.questionDraft.update({ where: { id: item.draft.id }, data: { status: "PUBLISHED" } });
+            const claimedDraft = await tx.questionDraft.updateMany({
+              where: {
+                id: item.draft.id,
+                status: "APPROVED",
+                revision: item.draft.revision,
+                contentHash: item.draft.contentHash
+              },
+              data: { status: "PUBLISHED", revision: { increment: 1 } }
+            });
+            if (claimedDraft.count !== 1) {
+              throw new AppError(`草稿 ${item.draft.id} 在发布准备期间发生变化`, "RELEASE_CONTENT_CHANGED", 409);
+            }
           }
           if (catalogDraft) {
             const claimedCatalog = await tx.catalogDraft.updateMany({
@@ -2112,8 +2302,39 @@ export class QuestionBankService {
     return { page, pageSize, total, items };
   }
 
-  async rollback(adminUserId: string, targetReleaseId: string, requestId?: string) {
+  async previewRollback(targetReleaseId: string) {
+    const [target, state] = await Promise.all([
+      this.prisma.questionRelease.findFirst({
+        where: { id: targetReleaseId, status: "PUBLISHED" },
+        select: { id: true, name: true, snapshotHash: true, snapshotKey: true, questionCount: true, qualityWarnings: true, publishedAt: true }
+      }),
+      this.prisma.catalogState.findUnique({ where: { id: 1 }, select: { activeReleaseId: true } })
+    ]);
+    if (!target?.snapshotKey || !target.snapshotHash) throw new AppError("目标发布不存在或缺少快照", "RELEASE_NOT_ROLLBACKABLE", 409);
+    if (state?.activeReleaseId === target.id) throw new AppError("目标版本已经是当前活动版本", "RELEASE_ALREADY_ACTIVE", 409);
+    const summary = {
+      targetReleaseId: target.id,
+      targetName: target.name,
+      questionCount: target.questionCount,
+      qualityWarningCount: Array.isArray(target.qualityWarnings) ? target.qualityWarnings.length : 0,
+      publishedAt: target.publishedAt
+    };
+    const candidateHash = createHash("sha256").update(stableStringify({
+      activeReleaseId: state?.activeReleaseId || null,
+      targetReleaseId: target.id,
+      snapshotHash: target.snapshotHash
+    })).digest("hex");
+    const confirmationText = `回滚到${target.name}（${target.questionCount}题）`;
+    return { candidateHash, confirmationText, summary };
+  }
+
+  async rollback(adminUserId: string, targetReleaseId: string, requestId?: string, confirmation?: { candidateHash?: string; confirmationText?: string }) {
     return this.withReleaseLock(async () => {
+      const preview = await this.previewRollback(targetReleaseId);
+      if (!confirmation?.candidateHash || confirmation.candidateHash !== preview.candidateHash
+        || !confirmation.confirmationText || confirmation.confirmationText !== preview.confirmationText) {
+        throw new AppError("回滚目标已变化，请重新预览并确认", "ROLLBACK_CANDIDATE_STALE", 409, preview);
+      }
       const target = await this.prisma.questionRelease.findFirst({ where: { id: targetReleaseId, status: "PUBLISHED" } });
       if (!target?.snapshotKey) throw new AppError("目标发布不存在或缺少快照", "RELEASE_NOT_ROLLBACKABLE", 409);
       if (!target.snapshotHash) throw new AppError("目标发布缺少快照哈希", "RELEASE_NOT_ROLLBACKABLE", 409);

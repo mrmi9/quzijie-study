@@ -24,6 +24,8 @@
     "db:export-mock": "tsx src/scripts/export-mock-snapshot.ts",
     "admin:manage": "tsx src/scripts/manage-admin.ts",
     "admin:manage:compiled": "node dist/src/scripts/manage-admin.js",
+    "admin:bootstrap-token": "tsx src/scripts/generate-admin-bootstrap-token.ts",
+    "admin:bootstrap-token:compiled": "node dist/src/scripts/generate-admin-bootstrap-token.js",
     "storage:lifecycle": "tsx src/scripts/configure-cos-lifecycle.ts",
     "storage:lifecycle:compiled": "node dist/src/scripts/configure-cos-lifecycle.js",
     "storage:cleanup": "tsx src/scripts/cleanup-question-bank-storage.ts",
@@ -44,10 +46,12 @@
     "fastify": "^5.10.0",
     "fastify-plugin": "^5.1.0",
     "mariadb": "^3.4.5",
-    "prisma": "^7.8.0"
+    "prisma": "^7.8.0",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "@types/node": "^24.10.0",
+    "@types/qrcode": "^1.5.5",
     "tsx": "^4.20.6",
     "typescript": "5.9.3"
   }

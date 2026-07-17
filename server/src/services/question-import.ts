@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import ExcelJS from "exceljs";
 import type { DatabaseClient } from "../db.js";
-import { Prisma } from "../generated/prisma/client.js";
+import { Prisma, type ImportBatchStatus } from "../generated/prisma/client.js";
 import { AppError } from "../errors.js";
 import {
   generateQuestionId,
@@ -18,7 +18,7 @@ import {
   QualityPolicyValidationError,
   type SubjectQualityPolicy
 } from "../domain/quality-policy.js";
-import type { QuestionBankService } from "./question-bank.js";
+import type { AdminReviewContext, QuestionBankService } from "./question-bank.js";
 import type { QuestionBankStorage } from "./question-bank-storage.js";
 
 const MAX_IMPORT_ROWS = 5_000;
@@ -692,7 +692,11 @@ export class QuestionImportService {
     return { rows, subjects: subjectPlans, chapters: chapterPlans, questions: questionPlans };
   }
 
-  private async updateValidationReport(batchId: string, plan: WorkbookPlan) {
+  private async updateValidationReport(
+    batchId: string,
+    plan: WorkbookPlan,
+    expected?: { status: ImportBatchStatus; revision: number }
+  ) {
     const summary = reportSummary(plan.rows);
     return this.prisma.$transaction(async (tx) => {
       for (const row of plan.rows) {
@@ -705,14 +709,23 @@ export class QuestionImportService {
           }
         });
       }
-      return tx.questionImportBatch.update({
-        where: { id: batchId },
-        data: {
-          ...summary, status: summary.errorRows ? "STAGING" : "VALID",
-          contentHash: null, submittedById: null, submittedAt: null, warningsAcknowledgedAt: null,
-          revision: { increment: 1 }
+      const nextStatus: ImportBatchStatus = summary.errorRows ? "STAGING" : "VALID";
+      const data = {
+        ...summary, status: nextStatus,
+        contentHash: null, submittedById: null, submittedAt: null, warningsAcknowledgedAt: null,
+        revision: { increment: 1 }
+      };
+      if (expected) {
+        const claimed = await tx.questionImportBatch.updateMany({
+          where: { id: batchId, status: expected.status, revision: expected.revision },
+          data
+        });
+        if (claimed.count !== 1) {
+          throw new AppError("导入批次在重新校验期间发生变化", "IMPORT_BATCH_REVISION_CONFLICT", 409);
         }
-      });
+        return tx.questionImportBatch.findUniqueOrThrow({ where: { id: batchId } });
+      }
+      return tx.questionImportBatch.update({ where: { id: batchId }, data });
     }, { timeout: 120_000 });
   }
 
@@ -852,11 +865,16 @@ export class QuestionImportService {
     }, { timeout: 120_000 });
   }
 
-  private async markMaterializationFailure(batchId: string, plan: WorkbookPlan, error: unknown) {
+  private async markMaterializationFailure(
+    batchId: string,
+    plan: WorkbookPlan,
+    error: unknown,
+    expected?: { status: ImportBatchStatus; revision: number }
+  ) {
     const message = error instanceof AppError ? error.message : "批次原子落库失败，请稍后重新校验";
     const target = plan.questions[0]?.row || plan.rows[0];
     if (target) addUnique(target.errors, `原子落库失败：${message}`);
-    return this.updateValidationReport(batchId, plan);
+    return this.updateValidationReport(batchId, plan, expected);
   }
 
   async importWorkbook(adminUserId: string, fileName: string, body: Buffer, requestId?: string) {
@@ -988,14 +1006,103 @@ export class QuestionImportService {
     return batch;
   }
 
+  async getBatchSummary(id: string) {
+    const batch = await this.prisma.questionImportBatch.findUnique({
+      where: { id },
+      include: {
+        createdBy: { select: { username: true, displayName: true } },
+        submittedBy: { select: { username: true, displayName: true } },
+        reviews: { orderBy: { createdAt: "desc" }, include: { reviewer: { select: { username: true, displayName: true } } } },
+        _count: { select: { rows: true } }
+      }
+    });
+    if (!batch) throw new AppError("导入批次不存在", "IMPORT_NOT_FOUND", 404);
+    return batch;
+  }
+
+  async listBatchRows(id: string, query: { page?: number; pageSize?: number; status?: string; entityType?: string } = {}) {
+    const exists = await this.prisma.questionImportBatch.findUnique({ where: { id }, select: { id: true } });
+    if (!exists) throw new AppError("导入批次不存在", "IMPORT_NOT_FOUND", 404);
+    const page = Math.max(1, Number(query.page) || 1);
+    const pageSize = Math.min(200, Math.max(1, Number(query.pageSize) || 50));
+    const status = String(query.status || "all").toLowerCase();
+    if (!["all", "error", "warning", "valid"].includes(status)) {
+      throw new AppError("导入行状态筛选值无效", "INVALID_IMPORT_ROW_FILTER", 400);
+    }
+    const entityType = String(query.entityType || "").trim();
+    const where: Prisma.QuestionImportRowWhereInput = { batchId: id, ...(entityType ? { entityType } : {}) };
+    const orderBy = [{ entityType: "asc" as const }, { rowNumber: "asc" as const }];
+    const include = { draft: { select: { id: true, status: true, revision: true, contentHash: true } } };
+    if (status === "all") {
+      const [total, items] = await Promise.all([
+        this.prisma.questionImportRow.count({ where }),
+        this.prisma.questionImportRow.findMany({ where, orderBy, skip: (page - 1) * pageSize, take: pageSize, include })
+      ]);
+      return { page, pageSize, total, items };
+    }
+    // MySQL JSON-array length is not exposed by Prisma's portable filters. An
+    // import is hard-capped at 5,000 rows, so status filtering scans only ids
+    // and the two small validation arrays, then fetches the requested page.
+    const candidates = await this.prisma.questionImportRow.findMany({
+      where,
+      orderBy,
+      select: { id: true, errors: true, warnings: true }
+    });
+    const filteredIds = candidates.filter((row) => {
+      const errors = Array.isArray(row.errors) ? row.errors.length : 0;
+      const warnings = Array.isArray(row.warnings) ? row.warnings.length : 0;
+      if (status === "error") return errors > 0;
+      if (status === "warning") return errors === 0 && warnings > 0;
+      if (status === "valid") return errors === 0 && warnings === 0;
+      return true;
+    }).map((row) => row.id);
+    const pageIds = filteredIds.slice((page - 1) * pageSize, page * pageSize);
+    const pageRows = pageIds.length ? await this.prisma.questionImportRow.findMany({ where: { id: { in: pageIds } }, include }) : [];
+    const byId = new Map(pageRows.map((row) => [row.id, row]));
+    return {
+      page,
+      pageSize,
+      total: filteredIds.length,
+      items: pageIds.map((rowId) => byId.get(rowId)).filter(Boolean)
+    };
+  }
+
+  async validationReport(id: string): Promise<Buffer> {
+    const batch = await this.getBatch(id);
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = "趣刷题喽题库管理";
+    const sheet = workbook.addWorksheet("校验报告");
+    sheet.columns = [
+      { header: "实体类型", key: "entityType", width: 16 },
+      { header: "行号", key: "rowNumber", width: 10 },
+      { header: "状态", key: "status", width: 12 },
+      { header: "错误", key: "errors", width: 48 },
+      { header: "警告", key: "warnings", width: 48 },
+      { header: "原始数据", key: "rawData", width: 72 }
+    ];
+    for (const row of batch.rows) {
+      const errors = Array.isArray(row.errors) ? row.errors.map(String) : [];
+      const warnings = Array.isArray(row.warnings) ? row.warnings.map(String) : [];
+      sheet.addRow({
+        entityType: row.entityType,
+        rowNumber: row.rowNumber,
+        status: errors.length ? "错误" : warnings.length ? "警告" : "通过",
+        errors: errors.join("\n"),
+        warnings: warnings.join("\n"),
+        rawData: JSON.stringify(row.rawData)
+      });
+    }
+    sheet.getRow(1).font = { bold: true };
+    sheet.views = [{ state: "frozen", ySplit: 1 }];
+    const payload = await workbook.xlsx.writeBuffer();
+    return Buffer.from(payload);
+  }
+
   async revalidateBatch(id: string, adminUserId?: string, requestId?: string) {
     const batch = await this.getBatch(id);
     const actorId = adminUserId || batch.createdById;
     if (["IN_REVIEW", "APPROVED", "PUBLISHED", "CANCELLED"].includes(batch.status)) {
       throw new AppError("当前导入批次不能重新校验", "IMPORT_NOT_EDITABLE", 409);
-    }
-    if (batch.rows.some((row) => row.draftId)) {
-      return batch;
     }
     const plan = await this.analyzeWorkbook(parsedFromStoredRows(batch.rows));
     const linkedQuestionRows = plan.questions.filter((question) => Boolean(question.row.draftId));
@@ -1003,11 +1110,13 @@ export class QuestionImportService {
       plan.questions.forEach((question) => addUnique(question.row.errors, "批次草稿状态不完整，请重新导入原文件"));
     }
     const summary = reportSummary(plan.rows);
-    if (summary.errorRows || linkedQuestionRows.length === plan.questions.length) return this.updateValidationReport(id, plan);
+    if (summary.errorRows || linkedQuestionRows.length === plan.questions.length) {
+      return this.updateValidationReport(id, plan, { status: batch.status, revision: batch.revision });
+    }
     try {
       return await this.materializeBatch(actorId, id, plan, requestId);
     } catch (error) {
-      return this.markMaterializationFailure(id, plan, error);
+      return this.markMaterializationFailure(id, plan, error, { status: batch.status, revision: batch.revision });
     }
   }
 
@@ -1051,10 +1160,10 @@ export class QuestionImportService {
     return this.getBatch(id);
   }
 
-  async reviewBatch(adminUserId: string, id: string, decision: "APPROVED" | "REJECTED", comment?: string, requestId?: string) {
+  async reviewBatch(adminUserId: string, id: string, decision: "APPROVED" | "REJECTED", comment?: string, requestId?: string, context: AdminReviewContext = {}) {
     const batch = await this.getBatch(id);
     if (batch.status !== "IN_REVIEW") throw new AppError("导入批次不在复核状态", "IMPORT_NOT_IN_REVIEW", 409);
-    if (batch.submittedById === adminUserId) throw new AppError("提交人不能复核自己的导入批次", "SELF_REVIEW_FORBIDDEN", 403);
+    const review = await this.bank.reviewMetadata(adminUserId, batch.submittedById, decision, context);
     if (!batch.contentHash) throw new AppError("导入批次缺少冻结哈希", "IMPORT_BATCH_HASH_MISSING", 409);
     const contentHash = importBatchContentHash(batch.sourceHash, batch.rows);
     if (contentHash !== batch.contentHash) throw new AppError("导入批次冻结内容校验失败", "IMPORT_BATCH_HASH_MISMATCH", 409);
@@ -1076,8 +1185,51 @@ export class QuestionImportService {
         data: { status: decision, revision: { increment: 1 } }
       });
       if (claimedBatch.count !== 1) throw new AppError("导入批次已被其他复核者处理", "IMPORT_BATCH_REVIEW_CONFLICT", 409);
-      await tx.importBatchReview.create({ data: { batchId: id, reviewerId: adminUserId, decision, contentHash, comment: comment?.normalize("NFKC").trim() || null } });
-      await tx.adminAuditLog.create({ data: this.auditData(adminUserId, `import.review.${decision.toLowerCase()}`, "question_import_batch", id, { status: batch.status, contentHash }, { status: decision, draftIds, contentHash }, requestId) });
+      await tx.importBatchReview.create({ data: { batchId: id, reviewerId: adminUserId, decision, contentHash, comment: comment?.normalize("NFKC").trim() || null, ...review } });
+      await tx.adminAuditLog.create({ data: this.auditData(adminUserId, `import.review.${decision.toLowerCase()}`, "question_import_batch", id, { status: batch.status, contentHash }, { status: decision, draftIds, contentHash, reviewMode: review.reviewMode, selfReviewNote: review.selfReviewNote }, requestId) });
+    });
+    return {
+      ...(await this.getBatch(id)),
+      reviewMode: review.reviewMode,
+      selfReviewNote: review.selfReviewNote,
+      checklist: review.checklist
+    };
+  }
+
+  async withdrawBatch(adminUserId: string, id: string, requestId?: string) {
+    const batch = await this.getBatch(id);
+    if ((batch.status !== "IN_REVIEW" && batch.status !== "APPROVED") || batch.submittedById !== adminUserId) {
+      throw new AppError("只能撤回自己待复核或已批准且尚未发布的导入批次", "IMPORT_BATCH_NOT_WITHDRAWABLE", 409);
+    }
+    const withdrawStatus: "IN_REVIEW" | "APPROVED" = batch.status;
+    const draftIds = Array.from(new Set(batch.rows.map((row) => row.draftId).filter((draftId): draftId is string => Boolean(draftId))));
+    await this.prisma.$transaction(async (tx) => {
+      if (draftIds.length) {
+        const claimedDrafts = await tx.questionDraft.updateMany({
+          where: { id: { in: draftIds }, status: withdrawStatus, submittedById: adminUserId },
+          data: {
+            status: "DRAFT",
+            submittedById: null,
+            submittedAt: null,
+            warningsAcknowledgedAt: null,
+            revision: { increment: 1 }
+          }
+        });
+        if (claimedDrafts.count !== draftIds.length) throw new AppError("批次题目撤回时发生变化", "IMPORT_BATCH_WITHDRAW_CONFLICT", 409);
+      }
+      const claimedBatch = await tx.questionImportBatch.updateMany({
+        where: { id, status: withdrawStatus, revision: batch.revision, submittedById: adminUserId },
+        data: {
+          status: "VALID",
+          contentHash: null,
+          submittedById: null,
+          submittedAt: null,
+          warningsAcknowledgedAt: null,
+          revision: { increment: 1 }
+        }
+      });
+      if (claimedBatch.count !== 1) throw new AppError("导入批次撤回时发生变化", "IMPORT_BATCH_WITHDRAW_CONFLICT", 409);
+      await tx.adminAuditLog.create({ data: this.auditData(adminUserId, "import.withdraw", "question_import_batch", id, { status: batch.status }, { status: "VALID", draftIds }, requestId) });
     });
     return this.getBatch(id);
   }

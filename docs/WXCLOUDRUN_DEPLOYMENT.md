@@ -53,8 +53,8 @@ QUIZIJIE_SEED_ON_EMPTY=true
 2. 新建第一阶段版本，构建目录使用仓库根目录、Dockerfile 使用根目录的 `Dockerfile`，监听端口为 `3000`，并设置 `ADMIN_ENABLED=false`。
 3. 部署第一阶段版本。启动期间允许 `/health=200`，但 `/ready`、业务 API 和 `/admin/` 必须保持 `503`；只有日志确认 MySQL 迁移、基线检查和系统回填全部成功后，`/ready` 才应返回 `200` 且 `database=ok`。
 4. 在第一阶段执行登录、目录、随机练习、错题、收藏、408 和积分的现有业务冒烟；失败时回滚应用版本，不启用管理后台。
-5. 配齐稳定的 `ADMIN_ENCRYPTION_KEY`、私有 COS 桶、最小权限凭据和至少两个独立管理员后，新建第二阶段版本并设置 `ADMIN_ENABLED=true`。
-6. 部署第二阶段版本，再次等待 `/ready=200/database ok`，随后验证 `/admin/` 登录、对象回读、基线快照和跨人复核发布流程。
+5. 配齐稳定的 `ADMIN_ENCRYPTION_KEY`、私有 COS 桶和最小权限凭据后，新建第二阶段版本并设置 `ADMIN_ENABLED=true`。单管理员运营同时设置 `ADMIN_REVIEW_POLICY=single-owner` 和一次性 `ADMIN_BOOTSTRAP_TOKEN_HASH`；双人运营保留默认 `two-person`。
+6. 部署第二阶段版本，再次等待 `/ready=200/database ok`。首次建号从 `/admin/setup` 完成，随后删除启动令牌哈希；验证 `/admin/` 登录、对象回读、基线快照、自检或独立复核以及 TOTP 发布/回滚流程。
 
 ## MySQL 备份与恢复
 

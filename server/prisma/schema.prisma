@@ -58,6 +58,11 @@ enum ReviewDecision {
   REJECTED
 }
 
+enum ReviewMode {
+  INDEPENDENT
+  SELF_APPROVED
+}
+
 enum ImportBatchStatus {
   STAGING
   VALID
@@ -547,6 +552,7 @@ model AdminUser {
   publishedReleases      QuestionRelease[]     @relation("ReleasePublishedBy")
   assets                 MediaAsset[]
   auditLogs              AdminAuditLog[]
+  bootstrapState         AdminBootstrapState?
 
   @@map("admin_users")
 }
@@ -558,6 +564,8 @@ model AdminSession {
   csrfTokenHash String    @map("csrf_token_hash") @db.Char(64)
   expiresAt     DateTime  @map("expires_at")
   revokedAt     DateTime? @map("revoked_at")
+  stepUpFailedCount Int   @default(0) @map("step_up_failed_count")
+  stepUpLockedUntil DateTime? @map("step_up_locked_until")
   ipHash        String?   @map("ip_hash") @db.Char(64)
   userAgent     String?   @map("user_agent") @db.VarChar(255)
   createdAt     DateTime  @default(now()) @map("created_at")
@@ -565,6 +573,15 @@ model AdminSession {
 
   @@index([adminUserId, expiresAt])
   @@map("admin_sessions")
+}
+
+model AdminBootstrapState {
+  id          Int       @id
+  adminUserId String    @unique @map("admin_user_id") @db.Char(36)
+  completedAt DateTime  @default(now()) @map("completed_at")
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Restrict)
+
+  @@map("admin_bootstrap_state")
 }
 
 model QuestionDraft {
@@ -619,6 +636,9 @@ model DraftReview {
   reviewerId String         @map("reviewer_id") @db.Char(36)
   decision   ReviewDecision
   comment    String?        @db.Text
+  reviewMode ReviewMode     @default(INDEPENDENT) @map("review_mode")
+  checklist  Json?
+  selfReviewNote String?    @map("self_review_note") @db.Text
   createdAt  DateTime       @default(now()) @map("created_at")
   draft      QuestionDraft  @relation(fields: [draftId], references: [id], onDelete: Cascade)
   reviewer   AdminUser      @relation(fields: [reviewerId], references: [id], onDelete: Restrict)
@@ -662,6 +682,9 @@ model CatalogDraftReview {
   decision       ReviewDecision
   contentHash    String         @map("content_hash") @db.Char(64)
   comment        String?        @db.Text
+  reviewMode     ReviewMode     @default(INDEPENDENT) @map("review_mode")
+  checklist      Json?
+  selfReviewNote String?        @map("self_review_note") @db.Text
   createdAt      DateTime       @default(now()) @map("created_at")
   catalogDraft   CatalogDraft   @relation(fields: [catalogDraftId], references: [id], onDelete: Cascade)
   reviewer       AdminUser      @relation(fields: [reviewerId], references: [id], onDelete: Restrict)
@@ -708,6 +731,9 @@ model ImportBatchReview {
   decision    ReviewDecision
   contentHash String              @map("content_hash") @db.Char(64)
   comment     String?             @db.Text
+  reviewMode  ReviewMode          @default(INDEPENDENT) @map("review_mode")
+  checklist   Json?
+  selfReviewNote String?          @map("self_review_note") @db.Text
   createdAt   DateTime            @default(now()) @map("created_at")
   batch       QuestionImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
   reviewer    AdminUser           @relation(fields: [reviewerId], references: [id], onDelete: Restrict)

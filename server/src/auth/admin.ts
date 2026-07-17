@@ -114,6 +114,13 @@ export function sha256(value: string | Buffer): string {
   return createHash("sha256").update(value).digest("hex");
 }
 
+export function verifySha256Secret(value: string, expectedHash: string): boolean {
+  if (!expectedHash || !/^[a-f0-9]{64}$/i.test(expectedHash)) return false;
+  const actual = Buffer.from(sha256(value), "hex");
+  const expected = Buffer.from(expectedHash, "hex");
+  return actual.length === expected.length && timingSafeEqual(actual, expected);
+}
+
 export function randomSessionToken(bytes = 48): string {
   return randomBytes(bytes).toString("base64url");
 }

@@ -44,6 +44,89 @@ function authorization(accessToken: string) {
   return { authorization: `Bearer ${accessToken}` };
 }
 
+type AdminReleaseInput = {
+  name: string;
+  draftIds: string[];
+  catalogDraftId?: string;
+  importBatchIds?: string[];
+};
+
+async function getReleasePreview(adminApp: FastifyInstance, headers: Record<string, string>, input: AdminReleaseInput) {
+  const response = await adminApp.inject({
+    method: "POST",
+    url: "/api/v1/admin/releases/preview",
+    headers,
+    payload: input
+  });
+  assert.equal(response.statusCode, 200, response.body);
+  return response.json().data as {
+    candidateHash: string;
+    confirmationText: string;
+    summary: {
+      added: number;
+      revised: number;
+      disabled: number;
+      catalogChanged: boolean;
+      catalogSubjectChanges: number;
+      catalogChapterChanges: number;
+      importBatchCount: number;
+      qualityWarningCount: number;
+    };
+  };
+}
+
+async function publishConfirmed(
+  adminApp: FastifyInstance,
+  headers: Record<string, string>,
+  secret: string,
+  input: AdminReleaseInput,
+  preview?: Awaited<ReturnType<typeof getReleasePreview>>
+) {
+  const confirmedPreview = preview || await getReleasePreview(adminApp, headers, input);
+  return adminApp.inject({
+    method: "POST",
+    url: "/api/v1/admin/releases",
+    headers,
+    payload: {
+      ...input,
+      candidateHash: confirmedPreview.candidateHash,
+      confirmationText: confirmedPreview.confirmationText,
+      confirmationTotp: createTotpToken(secret)
+    }
+  });
+}
+
+async function getRollbackPreview(adminApp: FastifyInstance, headers: Record<string, string>, releaseId: string) {
+  const response = await adminApp.inject({
+    method: "POST",
+    url: `/api/v1/admin/releases/${releaseId}/rollback/preview`,
+    headers,
+    payload: {}
+  });
+  assert.equal(response.statusCode, 200, response.body);
+  return response.json().data as { candidateHash: string; confirmationText: string };
+}
+
+async function rollbackConfirmed(
+  adminApp: FastifyInstance,
+  headers: Record<string, string>,
+  secret: string,
+  releaseId: string,
+  preview?: Awaited<ReturnType<typeof getRollbackPreview>>
+) {
+  const confirmedPreview = preview || await getRollbackPreview(adminApp, headers, releaseId);
+  return adminApp.inject({
+    method: "POST",
+    url: `/api/v1/admin/releases/${releaseId}/rollback`,
+    headers,
+    payload: {
+      candidateHash: confirmedPreview.candidateHash,
+      confirmationText: confirmedPreview.confirmationText,
+      confirmationTotp: createTotpToken(secret)
+    }
+  });
+}
+
 before(async () => {
   const testUrl = process.env.TEST_DATABASE_URL;
   if (!testUrl) throw new Error("缺少 TEST_DATABASE_URL");
@@ -150,6 +233,10 @@ describe("真实 MySQL API 闭环", () => {
       const adminPage = await adminApp.inject({ method: "GET", url: "/admin/" });
       assert.equal(adminPage.statusCode, 200, adminPage.body);
       assert.match(adminPage.headers["content-type"] || "", /text\/html/);
+      assert.equal(adminPage.headers["cache-control"], "no-store");
+      assert.equal(adminPage.headers["x-frame-options"], "DENY");
+      assert.match(adminPage.headers["content-security-policy"] || "", /frame-ancestors 'none'/);
+      assert.match(adminPage.headers["content-security-policy"] || "", /base-uri 'none'/);
       const assetPath = adminPage.body.match(/(?:src|href)="(\/admin\/assets\/[^"]+)"/)?.[1];
       assert.ok(assetPath);
       assert.equal((await adminApp.inject({ method: "GET", url: assetPath })).statusCode, 200);
@@ -241,10 +328,10 @@ describe("真实 MySQL API 闭环", () => {
         payload: { name: "forbidden catalog publish", draftIds: [], catalogDraftId: catalogDraft.id }
       });
       assert.equal(forbiddenCatalogPublish.statusCode, 403, forbiddenCatalogPublish.body);
-      const initialCatalogRelease = await adminApp.inject({
-        method: "POST", url: "/api/v1/admin/releases", headers: ownerHeaders,
-        payload: { name: "integration catalog addition", draftIds: [], catalogDraftId: catalogDraft.id }
-      });
+      const initialCatalogInput = { name: "integration catalog addition", draftIds: [], catalogDraftId: catalogDraft.id };
+      const initialCatalogPreview = await getReleasePreview(adminApp, ownerHeaders, initialCatalogInput);
+      assert.equal(initialCatalogPreview.summary.catalogChanged, true);
+      const initialCatalogRelease = await publishConfirmed(adminApp, ownerHeaders, ownerSecret, initialCatalogInput, initialCatalogPreview);
       assert.equal(initialCatalogRelease.statusCode, 200, initialCatalogRelease.body);
       assert.equal(initialCatalogRelease.json().data.questionCount, activeQuestionCountBefore);
       const catalogAfterInitialRelease = await adminApp.inject({ method: "GET", url: "/api/v1/catalog" });
@@ -278,28 +365,38 @@ describe("真实 MySQL API 闭环", () => {
               {
                 rowNumber: 2,
                 entityType: "subject",
-                rawData: { subject_id: subjectId },
+                rawData: { subject_id: subjectId, name: "Imported candidate name", short_name: "Candidate", color: "#7c3aed", description: "Published only with the complete import batch", quality_policy_json: "" },
                 normalizedData: { id: subjectId, name: "Imported candidate name", shortName: "Candidate", color: "#7c3aed", description: "Published only with the complete import batch" },
                 errors: [], warnings: []
               },
               {
                 rowNumber: 2,
                 entityType: "chapter",
-                rawData: { chapter_id: chapterId },
+                rawData: { chapter_id: chapterId, subject_id: subjectId, name: "Imported candidate chapter", description: "" },
                 normalizedData: { id: chapterId, subjectId, name: "Imported candidate chapter", description: null },
                 errors: [], warnings: []
               },
               {
                 rowNumber: 2,
                 entityType: "question",
-                rawData: { external_code: `QA-FILL-${suffix}` },
+                rawData: {
+                  question_id: "", external_code: `QA-FILL-${suffix}`, subject_id: subjectId, chapter_id: chapterId,
+                  type: "fill_blank", stem: "What is the default HTTP port?", code: "", explanation: "The default port for plain HTTP traffic is port 80.", difficulty: "1",
+                  tags: "network", exam_scopes: "", correct_option_ids: "", accepted_answers_json: "[[\"80\"]]",
+                  case_sensitive: "no", punctuation_sensitive: "no", reference_answer: "", images_json: "[]"
+                },
                 normalizedData: { questionId: fillDraftResponse.json().data.questionId },
                 errors: [], warnings: [], draftId: draftIds[0]
               },
               {
                 rowNumber: 3,
                 entityType: "question",
-                rawData: { external_code: `QA-SHORT-${suffix}` },
+                rawData: {
+                  question_id: "", external_code: `QA-SHORT-${suffix}`, subject_id: subjectId, chapter_id: chapterId,
+                  type: "short_answer", stem: "Why is release rollback useful?", code: "", explanation: "Rollback restores a verified question-bank version while preserving release history.", difficulty: "2",
+                  tags: "release", exam_scopes: "", correct_option_ids: "", accepted_answers_json: "[]",
+                  case_sensitive: "no", punctuation_sensitive: "no", reference_answer: "Restore a verified version while retaining the immutable release history.", images_json: "[]"
+                },
                 normalizedData: { questionId: shortDraftResponse.json().data.questionId },
                 errors: [], warnings: [], draftId: draftIds[1]
               }
@@ -334,7 +431,7 @@ describe("真实 MySQL API 闭环", () => {
       assert.equal(await prisma.questionDraft.count({ where: { id: { in: draftIds }, status: "APPROVED" } }), 2);
       const subjectBeforePartialRelease = await prisma.subject.findUniqueOrThrow({ where: { id: subjectId } });
       const partialImportRelease = await adminApp.inject({
-        method: "POST", url: "/api/v1/admin/releases", headers: ownerHeaders,
+        method: "POST", url: "/api/v1/admin/releases/preview", headers: ownerHeaders,
         payload: { name: "partial import must fail", draftIds: [draftIds[0]] }
       });
       assert.equal(partialImportRelease.statusCode, 409, partialImportRelease.body);
@@ -344,9 +441,26 @@ describe("真实 MySQL API 闭环", () => {
         method: "POST", url: "/api/v1/admin/releases", headers: reviewerHeaders, payload: { name: "越权发布", draftIds }
       });
       assert.equal(forbiddenPublish.statusCode, 403);
-      const published = await adminApp.inject({
-        method: "POST", url: "/api/v1/admin/releases", headers: ownerHeaders, payload: { name: "集成测试小批次", draftIds }
+      const publishInput = { name: "集成测试小批次", draftIds };
+      const publishPreview = await getReleasePreview(adminApp, ownerHeaders, publishInput);
+      assert.equal(publishPreview.summary.catalogChanged, true);
+      assert.equal(publishPreview.summary.catalogSubjectChanges, 1);
+      assert.equal(publishPreview.summary.catalogChapterChanges, 1);
+      assert.equal(publishPreview.summary.importBatchCount, 1);
+      const staleCandidate = await adminApp.inject({
+        method: "POST",
+        url: "/api/v1/admin/releases",
+        headers: ownerHeaders,
+        payload: {
+          ...publishInput,
+          candidateHash: "0".repeat(64),
+          confirmationText: publishPreview.confirmationText,
+          confirmationTotp: createTotpToken(ownerSecret)
+        }
       });
+      assert.equal(staleCandidate.statusCode, 409, staleCandidate.body);
+      assert.equal(staleCandidate.json().code, "RELEASE_CANDIDATE_STALE");
+      const published = await publishConfirmed(adminApp, ownerHeaders, ownerSecret, publishInput, publishPreview);
       assert.equal(published.statusCode, 200, published.body);
       assert.equal(published.json().data.questionCount, activeQuestionCountBefore + 2);
       assert.match(published.json().data.snapshotHash, /^[a-f0-9]{64}$/);
@@ -393,10 +507,12 @@ describe("真实 MySQL API 闭环", () => {
         payload: { decision: "APPROVED", comment: "directory-only workbook approved" }
       });
       assert.equal(reviewedDirectoryBatch.statusCode, 200, reviewedDirectoryBatch.body);
-      const directoryOnlyRelease = await adminApp.inject({
-        method: "POST", url: "/api/v1/admin/releases", headers: ownerHeaders,
-        payload: { name: "directory-only import release", draftIds: [], importBatchIds: [directoryOnlyBatch.id] }
-      });
+      const directoryOnlyInput = { name: "directory-only import release", draftIds: [], importBatchIds: [directoryOnlyBatch.id] };
+      const directoryOnlyPreview = await getReleasePreview(adminApp, ownerHeaders, directoryOnlyInput);
+      assert.equal(directoryOnlyPreview.summary.catalogChanged, true);
+      assert.equal(directoryOnlyPreview.summary.catalogSubjectChanges, 1);
+      assert.equal(directoryOnlyPreview.summary.catalogChapterChanges, 0);
+      const directoryOnlyRelease = await publishConfirmed(adminApp, ownerHeaders, ownerSecret, directoryOnlyInput, directoryOnlyPreview);
       assert.equal(directoryOnlyRelease.statusCode, 200, directoryOnlyRelease.body);
       assert.equal(directoryOnlyRelease.json().data.questionCount, activeQuestionCountBefore + 2);
       assert.equal(directoryOnlyRelease.json().data.verificationStatus, "PASSED");
@@ -446,12 +562,8 @@ describe("真实 MySQL API 闭环", () => {
         payload: { decision: "APPROVED", comment: "catalog rename approved" }
       });
       assert.equal(reviewedRenameDraft.statusCode, 200, reviewedRenameDraft.body);
-      const catalogRelease = await adminApp.inject({
-        method: "POST",
-        url: "/api/v1/admin/releases",
-        headers: ownerHeaders,
-        payload: { name: "目录配置发布", draftIds: [], catalogDraftId: renameDraft.id }
-      });
+      const catalogReleaseInput = { name: "目录配置发布", draftIds: [], catalogDraftId: renameDraft.id };
+      const catalogRelease = await publishConfirmed(adminApp, ownerHeaders, ownerSecret, catalogReleaseInput);
       assert.equal(catalogRelease.statusCode, 200, catalogRelease.body);
       const afterCatalogRelease = await adminApp.inject({ method: "GET", url: "/api/v1/catalog" });
       assert.equal(afterCatalogRelease.statusCode, 200, afterCatalogRelease.body);
@@ -468,12 +580,33 @@ describe("真实 MySQL API 闭环", () => {
       assert.equal(afterBootstrapSubject.name, "Integration quality (published)");
       const noChangeRelease = await adminApp.inject({
         method: "POST",
-        url: "/api/v1/admin/releases",
+        url: "/api/v1/admin/releases/preview",
         headers: ownerHeaders,
         payload: { name: "无变更目录发布", draftIds: [] }
       });
       assert.equal(noChangeRelease.statusCode, 409, noChangeRelease.body);
       assert.equal(noChangeRelease.json().code, "RELEASE_NO_CHANGES");
+
+      const frozenDraftResponse = await createDraft({
+        externalCode: `QA-FROZEN-${suffix}`,
+        subjectId,
+        chapterId,
+        type: "SINGLE",
+        stem: "Which release gate prevents publishing after failed verification?",
+        explanation: "A frozen catalog blocks subsequent releases until verification recovers.",
+        difficulty: 2,
+        tags: ["release-gate"],
+        images: [],
+        examScopes: [],
+        options: [{ id: "A", label: "A", text: "publishFrozen" }, { id: "B", label: "B", text: "pageSize" }],
+        correctOptionIds: ["A"]
+      });
+      assert.equal(frozenDraftResponse.statusCode, 200, frozenDraftResponse.body);
+      const frozenDraftId = frozenDraftResponse.json().data.id as string;
+      assert.equal((await adminApp.inject({ method: "POST", url: `/api/v1/admin/drafts/${frozenDraftId}/submit`, headers: ownerHeaders, payload: { acknowledgeWarnings: true } })).statusCode, 200);
+      assert.equal((await adminApp.inject({ method: "POST", url: `/api/v1/admin/drafts/${frozenDraftId}/review`, headers: reviewerHeaders, payload: { decision: "APPROVED" } })).statusCode, 200);
+      const frozenInput = { name: "frozen publish must fail", draftIds: [frozenDraftId] };
+      const frozenPreview = await getReleasePreview(adminApp, ownerHeaders, frozenInput);
 
       const currentSnapshotPath = resolve(adminConfig.questionBankStorageDir, catalogRelease.json().data.snapshotKey as string);
       const currentSnapshot = await readFile(currentSnapshotPath);
@@ -487,10 +620,7 @@ describe("真实 MySQL API 闭环", () => {
       assert.equal(failedVerification.statusCode, 503, failedVerification.body);
       assert.equal(failedVerification.json().code, "RELEASE_VERIFICATION_FAILED");
       assert.equal((await prisma.catalogState.findUniqueOrThrow({ where: { id: 1 } })).publishFrozen, true);
-      const frozenPublish = await adminApp.inject({
-        method: "POST", url: "/api/v1/admin/releases", headers: ownerHeaders,
-        payload: { name: "frozen publish must fail", draftIds: [] }
-      });
+      const frozenPublish = await publishConfirmed(adminApp, ownerHeaders, ownerSecret, frozenInput, frozenPreview);
       assert.equal(frozenPublish.statusCode, 409, frozenPublish.body);
       assert.equal(frozenPublish.json().code, "RELEASE_PUBLISH_FROZEN");
       await writeFile(currentSnapshotPath, currentSnapshot);
@@ -558,16 +688,13 @@ describe("真实 MySQL API 闭环", () => {
       const snapshotPath = resolve(adminConfig.questionBankStorageDir, snapshotKey);
       const originalSnapshot = await readFile(snapshotPath);
       await writeFile(snapshotPath, Buffer.concat([originalSnapshot, Buffer.from(" ")]));
-      const tamperedRollback = await adminApp.inject({
-        method: "POST", url: `/api/v1/admin/releases/${published.json().data.id}/rollback`, headers: ownerHeaders, payload: {}
-      });
+      const tamperedRollbackPreview = await getRollbackPreview(adminApp, ownerHeaders, published.json().data.id);
+      const tamperedRollback = await rollbackConfirmed(adminApp, ownerHeaders, ownerSecret, published.json().data.id, tamperedRollbackPreview);
       assert.equal(tamperedRollback.statusCode, 409, tamperedRollback.body);
       assert.equal(tamperedRollback.json().code, "ROLLBACK_SNAPSHOT_HASH_MISMATCH");
       await writeFile(snapshotPath, originalSnapshot);
 
-      const rolledBack = await adminApp.inject({
-        method: "POST", url: `/api/v1/admin/releases/${published.json().data.id}/rollback`, headers: ownerHeaders, payload: {}
-      });
+      const rolledBack = await rollbackConfirmed(adminApp, ownerHeaders, ownerSecret, published.json().data.id);
       assert.equal(rolledBack.statusCode, 200, rolledBack.body);
       assert.equal(rolledBack.json().data.kind, "ROLLBACK");
       assert.equal(await prisma.adminAuditLog.count({ where: { adminUserId: owner.id } }) > 0, true);
@@ -1467,24 +1594,15 @@ describe("真实 MySQL API 闭环", () => {
       assert.equal(reviewed.statusCode, 200, reviewed.body);
       assert.equal(reviewed.json().data.status, "APPROVED");
 
-      const published = await adminApp.inject({
-        method: "POST",
-        url: "/api/v1/admin/releases",
-        headers: ownerHeaders,
-        payload: { name: "开放资料原创题库 2026-07-17", draftIds: [], importBatchIds: [importedBatch.id] }
-      });
+      const openBatchInput = { name: "开放资料原创题库 2026-07-17", draftIds: [], importBatchIds: [importedBatch.id] };
+      const published = await publishConfirmed(adminApp, ownerHeaders, ownerSecret, openBatchInput);
       assert.equal(published.statusCode, 200, published.body);
       assert.equal(published.json().data.questionCount, activeQuestionCountBefore + 350);
       assert.equal(published.json().data.verificationStatus, "PASSED");
       assert.match(published.json().data.snapshotHash, /^[a-f0-9]{64}$/);
       assert.equal(await prisma.question.count({ where: { externalCode: { startsWith: "WEB-20260717-" }, status: "ACTIVE" } }), 350);
 
-      const rolledBack = await adminApp.inject({
-        method: "POST",
-        url: `/api/v1/admin/releases/${activeReleaseIdBefore}/rollback`,
-        headers: ownerHeaders,
-        payload: {}
-      });
+      const rolledBack = await rollbackConfirmed(adminApp, ownerHeaders, ownerSecret, activeReleaseIdBefore);
       assert.equal(rolledBack.statusCode, 200, rolledBack.body);
       assert.equal(rolledBack.json().data.kind, "ROLLBACK");
       assert.equal(await prisma.question.count({ where: { status: "ACTIVE" } }), activeQuestionCountBefore);

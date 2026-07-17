@@ -31,7 +31,7 @@ npm run check:release
 1. 第一阶段设置 `ADMIN_ENABLED=false`，部署包含向后兼容 MySQL 迁移的新后端。
 2. 云托管存活探针使用 `/health`，就绪探针或流量健康检查必须使用 `/ready`。启动期间 `/health=200` 仅说明进程存活；`/ready` 以及所有业务、管理后台接口返回 `503 SERVICE_BOOTSTRAPPING` 是预期行为。
 3. 等待 `/ready=200/database ok`，确认迁移、题库基线检查和系统回填全部完成，再验证 `/api/v1/catalog`、登录、随机练习、填空/简答、408、错题、收藏和积分。
-4. 配齐稳定的 `ADMIN_ENCRYPTION_KEY`、私有 COS 桶、最小权限凭据和至少两个独立管理员后，第二阶段设置 `ADMIN_ENABLED=true` 并部署；再次等待 `/ready=200/database ok` 后验证 `/admin/`。
+4. 配齐稳定的 `ADMIN_ENCRYPTION_KEY`、私有 COS 桶、最小权限凭据和 `ADMIN_REVIEW_POLICY` 后，第二阶段设置 `ADMIN_ENABLED=true` 并部署；单管理员首次通过一次性 `/admin/setup` 建号并删除启动令牌哈希，再等待 `/ready=200/database ok` 并验证 `/admin/`。
 5. 第一次启用题库后台时只发布一个小型测试批次，核对快照 SHA-256 和对象回读。
 6. 观察日志中的 API 5xx、迁移错误、缺少当前题目版本、对象上传失败和容器重启。
 

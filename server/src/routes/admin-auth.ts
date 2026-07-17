@@ -1,14 +1,22 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from "fastify";
 import type { AppConfig } from "../config.js";
 import type { DatabaseClient } from "../db.js";
+import { Prisma } from "../generated/prisma/client.js";
+import QRCode from "qrcode";
 import { AppError } from "../errors.js";
 import {
+  ADMIN_ROLES,
   decryptAdminSecret,
+  encryptAdminSecret,
+  generateTotpSecret,
+  hashAdminPassword,
   normalizeAdminRoles,
   normalizeAdminUsername,
   randomSessionToken,
   sha256,
+  totpProvisioningUri,
   verifyAdminPassword,
+  verifySha256Secret,
   verifyTotp,
   type AdminRole
 } from "../auth/admin.js";
@@ -69,8 +77,31 @@ export async function recordFailedAdminLogin(prisma: DatabaseClient, adminUserId
   throw new AppError("登录安全状态更新冲突，请稍后重试", "ADMIN_LOGIN_STATE_CONFLICT", 503);
 }
 
+export async function recordFailedAdminStepUp(prisma: DatabaseClient, sessionId: string, now = new Date()): Promise<void> {
+  for (let attempt = 0; attempt < 32; attempt += 1) {
+    const current = await prisma.adminSession.findUnique({
+      where: { id: sessionId },
+      select: { revokedAt: true, stepUpFailedCount: true }
+    });
+    if (!current || current.revokedAt) return;
+    const revoke = current.stepUpFailedCount + 1 >= 5;
+    const updated = await prisma.adminSession.updateMany({
+      where: { id: sessionId, revokedAt: null, stepUpFailedCount: current.stepUpFailedCount },
+      data: {
+        stepUpFailedCount: revoke ? 0 : { increment: 1 },
+        stepUpLockedUntil: revoke ? new Date(now.getTime() + 15 * 60_000) : null,
+        ...(revoke ? { revokedAt: now } : {})
+      }
+    });
+    if (updated.count === 1) return;
+  }
+  throw new AppError("二次验证安全状态更新冲突，请稍后重试", "ADMIN_STEP_UP_STATE_CONFLICT", 503);
+}
+
 export class AdminSecurity {
   constructor(private readonly prisma: DatabaseClient, private readonly config: AppConfig) {}
+
+  get reviewPolicy() { return this.config.adminReviewPolicy; }
 
   authenticate = async (request: FastifyRequest, _reply: FastifyReply): Promise<void> => {
     if (!this.config.adminEnabled) throw new AppError("管理后台未启用", "ADMIN_DISABLED", 404);
@@ -100,6 +131,33 @@ export class AdminSecurity {
       }
     };
   }
+
+  async verifyStepUp(request: FastifyRequest, token: string): Promise<void> {
+    const sessionId = request.adminUser?.sessionId;
+    if (!sessionId) throw new AppError("管理员登录已失效", "ADMIN_UNAUTHORIZED", 401);
+    const session = await this.prisma.adminSession.findUnique({
+      where: { id: sessionId },
+      include: { adminUser: true }
+    });
+    const now = new Date();
+    if (!session || session.revokedAt || session.expiresAt <= now || session.stepUpLockedUntil && session.stepUpLockedUntil > now) {
+      throw new AppError("管理员登录已失效", "ADMIN_UNAUTHORIZED", 401);
+    }
+    let verified = false;
+    try {
+      verified = verifyTotp(decryptAdminSecret(session.adminUser.totpSecretEncrypted, this.config.adminEncryptionKey), token);
+    } catch {
+      verified = false;
+    }
+    if (!verified) {
+      await recordFailedAdminStepUp(this.prisma, session.id, now);
+      throw new AppError("动态验证码不正确", "ADMIN_STEP_UP_FAILED", 401);
+    }
+    await this.prisma.adminSession.updateMany({
+      where: { id: session.id, revokedAt: null },
+      data: { stepUpFailedCount: 0, stepUpLockedUntil: null }
+    });
+  }
 }
 
 function setSessionCookie(reply: FastifyReply, config: AppConfig, token: string): void {
@@ -118,6 +176,133 @@ export function registerAdminAuthRoutes(
   config: AppConfig,
   security: AdminSecurity
 ): void {
+  const ensureSetupAvailable = async (): Promise<void> => {
+    const [administratorCount, bootstrapStateCount] = await Promise.all([
+      prisma.adminUser.count(),
+      prisma.adminBootstrapState.count()
+    ]);
+    if (!config.adminBootstrapTokenHash || administratorCount > 0 || bootstrapStateCount > 0) {
+      throw new AppError("初始化入口不存在", "NOT_FOUND", 404);
+    }
+  };
+
+  const verifyBootstrapToken = (token: string): void => {
+    if (!verifySha256Secret(token, config.adminBootstrapTokenHash)) {
+      throw new AppError("初始化凭据无效", "ADMIN_BOOTSTRAP_TOKEN_INVALID", 401);
+    }
+  };
+
+  app.get("/api/v1/admin/setup/status", async () => {
+    await ensureSetupAvailable();
+    return { data: { available: true } };
+  });
+
+  app.post<{ Body: { bootstrapToken: string; username?: string } }>("/api/v1/admin/setup/prepare", {
+    config: { rateLimit: { max: 5, timeWindow: "10 minutes" } },
+    schema: {
+      body: {
+        type: "object", additionalProperties: false, required: ["bootstrapToken"],
+        properties: {
+          bootstrapToken: { type: "string", minLength: 32, maxLength: 512 },
+          username: { type: "string", minLength: 3, maxLength: 63, pattern: "^[A-Za-z0-9][A-Za-z0-9._-]{2,62}$" }
+        }
+      }
+    }
+  }, async (request) => {
+    await ensureSetupAvailable();
+    verifyBootstrapToken(request.body.bootstrapToken);
+    const secret = generateTotpSecret();
+    const expiresAt = new Date(Date.now() + 10 * 60_000);
+    const setupToken = encryptAdminSecret(JSON.stringify({ version: 1, secret, expiresAt: expiresAt.toISOString() }), config.adminEncryptionKey);
+    let totpUsername = "owner";
+    if (request.body.username) {
+      try { totpUsername = normalizeAdminUsername(request.body.username); }
+      catch { throw new AppError("管理员用户名格式无效", "ADMIN_USERNAME_INVALID", 400); }
+    }
+    const totpUri = totpProvisioningUri(totpUsername, secret);
+    return {
+      data: {
+        setupToken,
+        totpSecret: secret,
+        totpUri,
+        qrCodeDataUrl: await QRCode.toDataURL(totpUri, { errorCorrectionLevel: "M", margin: 1, width: 256 }),
+        expiresAt: expiresAt.toISOString()
+      }
+    };
+  });
+
+  app.post<{ Body: { bootstrapToken: string; setupToken: string; username: string; displayName: string; password: string; totp: string } }>("/api/v1/admin/setup/complete", {
+    config: { rateLimit: { max: 5, timeWindow: "10 minutes" } },
+    schema: {
+      body: {
+        type: "object", additionalProperties: false,
+        required: ["bootstrapToken", "setupToken", "username", "displayName", "password", "totp"],
+        properties: {
+          bootstrapToken: { type: "string", minLength: 32, maxLength: 512 },
+          setupToken: { type: "string", minLength: 32, maxLength: 4096 },
+          username: { type: "string", minLength: 3, maxLength: 63, pattern: "^[A-Za-z0-9][A-Za-z0-9._-]{2,62}$" },
+          displayName: { type: "string", minLength: 1, maxLength: 96 },
+          password: { type: "string", minLength: 12, maxLength: 128 },
+          totp: { type: "string", pattern: "^[0-9]{6}$" }
+        }
+      }
+    }
+  }, async (request) => {
+    await ensureSetupAvailable();
+    verifyBootstrapToken(request.body.bootstrapToken);
+    let challenge: { version: number; secret: string; expiresAt: string };
+    try {
+      challenge = JSON.parse(decryptAdminSecret(request.body.setupToken, config.adminEncryptionKey)) as typeof challenge;
+    } catch {
+      throw new AppError("初始化会话无效或已过期", "ADMIN_SETUP_TOKEN_INVALID", 401);
+    }
+    if (challenge.version !== 1 || !challenge.secret || !challenge.expiresAt || new Date(challenge.expiresAt) <= new Date()) {
+      throw new AppError("初始化会话无效或已过期", "ADMIN_SETUP_TOKEN_INVALID", 401);
+    }
+    if (!verifyTotp(challenge.secret, request.body.totp)) {
+      throw new AppError("动态验证码不正确", "ADMIN_SETUP_TOTP_INVALID", 401);
+    }
+    let username: string;
+    try { username = normalizeAdminUsername(request.body.username); }
+    catch { throw new AppError("管理员用户名格式无效", "ADMIN_USERNAME_INVALID", 400); }
+    const displayName = request.body.displayName.normalize("NFKC").trim();
+    if (!displayName) throw new AppError("管理员显示名称不能为空", "ADMIN_DISPLAY_NAME_REQUIRED", 400);
+    const passwordHash = await hashAdminPassword(request.body.password);
+    try {
+      const created = await prisma.$transaction(async (tx) => {
+        if (await tx.adminUser.count() > 0 || await tx.adminBootstrapState.count() > 0) {
+          throw new AppError("初始化入口不存在", "NOT_FOUND", 404);
+        }
+        const user = await tx.adminUser.create({
+          data: {
+            username,
+            displayName,
+            passwordHash,
+            totpSecretEncrypted: encryptAdminSecret(challenge.secret, config.adminEncryptionKey),
+            roles: [...ADMIN_ROLES]
+          }
+        });
+        await tx.adminBootstrapState.create({ data: { id: 1, adminUserId: user.id } });
+        await tx.adminAuditLog.create({
+          data: {
+            adminUserId: user.id,
+            action: "admin.bootstrap.complete",
+            entityType: "admin_user",
+            entityId: user.id,
+            afterState: { username: user.username, roles: user.roles },
+            requestId: request.id
+          }
+        });
+        return user;
+      }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+      return { data: { user: adminView(created), completed: true } };
+    } catch (error) {
+      const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";
+      if (code === "P2002" || code === "P2034") throw new AppError("初始化入口不存在", "NOT_FOUND", 404);
+      throw error;
+    }
+  });
+
   app.post<{ Body: { username: string; password: string; totp: string } }>("/api/v1/admin/auth/login", {
     config: {
       rateLimit: {
@@ -179,7 +364,9 @@ export function registerAdminAuthRoutes(
     return { data: { user: adminView(user), csrfToken, expiresAt: expiresAt.toISOString() } };
   });
 
-  app.get("/api/v1/admin/auth/me", { preHandler: security.authenticate }, async (request) => ({ data: request.adminUser }));
+  app.get("/api/v1/admin/auth/me", { preHandler: security.authenticate }, async (request) => ({
+    data: { ...request.adminUser, user: request.adminUser, reviewPolicy: config.adminReviewPolicy }
+  }));
 
   app.post("/api/v1/admin/auth/logout", { preHandler: security.authenticate }, async (request, reply) => {
     await prisma.adminSession.updateMany({ where: { id: request.adminUser!.sessionId }, data: { revokedAt: new Date() } });
