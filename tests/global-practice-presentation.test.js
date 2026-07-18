@@ -1,5 +1,24 @@
 const assert = require('assert');
-const { decorateGlobalPracticeResult, decorateSubjectPracticeResult } = require('../miniprogram/utils/globalPracticePresentation');
+const {
+  getGlobalPracticePresentation,
+  decorateGlobalPracticeResult,
+  decorateSubjectPracticeResult
+} = require('../miniprogram/utils/globalPracticePresentation');
+
+const favoritePresentation = getGlobalPracticePresentation('favorite');
+assert.strictEqual(favoritePresentation.modeName, '全学科收藏重练');
+assert.strictEqual(favoritePresentation.setupTitle, '全部学科收藏');
+assert.strictEqual(favoritePresentation.allCountLabel, '全部收藏');
+assert.strictEqual(favoritePresentation.resultTitle, '全学科收藏结果');
+assert.strictEqual(favoritePresentation.setupUrl, '/modules/cpp/pages/setup/index?scope=all&mode=favorite');
+
+const wrongPresentation = getGlobalPracticePresentation('wrong');
+assert.strictEqual(wrongPresentation.modeName, '全学科错题重做');
+assert.strictEqual(wrongPresentation.setupTitle, '全部学科未掌握错题');
+assert.strictEqual(wrongPresentation.allCountLabel, '全部未掌握错题');
+assert.strictEqual(wrongPresentation.resultTitle, '全学科错题结果');
+assert.strictEqual(wrongPresentation.setupUrl, '/modules/cpp/pages/setup/index?scope=all&mode=wrong');
+assert.strictEqual(getGlobalPracticePresentation('random'), null);
 
 const subjects = [
   { id: 'cpp', name: 'C/C++', shortName: 'C/C++' },

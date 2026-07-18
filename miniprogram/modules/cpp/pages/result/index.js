@@ -1,6 +1,6 @@
 const repository = require('../../../../services/practiceRepository');
 const registry = require('../../../../config/subjectRegistry');
-const { decorateGlobalPracticeResult, decorateSubjectPracticeResult } = require('../../../../utils/globalPracticePresentation');
+const { getGlobalPracticePresentation, decorateGlobalPracticeResult, decorateSubjectPracticeResult } = require('../../../../utils/globalPracticePresentation');
 
 const MODE_NAMES = {
   chapter: '章节练习',
@@ -27,9 +27,17 @@ Page({
       .then((result) => {
         const isGlobal = result.scope === 'all';
         if (isGlobal) {
+          const globalPresentation = getGlobalPracticePresentation(result.mode);
           const decoratedResult = decorateGlobalPracticeResult(result, registry.getSubjects());
-          this.setData({ result: decoratedResult, subjectName: '全部学科', homeButtonText: '返回学习首页', modeName: '全学科收藏重练', isGlobal, loading: false });
-          wx.setNavigationBarTitle({ title: '全学科收藏结果' });
+          this.setData({
+            result: decoratedResult,
+            subjectName: '全部学科',
+            homeButtonText: '返回学习首页',
+            modeName: globalPresentation ? globalPresentation.modeName : MODE_NAMES[result.mode] || '全学科练习',
+            isGlobal,
+            loading: false
+          });
+          wx.setNavigationBarTitle({ title: globalPresentation ? globalPresentation.resultTitle : '全学科练习结果' });
           return;
         }
         const subject = registry.getSubject(result.subjectId) || { name: result.subjectId };
@@ -59,7 +67,11 @@ Page({
   practiceAgain() {
     const result = this.data.result;
     if (this.data.isGlobal) {
-      wx.redirectTo({ url: '/modules/cpp/pages/setup/index?scope=all&mode=favorite' });
+      const globalPresentation = getGlobalPracticePresentation(result.mode);
+      const url = globalPresentation
+        ? globalPresentation.setupUrl
+        : `/modules/cpp/pages/setup/index?scope=all&mode=${result.mode}`;
+      wx.redirectTo({ url });
       return;
     }
     if (result.mode === 'chapter') {

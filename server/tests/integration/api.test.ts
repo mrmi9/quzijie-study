@@ -4,7 +4,7 @@ import { after, before, describe, it } from "node:test";
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, LightMyRequestResponse } from "fastify";
 import FormData from "form-data";
 import { buildApp } from "../../src/app.js";
 import { loadConfig } from "../../src/config.js";
@@ -1219,7 +1219,199 @@ describe("真实 MySQL API 闭环", () => {
       && chapter.correctCount === chapter.totalCount && chapter.wrongCount === 0 && chapter.accuracy === 100));
   });
 
-  it("全局收藏严格拒绝非法组合，并在空题池或题量不足时给出稳定结果", async () => {
+  it("全局错题支持固定题量、未掌握筛选、用户隔离、跨学科判题和结果汇总", async () => {
+    const owner = await login("global-wrong-owner");
+    const stranger = await login("global-wrong-stranger");
+    const wrongGroups = await Promise.all(["cpp", "linux", "ds"].map((subjectId) => prisma.question.findMany({
+      where: {
+        subjectId,
+        status: "ACTIVE",
+        currentVersionId: { not: null },
+        currentVersion: { is: { type: { in: ["SINGLE", "MULTIPLE", "JUDGE"] } } }
+      },
+      orderBy: { id: "asc" },
+      take: 11,
+      select: { id: true, subjectId: true, chapterId: true }
+    })));
+    assert(wrongGroups.every((group) => group.length === 11));
+    const unmasteredQuestions = wrongGroups.flatMap((group) => group.slice(0, 9));
+    const masteredQuestion = wrongGroups[0]![9]!;
+    const strangerOnlyQuestion = wrongGroups[0]![10]!;
+    await prisma.wrongQuestionRecord.createMany({
+      data: unmasteredQuestions.map((question) => ({ userId: owner.user.id, questionId: question.id }))
+    });
+    await prisma.wrongQuestionRecord.create({
+      data: {
+        userId: owner.user.id,
+        questionId: masteredQuestion.id,
+        wrongCount: 3,
+        mastered: true,
+        masteredAt: new Date()
+      }
+    });
+    await prisma.wrongQuestionRecord.create({
+      data: { userId: stranger.user.id, questionId: strangerOnlyQuestion.id, wrongCount: 4 }
+    });
+
+    const unmasteredIds = new Set(unmasteredQuestions.map((question) => question.id));
+    for (const count of [5, 10, 20] as const) {
+      const fixed = await app.inject({
+        method: "POST",
+        url: "/api/v1/practice-sessions",
+        headers: authorization(owner.accessToken),
+        payload: { scope: "all", mode: "wrong", count }
+      });
+      assert.equal(fixed.statusCode, 200, fixed.body);
+      assert.equal(fixed.json().data.scope, "all");
+      assert.equal(fixed.json().data.mode, "wrong");
+      assert.equal(fixed.json().data.subjectId, null);
+      assert.equal(fixed.json().data.subject, null);
+      assert.equal(fixed.json().data.totalCount, count);
+      const questionIds = fixed.json().data.questions.map((question: { id: string }) => question.id);
+      assert.equal(new Set(questionIds).size, count);
+      assert(questionIds.every((questionId: string) => unmasteredIds.has(questionId)));
+    }
+
+    const created = await app.inject({
+      method: "POST",
+      url: "/api/v1/practice-sessions",
+      headers: authorization(owner.accessToken),
+      payload: { scope: "all", mode: "wrong", count: "all" }
+    });
+    assert.equal(created.statusCode, 200, created.body);
+    const session = created.json().data as {
+      id: string;
+      scope: string;
+      mode: string;
+      subjectId: null;
+      subject: null;
+      totalCount: number;
+      questions: Array<{ id: string; subjectId: string; chapterId: string } & Record<string, unknown>>;
+    };
+    assert.equal(session.scope, "all");
+    assert.equal(session.mode, "wrong");
+    assert.equal(session.subjectId, null);
+    assert.equal(session.subject, null);
+    assert.equal(session.totalCount, unmasteredQuestions.length);
+    assert.equal(new Set(session.questions.map((question) => question.id)).size, unmasteredQuestions.length);
+    assert.deepEqual(new Set(session.questions.map((question) => question.id)), unmasteredIds);
+    assert.equal(new Set(session.questions.map((question) => question.subjectId)).size, 3);
+    assert.equal(session.questions.some((question) => question.id === masteredQuestion.id), false);
+    assert.equal(session.questions.some((question) => question.id === strangerOnlyQuestion.id), false);
+    session.questions.forEach((question) => {
+      assert.equal(question.correctOptionIds, undefined);
+      assert.equal(question.acceptedAnswers, undefined);
+      assert.equal(question.answerConfig, undefined);
+      assert.equal(question.referenceAnswer, undefined);
+      assert.equal(question.explanation, undefined);
+    });
+
+    const forbidden = await app.inject({
+      method: "GET",
+      url: `/api/v1/practice-sessions/${session.id}`,
+      headers: authorization(stranger.accessToken)
+    });
+    assert.equal(forbidden.statusCode, 404, forbidden.body);
+
+    const storedSession = await prisma.practiceSession.findUniqueOrThrow({ where: { id: session.id } });
+    assert.equal(storedSession.mode, "WRONG");
+    assert.equal(storedSession.subjectId, null);
+    assert.equal(storedSession.chapterId, null);
+    assert.equal(storedSession.requestedCount, unmasteredQuestions.length);
+
+    const frozenQuestion = unmasteredQuestions.find((question) => question.subjectId === "ds")!;
+    await prisma.wrongQuestionRecord.update({
+      where: { userId_questionId: { userId: owner.user.id, questionId: frozenQuestion.id } },
+      data: { mastered: true, masteredAt: new Date() }
+    });
+    const restored = await app.inject({
+      method: "GET",
+      url: `/api/v1/practice-sessions/${session.id}`,
+      headers: authorization(owner.accessToken)
+    });
+    assert.equal(restored.statusCode, 200, restored.body);
+    assert.deepEqual(
+      new Set(restored.json().data.questions.map((question: { id: string }) => question.id)),
+      unmasteredIds
+    );
+
+    const storedQuestions = await prisma.practiceSessionQuestion.findMany({
+      where: { sessionId: session.id },
+      orderBy: { position: "asc" }
+    });
+    const correctlyRetried = storedQuestions.find((item) => (item.snapshot as unknown as QuestionSnapshot).subjectId === "cpp")!;
+    const incorrectlyRetried = storedQuestions.find((item) => (item.snapshot as unknown as QuestionSnapshot).subjectId === "linux")!;
+    const incorrectSnapshot = incorrectlyRetried.snapshot as unknown as QuestionSnapshot;
+    const incorrectOption = incorrectSnapshot.options.find((option) => !incorrectSnapshot.correctOptionIds.includes(option.id));
+    assert(incorrectOption);
+    for (let index = 0; index < storedQuestions.length; index += 1) {
+      const item = storedQuestions[index]!;
+      const snapshot = item.snapshot as unknown as QuestionSnapshot;
+      const shouldBeWrong = item.questionId === incorrectlyRetried.questionId;
+      const answerResponse: LightMyRequestResponse = await app.inject({
+        method: "POST",
+        url: `/api/v1/practice-sessions/${session.id}/answers`,
+        headers: authorization(owner.accessToken),
+        payload: {
+          questionId: item.questionId,
+          selectedOptionIds: shouldBeWrong ? [incorrectOption.id] : snapshot.correctOptionIds,
+          clientAnswerId: `global-wrong-${session.id}-${index}`
+        }
+      });
+      assert.equal(answerResponse.statusCode, 200, answerResponse.body);
+      assert.equal(answerResponse.json().data.isCorrect, !shouldBeWrong);
+    }
+
+    const masteredRecord = await prisma.wrongQuestionRecord.findUniqueOrThrow({
+      where: { userId_questionId: { userId: owner.user.id, questionId: correctlyRetried.questionId } }
+    });
+    assert.equal(masteredRecord.mastered, true);
+    assert(masteredRecord.masteredAt);
+    const repeatedWrongRecord = await prisma.wrongQuestionRecord.findUniqueOrThrow({
+      where: { userId_questionId: { userId: owner.user.id, questionId: incorrectlyRetried.questionId } }
+    });
+    assert.equal(repeatedWrongRecord.mastered, false);
+    assert.equal(repeatedWrongRecord.masteredAt, null);
+    assert.equal(repeatedWrongRecord.wrongCount, 2);
+
+    const finished = await app.inject({
+      method: "POST",
+      url: `/api/v1/practice-sessions/${session.id}/finish`,
+      headers: authorization(owner.accessToken)
+    });
+    assert.equal(finished.statusCode, 200, finished.body);
+    const result = finished.json().data as {
+      scope: string;
+      mode: string;
+      subjectId: null;
+      subject: null;
+      totalCount: number;
+      correctCount: number;
+      wrongCount: number;
+      subjects: Array<{ subjectId: string; totalCount: number; correctCount: number; wrongCount: number; accuracy: number }>;
+      chapters: Array<{ subjectId: string; chapterId: string; totalCount: number; correctCount: number; wrongCount: number; accuracy: number }>;
+    };
+    assert.equal(result.scope, "all");
+    assert.equal(result.mode, "wrong");
+    assert.equal(result.subjectId, null);
+    assert.equal(result.subject, null);
+    assert.equal(result.totalCount, unmasteredQuestions.length);
+    assert.equal(result.correctCount, result.totalCount - 1);
+    assert.equal(result.wrongCount, 1);
+    assert.deepEqual(result.subjects.map((subject) => subject.subjectId), ["cpp", "linux", "ds"]);
+    assert.equal(result.subjects.reduce((sum, subject) => sum + subject.totalCount, 0), result.totalCount);
+    assert.equal(result.subjects.reduce((sum, subject) => sum + subject.wrongCount, 0), 1);
+    const linuxResult = result.subjects.find((subject) => subject.subjectId === "linux")!;
+    assert.equal(linuxResult.wrongCount, 1);
+    assert.equal(linuxResult.correctCount, linuxResult.totalCount - 1);
+    assert.equal(result.chapters.reduce((sum, chapter) => sum + chapter.totalCount, 0), result.totalCount);
+    assert.equal(result.chapters.reduce((sum, chapter) => sum + chapter.wrongCount, 0), 1);
+    const wrongChapter = result.chapters.find((chapter) => chapter.subjectId === "linux" && chapter.chapterId === incorrectSnapshot.chapterId)!;
+    assert.equal(wrongChapter.wrongCount, 1);
+    assert.equal(wrongChapter.correctCount, wrongChapter.totalCount - 1);
+  });
+
+  it("全局重练严格拒绝非法组合，并在空题池或题量不足时给出稳定结果", async () => {
     const emptyOwner = await login("global-favorite-empty-owner");
     const empty = await app.inject({
       method: "POST",
@@ -1229,11 +1421,22 @@ describe("真实 MySQL API 闭环", () => {
     });
     assert.equal(empty.statusCode, 400);
     assert.equal(empty.json().code, "EMPTY_QUESTION_POOL");
+    const emptyWrong = await app.inject({
+      method: "POST",
+      url: "/api/v1/practice-sessions",
+      headers: authorization(emptyOwner.accessToken),
+      payload: { scope: "all", mode: "wrong", count: "all" }
+    });
+    assert.equal(emptyWrong.statusCode, 400);
+    assert.equal(emptyWrong.json().code, "EMPTY_QUESTION_POOL");
 
     const invalidCases = [
       { payload: { scope: "all", mode: "random", count: 5 }, code: "INVALID_GLOBAL_SESSION" },
+      { payload: { scope: "all", mode: "chapter", chapterId: "cpp-basics", count: 5 }, code: "INVALID_GLOBAL_SESSION" },
       { payload: { scope: "all", subject: "cpp", mode: "favorite", count: 5 }, code: "INVALID_GLOBAL_SESSION" },
       { payload: { scope: "all", mode: "favorite", chapterId: "cpp-basics", count: 5 }, code: "INVALID_GLOBAL_SESSION" },
+      { payload: { scope: "all", subject: "cpp", mode: "wrong", count: 5 }, code: "INVALID_GLOBAL_SESSION" },
+      { payload: { scope: "all", mode: "wrong", chapterId: "cpp-basics", count: 5 }, code: "INVALID_GLOBAL_SESSION" },
       { payload: { scope: "subject", mode: "favorite", count: 5 }, code: "SUBJECT_REQUIRED" },
       { payload: { subject: "cpp", mode: "favorite", count: "all" }, code: "INVALID_COUNT" },
       { payload: { subject: "cpp", mode: "random", chapterId: "cpp-basics", count: 5 }, code: "CHAPTER_NOT_ALLOWED" }
@@ -1250,7 +1453,8 @@ describe("真实 MySQL API 闭环", () => {
     }
     for (const payload of [
       { scope: "group", mode: "favorite", count: 5 },
-      { scope: "all", mode: "favorite", count: 7 }
+      { scope: "all", mode: "favorite", count: 7 },
+      { scope: "all", mode: "wrong", count: 7 }
     ]) {
       const response = await app.inject({
         method: "POST",
@@ -1279,6 +1483,19 @@ describe("真实 MySQL API 闭环", () => {
     });
     assert.equal(capped.statusCode, 200, capped.body);
     assert.equal(capped.json().data.totalCount, sparseQuestions.length);
+
+    const sparseWrongOwner = await login("global-wrong-sparse-owner");
+    await prisma.wrongQuestionRecord.createMany({
+      data: sparseQuestions.map((question) => ({ userId: sparseWrongOwner.user.id, questionId: question.id }))
+    });
+    const cappedWrong = await app.inject({
+      method: "POST",
+      url: "/api/v1/practice-sessions",
+      headers: authorization(sparseWrongOwner.accessToken),
+      payload: { scope: "all", mode: "wrong", count: 20 }
+    });
+    assert.equal(cappedWrong.statusCode, 200, cappedWrong.body);
+    assert.equal(cappedWrong.json().data.totalCount, sparseQuestions.length);
   });
 
   it("积分流水在并发、每日上限和普通练习/408共享题目时保持幂等", async () => {

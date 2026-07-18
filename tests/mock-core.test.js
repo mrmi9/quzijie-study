@@ -59,6 +59,21 @@ function answerSession(core, session, firstWrong = false) {
   return core.finishSession(session.id);
 }
 
+function seedWrongQuestions(core, selectedQuestions, mastered = false) {
+  const state = core.loadState();
+  selectedQuestions.forEach((question, index) => {
+    const subject = core.subjectState(state, question.subjectId);
+    subject.wrongQuestions[question.id] = {
+      questionId: question.id,
+      wrongCount: 1,
+      mastered,
+      lastWrongAt: index + 1,
+      masteredAt: mastered ? index + 1 : null
+    };
+  });
+  core.saveState(state);
+}
+
 assert(questions.length > 0 && questions.length <= 100000);
 assert.strictEqual(new Set(questions.map((item) => item.id)).size, questions.length);
 assert.deepStrictEqual(registry.subjectIds.slice().sort(), Array.from(new Set(questions.map((item) => item.subjectId))).sort());
@@ -263,6 +278,7 @@ registry.subjectIds.forEach((subjectId) => {
   assert(result.chapters.every((chapter) => chapter.totalCount === chapter.correctCount + chapter.wrongCount));
 
   assert.throws(() => core.createSession({ scope: 'all', mode: 'random', count: 5 }), (error) => error.code === 'INVALID_GLOBAL_SESSION');
+  assert.throws(() => core.createSession({ scope: 'all', mode: 'chapter', chapterId: 'c-basics', count: 5 }), (error) => error.code === 'INVALID_GLOBAL_SESSION');
   assert.throws(() => core.createSession({ scope: 'all', mode: 'favorite', subject: 'cpp', count: 5 }), (error) => error.code === 'INVALID_GLOBAL_SESSION');
   assert.throws(() => core.createSession({ scope: 'all', mode: 'favorite', chapterId: 'c-basics', count: 5 }), (error) => error.code === 'INVALID_GLOBAL_SESSION');
   assert.throws(() => core.createSession({ scope: 'all', mode: 'favorite', count: 6 }), (error) => error.code === 'INVALID_COUNT');
@@ -272,10 +288,94 @@ registry.subjectIds.forEach((subjectId) => {
   assert.throws(() => core.createSession({ subject: 'cpp', mode: 'favorite', count: 'all' }), (error) => error.code === 'INVALID_COUNT');
 }
 
-// 全局收藏为空时给出明确错误，不创建空白会话。
+// 全局错题支持跨学科 5/10/20/全部建卷，只纳入有效且未掌握的错题，并保持会话题目快照。
+{
+  const objectiveQuestions = (subjectId) => questions.filter(
+    (question) => question.subjectId === subjectId && ['single', 'multiple', 'judge'].includes(question.type)
+  );
+  const cppQuestions = objectiveQuestions('cpp').slice(0, 13);
+  const dsQuestions = objectiveQuestions('ds').slice(0, 12);
+  const wrongQuestions = cppQuestions.slice(0, 11).flatMap((question, index) => [question, dsQuestions[index]]);
+  const masteredWrong = cppQuestions[11];
+  const unrelatedQuestion = dsQuestions[11];
+  const disabledWrong = Object.assign({}, cppQuestions[12], { status: 'disabled' });
+  const { core } = makeCore({
+    questions: wrongQuestions.concat(masteredWrong, unrelatedQuestion, disabledWrong),
+    stateKey: 'global_wrong_sessions',
+    random: () => 0
+  });
+  seedWrongQuestions(core, wrongQuestions);
+  seedWrongQuestions(core, [masteredWrong], true);
+  seedWrongQuestions(core, [disabledWrong]);
+
+  new Map([[5, 5], [10, 10], [20, 20]]).forEach((expectedCount, count) => {
+    const session = core.createSession({ scope: 'all', mode: 'wrong', count });
+    assert.strictEqual(session.scope, 'all');
+    assert.strictEqual(session.subjectId, null);
+    assert.strictEqual(session.subject, null);
+    assert.strictEqual(session.mode, 'wrong');
+    assert.strictEqual(session.totalCount, expectedCount);
+    assert.strictEqual(new Set(session.questions.map((question) => question.id)).size, expectedCount);
+    assert(session.questions.every((question) => question.correctOptionIds === undefined && question.explanation === undefined));
+  });
+
+  const allSession = core.createSession({ scope: 'all', mode: 'wrong', count: 'all' });
+  assert.strictEqual(allSession.totalCount, wrongQuestions.length);
+  assert.strictEqual(new Set(allSession.questions.map((question) => question.id)).size, wrongQuestions.length);
+  assert.deepStrictEqual(new Set(allSession.questions.map((question) => question.subjectId)), new Set(['cpp', 'ds']));
+  assert(!allSession.questions.some((question) => question.id === masteredWrong.id));
+  assert(!allSession.questions.some((question) => question.id === unrelatedQuestion.id));
+  assert(!allSession.questions.some((question) => question.id === disabledWrong.id));
+  assert.notDeepStrictEqual(allSession.questions.map((question) => question.id), wrongQuestions.map((question) => question.id));
+
+  const retainedQuestion = allSession.questions[0];
+  const state = core.loadState();
+  state.subjects[retainedQuestion.subjectId].wrongQuestions[retainedQuestion.id].mastered = true;
+  core.saveState(state);
+  assert.strictEqual(core.getSession(allSession.id).totalCount, wrongQuestions.length);
+
+  const result = answerSession(core, allSession, true);
+  assert.strictEqual(result.scope, 'all');
+  assert.strictEqual(result.mode, 'wrong');
+  assert.deepStrictEqual(result.subjects.map((subject) => subject.subjectId), ['cpp', 'ds']);
+  assert.strictEqual(result.subjects.reduce((sum, subject) => sum + subject.totalCount, 0), wrongQuestions.length);
+  assert.strictEqual(result.wrongCount, 1);
+  const updatedState = core.loadState();
+  assert.strictEqual(updatedState.subjects[retainedQuestion.subjectId].wrongQuestions[retainedQuestion.id].mastered, false);
+  assert.strictEqual(updatedState.subjects[retainedQuestion.subjectId].wrongQuestions[retainedQuestion.id].wrongCount, 2);
+  allSession.questions.slice(1).forEach((question) => {
+    assert.strictEqual(updatedState.subjects[question.subjectId].wrongQuestions[question.id].mastered, true);
+  });
+
+  assert.throws(() => core.createSession({ scope: 'all', mode: 'wrong', subject: 'cpp', count: 5 }), (error) => error.code === 'INVALID_GLOBAL_SESSION');
+  assert.throws(() => core.createSession({ scope: 'all', mode: 'wrong', chapterId: 'c-basics', count: 5 }), (error) => error.code === 'INVALID_GLOBAL_SESSION');
+  assert.throws(() => core.createSession({ scope: 'all', mode: 'wrong', count: 6 }), (error) => error.code === 'INVALID_COUNT');
+}
+
+// 固定题量大于全局未掌握错题池时取现有全部，仍保持跨学科且不重复。
+{
+  const limitedCppQuestions = questions.filter(
+    (question) => question.subjectId === 'cpp' && ['single', 'multiple', 'judge'].includes(question.type)
+  ).slice(0, 4);
+  const limitedDsQuestions = questions.filter(
+    (question) => question.subjectId === 'ds' && ['single', 'multiple', 'judge'].includes(question.type)
+  ).slice(0, 3);
+  const limitedWrongQuestions = limitedCppQuestions.flatMap((question, index) => (
+    limitedDsQuestions[index] ? [question, limitedDsQuestions[index]] : [question]
+  ));
+  const { core } = makeCore({ questions: limitedWrongQuestions, stateKey: 'limited_global_wrongs' });
+  seedWrongQuestions(core, limitedWrongQuestions);
+  const session = core.createSession({ scope: 'all', mode: 'wrong', count: 20 });
+  assert.strictEqual(session.totalCount, limitedWrongQuestions.length);
+  assert.strictEqual(new Set(session.questions.map((question) => question.id)).size, limitedWrongQuestions.length);
+  assert.deepStrictEqual(new Set(session.questions.map((question) => question.subjectId)), new Set(['cpp', 'ds']));
+}
+
+// 全局收藏或未掌握错题为空时给出明确错误，不创建空白会话。
 {
   const { core } = makeCore({ stateKey: 'empty_global_favorites' });
   assert.throws(() => core.createSession({ scope: 'all', mode: 'favorite', count: 'all' }), (error) => error.code === 'EMPTY_QUESTION_POOL');
+  assert.throws(() => core.createSession({ scope: 'all', mode: 'wrong', count: 'all' }), (error) => error.code === 'EMPTY_QUESTION_POOL');
 }
 
 // 填空题自动判定，简答题提交后展示参考答案并必须自评；未掌握进入错题本。
@@ -374,4 +474,4 @@ registry.subjectIds.forEach((subjectId) => {
   assert.strictEqual(core.getLearningOverview().totalAttempts, 40);
 }
 
-console.log(`PracticeCore tests passed: ${registry.subjectIds.length} subjects, five question types, global favorites, migration, records, recovery and 408.`);
+console.log(`PracticeCore tests passed: ${registry.subjectIds.length} subjects, five question types, global favorites and wrong questions, migration, records, recovery and 408.`);

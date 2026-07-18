@@ -3,6 +3,7 @@ const repository = require('../../../../services/practiceRepository');
 const registry = require('../../../../config/subjectRegistry');
 const { buildPracticeOptionFeedback } = require('../../../../utils/practiceOptionFeedback');
 const { buildPracticeNavigationState } = require('../../../../utils/practiceNavigation');
+const { getGlobalPracticePresentation } = require('../../../../utils/globalPracticePresentation');
 
 const TYPE_NAMES = { single: '单选题', multiple: '多选题', judge: '判断题', fill_blank: '填空题', short_answer: '简答题' };
 const DIFFICULTY_NAMES = { 1: '基础', 2: '进阶', 3: '难题' };
@@ -54,7 +55,8 @@ Page({
         }
         const isGlobal = session.scope === 'all';
         const subject = registry.getSubject(session.subjectId || session.subject);
-        if (isGlobal) wx.setNavigationBarTitle({ title: '全学科收藏重练' });
+        const globalPresentation = isGlobal ? getGlobalPracticePresentation(session.mode) : null;
+        if (isGlobal) wx.setNavigationBarTitle({ title: globalPresentation ? globalPresentation.modeName : '全学科练习' });
         else if (subject) wx.setNavigationBarTitle({ title: `${subject.name} 答题` });
         const currentIndex = Math.min(session.currentIndex === undefined ? session.answeredCount : session.currentIndex, session.totalCount - 1);
         this.setData({ session, currentIndex, isGlobal, loading: false });

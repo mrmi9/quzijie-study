@@ -1,8 +1,8 @@
 <view class="page-shell cpp-page safe-bottom setup-page">
   <view class="setup-hero card">
     <text class="mode-label">{{modeName}}</text>
-    <text class="mode-title">{{isGlobal ? '全部学科收藏' : chapterName || subjectName + ' 核心知识'}}</text>
-    <text class="mode-tip">{{isGlobal ? '系统将从所有学科的收藏题中随机混排；固定题量不足时使用全部收藏。' : '系统将在同一组练习中自动排除重复题目；题库不足时使用全部可用题。'}}</text>
+    <text class="mode-title">{{isGlobal ? setupTitle : chapterName || subjectName + ' 核心知识'}}</text>
+    <text class="mode-tip">{{isGlobal ? setupTip : '系统将在同一组练习中自动排除重复题目；题库不足时使用全部可用题。'}}</text>
   </view>
 
   <view class="section-title">选择题量</view>

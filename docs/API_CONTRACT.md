@@ -87,7 +87,7 @@
 }
 ```
 
-`scope` 为 `subject|all`；旧会话缺少该字段时按 `subject` 处理。全局收藏会话的 `scope="all"`，且 `subjectId` 与兼容字段 `subject` 均为 `null`。模式为 `chapter|random|wrong|favorite`，状态为 `active|completed|abandoned`。
+`scope` 为 `subject|all`；旧会话缺少该字段时按 `subject` 处理。全局收藏或错题会话的 `scope="all"`，且 `subjectId` 与兼容字段 `subject` 均为 `null`。模式为 `chapter|random|wrong|favorite`，状态为 `active|completed|abandoned`。
 
 ### ExamView
 
@@ -148,7 +148,17 @@
 }
 ```
 
-全局范围只允许 `mode="favorite"`，且不得传 `subject` 或 `chapterId`；`count` 可为 5、10、20 或 `"all"`。服务端从当前用户全部有效收藏中随机、不重复地建卷并保存题目快照。数字题量取指定值与收藏总数的较小值，`"all"` 取建卷时的全部收藏。
+跨学科未掌握错题重练使用：
+
+```json
+{
+  "scope": "all",
+  "mode": "wrong",
+  "count": "all"
+}
+```
+
+全局范围只允许 `mode="favorite"` 或 `mode="wrong"`，且不得传 `subject` 或 `chapterId`；`count` 可为 5、10、20 或 `"all"`。收藏模式从当前用户全部有效收藏中取题，错题模式从当前用户全部有效、未掌握错题中取题；两种模式均随机、不重复地建卷并保存题目快照。数字题量取指定值与对应题池总数的较小值，`"all"` 取建卷时对应题池的全部题目。错题模式答对后按题目所属学科将该题标记为已掌握，答错则保持未掌握并累计错误次数；对应题池为空时返回 `EMPTY_QUESTION_POOL`。
 
 ### GET /practice-sessions/{id}
 

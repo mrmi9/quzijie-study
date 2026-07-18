@@ -333,11 +333,11 @@ export class PracticeService {
     const mode = payload.mode as PublicMode;
 
     if (scope === "all") {
-      if (mode !== "favorite" || payload.subject !== undefined || payload.chapterId !== undefined) {
-        throw new AppError("全局范围仅支持不指定学科和章节的收藏重练", "INVALID_GLOBAL_SESSION", 400);
+      if (!["favorite", "wrong"].includes(mode) || payload.subject !== undefined || payload.chapterId !== undefined) {
+        throw new AppError("全局范围仅支持不指定学科和章节的收藏或错题重练", "INVALID_GLOBAL_SESSION", 400);
       }
       if (payload.count !== "all" && ![5, 10, 20].includes(Number(payload.count))) {
-        throw new AppError("全局收藏题量只能选择 5、10、20 或全部", "INVALID_COUNT", 400);
+        throw new AppError("全局重练题量只能选择 5、10、20 或全部", "INVALID_COUNT", 400);
       }
     } else {
       if (!payload.subject) throw new AppError("单学科练习缺少 subject", "SUBJECT_REQUIRED", 400);

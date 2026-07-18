@@ -1,3 +1,26 @@
+const GLOBAL_PRACTICE_PRESENTATIONS = {
+  favorite: {
+    modeName: '全学科收藏重练',
+    setupTitle: '全部学科收藏',
+    setupTip: '系统将从所有学科的收藏题中随机混排；固定题量不足时使用全部收藏。',
+    allCountLabel: '全部收藏',
+    resultTitle: '全学科收藏结果',
+    setupUrl: '/modules/cpp/pages/setup/index?scope=all&mode=favorite'
+  },
+  wrong: {
+    modeName: '全学科错题重做',
+    setupTitle: '全部学科未掌握错题',
+    setupTip: '系统将从所有学科的未掌握错题中随机混排；固定题量不足时使用全部未掌握错题。',
+    allCountLabel: '全部未掌握错题',
+    resultTitle: '全学科错题结果',
+    setupUrl: '/modules/cpp/pages/setup/index?scope=all&mode=wrong'
+  }
+};
+
+function getGlobalPracticePresentation(mode) {
+  return GLOBAL_PRACTICE_PRESENTATIONS[mode] || null;
+}
+
 function decorateGlobalPracticeResult(result, subjects) {
   const subjectList = Array.isArray(subjects) ? subjects : [];
   const subjectById = {};
@@ -49,4 +72,4 @@ function decorateSubjectPracticeResult(result, subjectName) {
   });
 }
 
-module.exports = { decorateGlobalPracticeResult, decorateSubjectPracticeResult };
+module.exports = { getGlobalPracticePresentation, decorateGlobalPracticeResult, decorateSubjectPracticeResult };

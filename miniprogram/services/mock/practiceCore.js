@@ -291,8 +291,8 @@ class PracticeCore {
     const mode = payload.mode;
     if (!['subject', 'all'].includes(scope)) throw createDomainError('不支持的练习范围', 'INVALID_SCOPE');
     if (!['chapter', 'random', 'wrong', 'favorite'].includes(mode)) throw createDomainError('不支持的练习模式', 'INVALID_MODE');
-    if (scope === 'all' && (mode !== 'favorite' || payload.subject !== undefined || payload.chapterId !== undefined)) {
-      throw createDomainError('全学科范围仅支持不指定学科和章节的收藏重练', 'INVALID_GLOBAL_SESSION');
+    if (scope === 'all' && (!['favorite', 'wrong'].includes(mode) || payload.subject !== undefined || payload.chapterId !== undefined)) {
+      throw createDomainError('全学科范围仅支持不指定学科和章节的错题或收藏重练', 'INVALID_GLOBAL_SESSION');
     }
     if (scope === 'subject' && !payload.subject) throw createDomainError('单学科练习缺少 subject', 'SUBJECT_REQUIRED');
     if (scope === 'subject' && !this.registry.getSubject(payload.subject)) throw createDomainError('学科不存在', 'SUBJECT_NOT_FOUND');
@@ -310,7 +310,14 @@ class PracticeCore {
     const subject = scope === 'subject' ? this.subjectState(state, payload.subject) : null;
     let candidates = this.activeQuestions(scope === 'subject' ? payload.subject : undefined);
     if (scope === 'all') {
-      candidates = candidates.filter((question) => this.subjectState(state, question.subjectId).favorites[question.id]);
+      candidates = candidates.filter((question) => {
+        const questionSubject = this.subjectState(state, question.subjectId);
+        if (mode === 'wrong') {
+          const wrong = questionSubject.wrongQuestions[question.id];
+          return wrong && !wrong.mastered;
+        }
+        return questionSubject.favorites[question.id];
+      });
     } else if (mode === 'chapter') {
       if (!payload.chapterId) throw createDomainError('章节练习缺少 chapterId', 'CHAPTER_REQUIRED');
       candidates = candidates.filter((question) => question.chapterId === payload.chapterId);

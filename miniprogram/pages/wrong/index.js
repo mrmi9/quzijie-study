@@ -10,7 +10,8 @@ Page({
     mastery: 'all',
     loading: true,
     error: '',
-    questions: []
+    questions: [],
+    unmasteredCount: 0
   },
 
   onShow() {
@@ -27,9 +28,17 @@ Page({
 
   loadQuestions() {
     const mastered = this.data.mastery === 'all' ? undefined : this.data.mastery === 'mastered';
+    const subjectId = this.data.subjectId || undefined;
     this.setData({ loading: true, error: '' });
-    return repository.getWrongQuestions(this.data.subjectId || undefined, mastered)
-      .then((questions) => this.setData({ questions: questions.map((item) => this.decorate(item)), loading: false }))
+    return Promise.all([
+      repository.getWrongQuestions(subjectId, mastered),
+      repository.getWrongQuestions(subjectId, false)
+    ])
+      .then(([questions, unmastered]) => this.setData({
+        questions: questions.map((item) => this.decorate(item)),
+        unmasteredCount: unmastered.length,
+        loading: false
+      }))
       .catch((error) => this.setData({ loading: false, error: error.message || '错题加载失败' }));
   },
 
@@ -57,10 +66,14 @@ Page({
   },
 
   startReview() {
-    if (!this.data.subjectId) {
-      wx.showToast({ title: '请先选择一个学科', icon: 'none' });
+    if (this.data.loading || this.data.error) return;
+    if (!this.data.unmasteredCount) {
+      wx.showToast({ title: '没有待掌握的错题', icon: 'none' });
       return;
     }
-    wx.navigateTo({ url: `/modules/cpp/pages/setup/index?subjectId=${this.data.subjectId}&mode=wrong` });
+    const url = this.data.subjectId
+      ? `/modules/cpp/pages/setup/index?subjectId=${this.data.subjectId}&mode=wrong`
+      : '/modules/cpp/pages/setup/index?scope=all&mode=wrong';
+    wx.navigateTo({ url });
   }
 });
