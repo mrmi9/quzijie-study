@@ -251,6 +251,32 @@ describe("真实 MySQL API 闭环", () => {
       const ownerHeaders = { cookie: ownerSession.cookie, "x-csrf-token": ownerSession.csrf };
       const reviewerHeaders = { cookie: reviewerSession.cookie, "x-csrf-token": reviewerSession.csrf };
 
+      const disposableCatalogDraft = await adminApp.inject({
+        method: "POST", url: "/api/v1/admin/catalog-drafts", headers: ownerHeaders,
+        payload: { name: "discarded catalog draft" }
+      });
+      assert.equal(disposableCatalogDraft.statusCode, 200, disposableCatalogDraft.body);
+      const disposableCatalogDraftId = disposableCatalogDraft.json().data.id as string;
+      const cancelledCatalogDraft = await adminApp.inject({
+        method: "POST", url: `/api/v1/admin/catalog-drafts/${disposableCatalogDraftId}/cancel`, headers: ownerHeaders,
+        payload: {}
+      });
+      assert.equal(cancelledCatalogDraft.statusCode, 200, cancelledCatalogDraft.body);
+      assert.equal(cancelledCatalogDraft.json().data.status, "CANCELLED");
+      const activeCatalogDraftList = await adminApp.inject({ method: "GET", url: "/api/v1/admin/catalog-drafts", headers: ownerHeaders });
+      assert.equal(activeCatalogDraftList.statusCode, 200, activeCatalogDraftList.body);
+      assert.equal(activeCatalogDraftList.json().data.items.some((item: { id: string }) => item.id === disposableCatalogDraftId), false);
+      const fullCatalogDraftList = await adminApp.inject({ method: "GET", url: "/api/v1/admin/catalog-drafts?includeCancelled=1", headers: ownerHeaders });
+      assert.equal(fullCatalogDraftList.statusCode, 200, fullCatalogDraftList.body);
+      assert.equal(fullCatalogDraftList.json().data.items.some((item: { id: string; status: string }) => item.id === disposableCatalogDraftId && item.status === "CANCELLED"), true);
+      const editCancelledCatalogDraft = await adminApp.inject({
+        method: "PATCH", url: `/api/v1/admin/catalog-drafts/${disposableCatalogDraftId}`, headers: ownerHeaders,
+        payload: { revision: cancelledCatalogDraft.json().data.revision, payload: cancelledCatalogDraft.json().data.payload }
+      });
+      assert.equal(editCancelledCatalogDraft.statusCode, 409, editCancelledCatalogDraft.body);
+      assert.equal(editCancelledCatalogDraft.json().code, "CATALOG_DRAFT_NOT_EDITABLE");
+      assert.equal(await prisma.adminAuditLog.count({ where: { action: "catalog_draft.cancel", entityId: disposableCatalogDraftId } }), 1);
+
       const noCsrf = await adminApp.inject({ method: "POST", url: "/api/v1/admin/subjects", headers: { cookie: ownerSession.cookie }, payload: {} });
       assert.equal(noCsrf.statusCode, 403);
       assert.equal(noCsrf.json().code, "ADMIN_CSRF_INVALID");
@@ -334,6 +360,12 @@ describe("真实 MySQL API 闭环", () => {
       const initialCatalogRelease = await publishConfirmed(adminApp, ownerHeaders, ownerSecret, initialCatalogInput, initialCatalogPreview);
       assert.equal(initialCatalogRelease.statusCode, 200, initialCatalogRelease.body);
       assert.equal(initialCatalogRelease.json().data.questionCount, activeQuestionCountBefore);
+      const cancelPublishedCatalogDraft = await adminApp.inject({
+        method: "POST", url: `/api/v1/admin/catalog-drafts/${catalogDraft.id}/cancel`, headers: ownerHeaders,
+        payload: {}
+      });
+      assert.equal(cancelPublishedCatalogDraft.statusCode, 409, cancelPublishedCatalogDraft.body);
+      assert.equal(cancelPublishedCatalogDraft.json().code, "CATALOG_DRAFT_NOT_CANCELLABLE");
       const catalogAfterInitialRelease = await adminApp.inject({ method: "GET", url: "/api/v1/catalog" });
       assert.equal(catalogAfterInitialRelease.statusCode, 200, catalogAfterInitialRelease.body);
       assert.equal(catalogAfterInitialRelease.json().data.modules.some((module: { id: string }) => module.id === subjectId), false);

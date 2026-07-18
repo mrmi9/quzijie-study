@@ -6,7 +6,8 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
 
 const adminRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const baseUrl = process.env.ADMIN_PREVIEW_URL || "http://127.0.0.1:4173/admin/";
+const previewPort = Number(process.env.ADMIN_PREVIEW_PORT || 6173);
+const baseUrl = process.env.ADMIN_PREVIEW_URL || `http://127.0.0.1:${previewPort}/admin/`;
 const ownServer = !process.env.ADMIN_PREVIEW_URL;
 
 function chromeExecutable() {
@@ -26,7 +27,7 @@ function chromeExecutable() {
 }
 
 const server = ownServer
-  ? spawn(process.execPath, [resolve(adminRoot, "../node_modules/vite/bin/vite.js"), "preview", "--host", "127.0.0.1", "--port", "4173"], {
+  ? spawn(process.execPath, [resolve(adminRoot, "../node_modules/vite/bin/vite.js"), "preview", "--host", "127.0.0.1", "--port", String(previewPort)], {
       cwd: adminRoot,
       stdio: "ignore"
     })
@@ -94,6 +95,8 @@ function questionDraft(status = "IN_REVIEW") {
 function createMockState() {
   return {
     draftStatus: "IN_REVIEW",
+    catalogDraftStatus: "DRAFT",
+    catalogCancelCount: 0,
     reviewBodies: [],
     publishBodies: [],
     rollbackBodies: [],
@@ -114,6 +117,28 @@ const catalog = {
   }],
   modules: []
 };
+
+function catalogDraft(status = "DRAFT") {
+  return {
+    id: "catalog-1",
+    name: "误建目录草稿",
+    status,
+    revision: status === "CANCELLED" ? 2 : 1,
+    payload: {
+      subjects: catalog.subjects.map(({ chapters, ...subject }) => subject),
+      chapters: catalog.subjects.flatMap((subject) => subject.chapters || []),
+      modules: catalog.modules
+    },
+    baseCatalogHash: "b".repeat(64),
+    contentHash: "b".repeat(64),
+    validationErrors: [],
+    validationWarnings: [],
+    createdById: owner.id,
+    submittedById: null,
+    createdAt: "2026-07-17T08:00:00.000Z",
+    updatedAt: "2026-07-17T08:10:00.000Z"
+  };
+}
 
 async function installApiMock(page, state, { setup = false } = {}) {
   await page.route("**/api/v1/media/**", (route) => route.fulfill({
@@ -176,7 +201,17 @@ async function installApiMock(page, state, { setup = false } = {}) {
       state.draftCreates += 1;
       return json({ data: questionDraft("DRAFT") });
     }
-    if (path === "/api/v1/admin/catalog-drafts") return json({ data: paged([]) });
+    if (path === "/api/v1/admin/catalog-drafts/catalog-1/cancel" && method === "POST") {
+      state.catalogDraftStatus = "CANCELLED";
+      state.catalogCancelCount += 1;
+      return json({ data: catalogDraft("CANCELLED") });
+    }
+    if (path === "/api/v1/admin/catalog-drafts/catalog-1" && method === "GET") return json({ data: catalogDraft(state.catalogDraftStatus) });
+    if (path === "/api/v1/admin/catalog-drafts" && method === "GET") {
+      const includeCancelled = url.searchParams.get("includeCancelled") === "1";
+      const items = state.catalogDraftStatus === "CANCELLED" && !includeCancelled ? [] : [catalogDraft(state.catalogDraftStatus)];
+      return json({ data: paged(items) });
+    }
     if (path === "/api/v1/admin/imports" && method === "GET") {
       if (url.searchParams.get("status") === "APPROVED") return json({ data: paged([]) });
       return json({ data: paged([{
@@ -280,6 +315,20 @@ try {
 
   const state = createMockState();
   const page = await openAdmin(browser, { width: 390, height: 844 }, state);
+
+  await mobileNavigate(page, "catalog");
+  await page.getByRole("heading", { name: "学科与章节" }).waitFor();
+  await page.locator("#catalog-draft-select").selectOption("catalog-1");
+  await page.locator("#catalog-cancel").waitFor();
+  await page.locator("#catalog-cancel").click();
+  await page.getByRole("heading", { name: "作废目录草稿" }).waitFor();
+  await page.getByRole("button", { name: "确认执行" }).click();
+  await page.getByText("目录草稿已作废").waitFor();
+  assert.equal(state.catalogCancelCount, 1, "目录草稿应通过软作废接口取消");
+  await page.locator("#show-cancelled-catalog-drafts").check();
+  const cancelledOption = page.locator("#catalog-draft-select option", { hasText: "误建目录草稿 · 已作废" });
+  assert.equal(await cancelledOption.count(), 1, "显示已作废后应重新列出目录草稿");
+  await assertNoHorizontalOverflow(page, "390px 目录草稿作废");
 
   await mobileNavigate(page, "questions");
   await page.getByRole("heading", { name: "已发布题目" }).waitFor();

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { buildPublicCatalog } from "../../src/services/catalog.js";
-import { catalogPayloadHash, normalizeCatalogDraftPayload, validateCatalogDraftPayload } from "../../src/services/question-bank.js";
+import { canCancelCatalogDraftStatus, catalogPayloadHash, normalizeCatalogDraftPayload, validateCatalogDraftPayload } from "../../src/services/question-bank.js";
 
 describe("发布目录投影", () => {
   it("只公开活动发布中有题目的学科、章节和非空模块", () => {
@@ -92,5 +92,14 @@ describe("目录变更集", () => {
     assert(validation.errors.some((error) => error.includes("其他学科章节 beta-1")));
     assert(validation.errors.some((error) => error.includes("不存在的章节 missing-1")));
     assert(validation.errors.some((error) => error.includes("停用章节 alpha-off")));
+  });
+
+  it("只允许作废尚未发布的目录草稿", () => {
+    for (const status of ["DRAFT", "IN_REVIEW", "APPROVED", "REJECTED"]) {
+      assert.equal(canCancelCatalogDraftStatus(status), true, `${status} 应允许作废`);
+    }
+    for (const status of ["PUBLISHED", "CANCELLED"]) {
+      assert.equal(canCancelCatalogDraftStatus(status), false, `${status} 不应允许再次作废`);
+    }
   });
 });

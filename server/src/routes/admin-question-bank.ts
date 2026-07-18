@@ -103,7 +103,7 @@ export function registerAdminQuestionBankRoutes(
   app.get("/api/v1/admin/dashboard", { preHandler: security.authenticate }, async () => ({ data: await bank.dashboard() }));
   app.get<{ Querystring: { catalogDraftId?: string } }>("/api/v1/admin/catalog", { preHandler: security.authenticate }, async (request) => ({ data: await bank.adminCatalog(request.query.catalogDraftId) }));
 
-  app.get<{ Querystring: { page?: number; pageSize?: number; status?: string } }>("/api/v1/admin/catalog-drafts", { preHandler: security.authenticate }, async (request) => ({ data: await bank.listCatalogDrafts(request.query) }));
+  app.get<{ Querystring: { page?: number; pageSize?: number; status?: string; includeCancelled?: string } }>("/api/v1/admin/catalog-drafts", { preHandler: security.authenticate }, async (request) => ({ data: await bank.listCatalogDrafts(request.query) }));
   app.post<{ Body: { name: string } }>("/api/v1/admin/catalog-drafts", { preHandler: security.requireRole("OWNER", "EDITOR") }, async (request) => ({ data: await bank.createCatalogDraft(request.adminUser!.id, request.body?.name, request.id) }));
   app.get<{ Params: { id: string } }>("/api/v1/admin/catalog-drafts/:id", { preHandler: security.authenticate }, async (request) => ({ data: await bank.getCatalogDraft(request.params.id) }));
   app.patch<{ Params: { id: string }; Body: { revision: number; payload: unknown } }>("/api/v1/admin/catalog-drafts/:id", { preHandler: security.requireRole("OWNER", "EDITOR") }, async (request) => ({ data: await bank.updateCatalogDraft(request.adminUser!.id, request.params.id, request.body.revision, request.body.payload, request.id) }));
@@ -113,6 +113,7 @@ export function registerAdminQuestionBankRoutes(
     return { data: await bank.reviewCatalogDraft(request.adminUser!.id, request.params.id, request.body.decision, request.body.comment, request.id, { checklist: request.body.checklist, selfReviewNote: request.body.selfReviewNote }) };
   });
   app.post<{ Params: { id: string } }>("/api/v1/admin/catalog-drafts/:id/withdraw", { preHandler: security.requireRole("OWNER", "EDITOR") }, async (request) => ({ data: await bank.withdrawCatalogDraft(request.adminUser!.id, request.params.id, request.id) }));
+  app.post<{ Params: { id: string } }>("/api/v1/admin/catalog-drafts/:id/cancel", { preHandler: security.requireRole("OWNER", "EDITOR") }, async (request) => ({ data: await bank.cancelCatalogDraft(request.adminUser!.id, request.params.id, request.id) }));
 
   app.post<{ Body: { id: string; name: string; shortName: string; color?: string; description?: string; iconKey?: string; qualityPolicy?: unknown } }>("/api/v1/admin/subjects", {
     preHandler: security.requireRole("OWNER", "EDITOR")

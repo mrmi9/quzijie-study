@@ -266,6 +266,10 @@ export function catalogPayloadHash(payload: CatalogDraftPayload): string {
   return createHash("sha256").update(stableStringify(normalizeCatalogDraftPayload(payload))).digest("hex");
 }
 
+export function canCancelCatalogDraftStatus(status: string): boolean {
+  return ["DRAFT", "IN_REVIEW", "APPROVED", "REJECTED"].includes(status);
+}
+
 export function validateCatalogDraftPayload(payload: CatalogDraftPayload): CatalogValidation {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -651,14 +655,19 @@ export class QuestionBankService {
     return { releaseId: release.id, payload, catalogHash, snapshot };
   }
 
-  async listCatalogDrafts(query: { status?: string; page?: number; pageSize?: number }) {
+  async listCatalogDrafts(query: { status?: string; page?: number; pageSize?: number; includeCancelled?: string | boolean }) {
     const page = Math.max(1, Number(query.page) || 1);
     const pageSize = Math.min(100, Math.max(1, Number(query.pageSize) || 30));
     const status = query.status ? String(query.status).toUpperCase() : undefined;
     if (status && !["DRAFT", "IN_REVIEW", "APPROVED", "REJECTED", "PUBLISHED", "CANCELLED"].includes(status)) {
       throw new AppError("目录草稿状态筛选值无效", "INVALID_CATALOG_DRAFT_FILTER", 400);
     }
-    const where: Prisma.CatalogDraftWhereInput = status ? { status: status as never } : {};
+    const includeCancelled = query.includeCancelled === true || ["1", "true"].includes(String(query.includeCancelled || "").toLowerCase());
+    const where: Prisma.CatalogDraftWhereInput = status
+      ? { status: status as never }
+      : includeCancelled
+        ? {}
+        : { status: { not: "CANCELLED" } };
     const [total, items] = await Promise.all([
       this.prisma.catalogDraft.count({ where }),
       this.prisma.catalogDraft.findMany({
@@ -817,6 +826,35 @@ export class QuestionBankService {
       if (claimed.count !== 1) throw new AppError("目录草稿撤回时发生变化", "CATALOG_DRAFT_WITHDRAW_CONFLICT", 409);
       const updated = await tx.catalogDraft.findUniqueOrThrow({ where: { id } });
       await tx.adminAuditLog.create({ data: this.auditData({ adminUserId, action: "catalog_draft.withdraw", entityType: "catalog_draft", entityId: id, beforeState: { status: before.status }, afterState: { status: updated.status }, requestId }) });
+      return updated;
+    });
+  }
+
+  async cancelCatalogDraft(adminUserId: string, id: string, requestId?: string) {
+    const before = await this.prisma.catalogDraft.findUnique({ where: { id } });
+    if (!before) throw new AppError("目录草稿不存在", "CATALOG_DRAFT_NOT_FOUND", 404);
+    if (before.status === "CANCELLED") return before;
+    if (!canCancelCatalogDraftStatus(before.status)) {
+      throw new AppError("只能作废尚未发布的目录草稿", "CATALOG_DRAFT_NOT_CANCELLABLE", 409);
+    }
+    return this.prisma.$transaction(async (tx) => {
+      const claimed = await tx.catalogDraft.updateMany({
+        where: { id, status: before.status, revision: before.revision },
+        data: { status: "CANCELLED", revision: { increment: 1 } }
+      });
+      if (claimed.count !== 1) throw new AppError("目录草稿作废时发生变化，请刷新后重试", "CATALOG_DRAFT_CANCEL_CONFLICT", 409);
+      const updated = await tx.catalogDraft.findUniqueOrThrow({ where: { id } });
+      await tx.adminAuditLog.create({
+        data: this.auditData({
+          adminUserId,
+          action: "catalog_draft.cancel",
+          entityType: "catalog_draft",
+          entityId: id,
+          beforeState: { status: before.status, revision: before.revision, contentHash: before.contentHash },
+          afterState: { status: updated.status, revision: updated.revision, contentHash: updated.contentHash },
+          requestId
+        })
+      });
       return updated;
     });
   }

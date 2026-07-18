@@ -303,6 +303,7 @@
 - Excel 批次通过 `POST /api/v1/admin/imports/:id/submit` 冻结内容哈希，再调用 `POST /api/v1/admin/imports/:id/review` 整批批准或驳回；导入题目不能绕过批次单独提交或复核。只包含学科/章节的目录型工作簿同样支持该流程。
 - `ADMIN_REVIEW_POLICY=two-person` 时提交人不得复核自己的目录、题目或导入批次；`single-owner` 时只有同时具有 `OWNER` 权限的提交人可以自审。自审批准必须提交 `checklist` 和非空 `selfReviewNote`，返回及审计记录中的 `reviewMode` 为 `SELF_APPROVED`；独立复核为 `INDEPENDENT`。
 - 处于 `IN_REVIEW` 的目录、题目和导入批次，可由原提交人分别调用 `POST /api/v1/admin/catalog-drafts/:id/withdraw`、`POST /api/v1/admin/drafts/:id/withdraw`、`POST /api/v1/admin/imports/:id/withdraw` 撤回。目录/题目回到 `DRAFT`，导入批次回到 `VALID`；批准后再修改会使既有批准失效，必须重新提交。
+- `POST /api/v1/admin/catalog-drafts/:id/cancel` 将尚未发布的目录草稿从 `DRAFT`、`IN_REVIEW`、`APPROVED` 或 `REJECTED` 软作废为 `CANCELLED`，保留内容和审计记录且不改变线上目录；已发布草稿拒绝作废，必须走发布回滚。`GET /api/v1/admin/catalog-drafts` 默认排除已作废记录，传 `includeCancelled=1` 可显示全部，传 `status=CANCELLED` 可只查询已作废记录。
 - 发布先调用 `POST /api/v1/admin/releases/preview`，再把预览返回的 `candidateHash`、`confirmationText` 与当前 `confirmationTotp` 原样提交给 `POST /api/v1/admin/releases`。目录变更集、题目草稿和 Excel 目录批次在同一事务中生效，任一内容哈希、revision、复核记录或活动基线不一致都会阻止发布。
 - 发布切换后立即执行快照、目录投影、题目版本、题型内容、媒体和 408 题池自检。失败时返回 `RELEASE_VERIFICATION_FAILED` 并冻结新发布；所有者可调用 `POST /api/v1/admin/releases/:id/retry-verification`，回滚接口在冻结期间仍可用。
 - `GET /api/v1/admin/questions`、`/drafts`、`/catalog-drafts`、`/imports`、`/releases`、`/media` 和 `/audit-logs` 使用 `page`/`pageSize` 分页；列表响应统一包含 `{ page, pageSize, total, items }`。题目列表还支持 `search`、`subjectId`、`chapterId`、`type`、`difficulty`、`status`、`publishedFrom` 和 `publishedTo`。

@@ -32,6 +32,7 @@ let reviewPolicy: ReviewPolicy = "two-person";
 let setupAvailable = false;
 let page: Page = "dashboard";
 let selectedCatalogDraftId = sessionStorage.getItem("qz_admin_catalog_draft") || "";
+let showCancelledCatalogDrafts = sessionStorage.getItem("qz_admin_show_cancelled_catalog_drafts") === "1";
 let catalogDraftPage = 1;
 let questionFilters: QuestionFilters = { search: "", subjectId: "", chapterId: "", type: "", difficulty: "", status: "", publishedFrom: "", publishedTo: "", page: 1 };
 let draftStatus = "";
@@ -58,7 +59,7 @@ function markReviewEvidence(kind: "catalog" | "draft" | "import", id: unknown, r
 const STATUS_LABELS: Record<string, string> = {
   ACTIVE: "启用", DISABLED: "已停用", VALID: "校验通过", INVALID: "校验失败", STAGING: "待校验",
   DRAFT: "草稿", IN_REVIEW: "待自检", APPROVED: "已批准", REJECTED: "已驳回", PUBLISHED: "已发布",
-  READY: "就绪", FAILED: "失败", CANCELLED: "已取消", PENDING: "等待中", PASSED: "通过", PREPARING: "发布准备中",
+  READY: "就绪", FAILED: "失败", CANCELLED: "已作废", PENDING: "等待中", PASSED: "通过", PREPARING: "发布准备中",
   SINGLE: "单选题", MULTIPLE: "多选题", JUDGE: "判断题", FILL_BLANK: "填空题", SHORT_ANSWER: "简答题",
   ADDED: "新增", CHANGED: "修改", REMOVED: "移除", GROUP: "组合模块", SUBJECT: "学科模块", EXAM: "考试模块",
   OWNER: "所有者", EDITOR: "编辑", REVIEWER: "复核", PUBLISHER: "发布", NORMAL: "常规发布", ROLLBACK: "回滚发布",
@@ -87,6 +88,7 @@ const AUDIT_ACTION_LABELS: Record<string, string> = {
   "catalog_draft.update": "修改目录变更集",
   "catalog_draft.submit": "提交目录复核",
   "catalog_draft.withdraw": "撤回目录变更集",
+  "catalog_draft.cancel": "作废目录变更集",
   "catalog_draft.review.approved": "批准目录变更集",
   "catalog_draft.review.rejected": "驳回目录变更集",
   "draft.create": "新建题目草稿",
@@ -529,7 +531,7 @@ async function patchCatalogDraft(draft: CatalogDraft, payload: CatalogPayload): 
 async function catalogPage(): Promise<void> {
   const [liveResult, draftResult] = await Promise.all([
     api<{ data: { subjects: Json[]; modules: Json[]; chapters?: Json[] } }>("/api/v1/admin/catalog"),
-    api<{ data: CatalogDraft[] | Paged<CatalogDraft> }>(`/api/v1/admin/catalog-drafts?page=${catalogDraftPage}&pageSize=${ADMIN_PAGE_SIZE}`)
+    api<{ data: CatalogDraft[] | Paged<CatalogDraft> }>(`/api/v1/admin/catalog-drafts?page=${catalogDraftPage}&pageSize=${ADMIN_PAGE_SIZE}${showCancelledCatalogDrafts ? "&includeCancelled=1" : ""}`)
   ]);
   const draftPageResult = paged(draftResult.data, catalogDraftPage);
   const drafts = draftPageResult.items;
@@ -549,14 +551,15 @@ async function catalogPage(): Promise<void> {
   const displayPayload = selectedDraft ? candidatePayload : livePayload;
   const displayCatalog = catalogWithNestedChapters(displayPayload);
   const editable = canEditCatalogDraft(selectedDraft) && hasRole("EDITOR");
+  const cancellable = Boolean(selectedDraft && ["DRAFT", "IN_REVIEW", "APPROVED", "REJECTED"].includes(selectedDraft.status) && hasRole("EDITOR"));
   const errors = (selectedDraft?.validationErrors || []) as unknown[];
   const warnings = (selectedDraft?.validationWarnings || []) as unknown[];
   const selfSubmitted = Boolean(selectedDraft?.submittedById && selectedDraft.submittedById === currentUser?.id);
   const catalogEvidenceSeen = Boolean(selectedDraft && hasReviewEvidence("catalog", selectedDraft.id, selectedDraft.revision));
 
   content(`<div class="page-head"><div><h1>学科与章节</h1><div class="muted">线上目录只读；目录调整必须在变更集中完成复核并发布</div></div>${hasRole("EDITOR") ? '<button class="primary" id="new-catalog-draft">新建目录变更</button>' : ""}</div>
-    <section class="panel catalog-workspace"><div class="catalog-draft-bar"><label class="field compact"><span>当前目录视图</span><select id="catalog-draft-select"><option value="">当前线上目录（只读）</option>${displayedDrafts.map((draft) => `<option value="${escapeHtml(draft.id)}" ${draft.id === selectedDraft?.id ? "selected" : ""}>${escapeHtml(draft.name)} · ${escapeHtml(draft.status)}</option>`).join("")}</select></label>
-      <div class="catalog-draft-summary">${selectedDraft ? `<div><strong>${escapeHtml(selectedDraft.name)}</strong> ${statusTag(selectedDraft.status)}<div class="muted">修订 ${escapeHtml(selectedDraft.revision)} · 更新于 ${formatTime(selectedDraft.updatedAt || selectedDraft.createdAt)}</div></div><div class="actions"><button class="secondary" id="catalog-diff">查看线上差异</button>${editable ? `<button class="primary" id="catalog-submit">提交复核</button>` : ""}${selectedDraft.status === "IN_REVIEW" && hasRole("REVIEWER") ? `<button class="primary" data-catalog-review="APPROVED" ${selfSubmitted && (!canReviewOwnSubmission(selectedDraft.submittedById) || !catalogEvidenceSeen) ? `disabled title="${canReviewOwnSubmission(selectedDraft.submittedById) ? "请先查看完整目录差异" : "当前策略要求由另一账号复核"}"` : ""}>${selfSubmitted ? "自检通过" : "复核通过"}</button>${!selfSubmitted ? '<button class="danger" data-catalog-review="REJECTED">驳回</button>' : ""}` : ""}${["IN_REVIEW","APPROVED"].includes(String(selectedDraft.status)) && selfSubmitted && hasRole("EDITOR") ? '<button class="secondary" id="catalog-withdraw">撤回修改</button>' : ""}${selectedDraft.status === "APPROVED" && hasRole("PUBLISHER") ? `<button class="primary" id="catalog-go-release">选择并发布</button>` : ""}</div>` : `<div><strong>当前线上目录</strong> ${statusTag("PUBLISHED")}<div class="muted">请选择或新建目录变更集后再编辑</div></div>`}</div></div>
+    <section class="panel catalog-workspace"><div class="catalog-draft-bar"><div class="catalog-draft-picker"><label class="field compact"><span>当前目录视图</span><select id="catalog-draft-select"><option value="">当前线上目录（只读）</option>${displayedDrafts.map((draft) => `<option value="${escapeHtml(draft.id)}" ${draft.id === selectedDraft?.id ? "selected" : ""}>${escapeHtml(draft.name)} · ${escapeHtml(label(draft.status))}</option>`).join("")}</select></label><label class="catalog-cancelled-toggle"><input type="checkbox" id="show-cancelled-catalog-drafts" ${showCancelledCatalogDrafts ? "checked" : ""}> 显示已作废</label></div>
+      <div class="catalog-draft-summary">${selectedDraft ? `<div><strong>${escapeHtml(selectedDraft.name)}</strong> ${statusTag(selectedDraft.status)}<div class="muted">修订 ${escapeHtml(selectedDraft.revision)} · 更新于 ${formatTime(selectedDraft.updatedAt || selectedDraft.createdAt)}</div></div><div class="actions"><button class="secondary" id="catalog-diff">查看线上差异</button>${editable ? `<button class="primary" id="catalog-submit">提交复核</button>` : ""}${selectedDraft.status === "IN_REVIEW" && hasRole("REVIEWER") ? `<button class="primary" data-catalog-review="APPROVED" ${selfSubmitted && (!canReviewOwnSubmission(selectedDraft.submittedById) || !catalogEvidenceSeen) ? `disabled title="${canReviewOwnSubmission(selectedDraft.submittedById) ? "请先查看完整目录差异" : "当前策略要求由另一账号复核"}"` : ""}>${selfSubmitted ? "自检通过" : "复核通过"}</button>${!selfSubmitted ? '<button class="danger" data-catalog-review="REJECTED">驳回</button>' : ""}` : ""}${["IN_REVIEW","APPROVED"].includes(String(selectedDraft.status)) && selfSubmitted && hasRole("EDITOR") ? '<button class="secondary" id="catalog-withdraw">撤回修改</button>' : ""}${selectedDraft.status === "APPROVED" && hasRole("PUBLISHER") ? `<button class="primary" id="catalog-go-release">选择并发布</button>` : ""}${cancellable ? '<button class="danger" id="catalog-cancel">作废草稿</button>' : ""}</div>` : `<div><strong>当前线上目录</strong> ${statusTag("PUBLISHED")}<div class="muted">请选择或新建目录变更集后再编辑</div></div>`}</div></div>
       ${selectedDraft ? `<div class="catalog-meta"><span>基线 <code>${escapeHtml(String(selectedDraft.baseCatalogHash || "—").slice(0, 16))}</code></span><span>内容 <code>${escapeHtml(String(selectedDraft.contentHash || "未冻结").slice(0, 16))}</code></span><span class="tag ${errors.length ? "bad" : "good"}">错误 ${errors.length}</span><span class="tag warn">警告 ${warnings.length}</span></div>` : ""}
       ${errors.length || warnings.length ? `<details class="catalog-validation"><summary>查看校验结果</summary><pre>${escapeHtml(JSON.stringify({ errors, warnings }, null, 2))}</pre></details>` : ""}
       ${paginationHtml(draftPageResult, "catalog-draft-pagination")}
@@ -569,6 +572,16 @@ async function catalogPage(): Promise<void> {
     selectedCatalogDraftId = (event.currentTarget as HTMLSelectElement).value;
     if (selectedCatalogDraftId) sessionStorage.setItem("qz_admin_catalog_draft", selectedCatalogDraftId);
     else sessionStorage.removeItem("qz_admin_catalog_draft");
+    void catalogPage();
+  });
+  document.querySelector<HTMLInputElement>("#show-cancelled-catalog-drafts")?.addEventListener("change", (event) => {
+    showCancelledCatalogDrafts = (event.currentTarget as HTMLInputElement).checked;
+    sessionStorage.setItem("qz_admin_show_cancelled_catalog_drafts", showCancelledCatalogDrafts ? "1" : "0");
+    catalogDraftPage = 1;
+    if (!showCancelledCatalogDrafts && selectedDraft?.status === "CANCELLED") {
+      selectedCatalogDraftId = "";
+      sessionStorage.removeItem("qz_admin_catalog_draft");
+    }
     void catalogPage();
   });
   bindPagination("catalog-draft-pagination", draftPageResult, (nextPage) => { catalogDraftPage = nextPage; void catalogPage(); });
@@ -602,6 +615,16 @@ async function catalogPage(): Promise<void> {
   document.querySelector("#catalog-withdraw")?.addEventListener("click", async () => {
     if (!selectedDraft || !await confirmDialog("撤回后可以继续修改；原自检/复核状态会失效。", "撤回目录变更")) return;
     try { await api(`/api/v1/admin/catalog-drafts/${encodeURIComponent(selectedDraft.id)}/withdraw`, { method: "POST", body: "{}" }); notify("目录变更已撤回，可以继续修改"); await catalogPage(); } catch (error) { notify(String(error), true); }
+  });
+  document.querySelector("#catalog-cancel")?.addEventListener("click", async () => {
+    if (!selectedDraft || !await confirmDialog("作废后，该草稿不能再编辑、复核或发布；线上目录不会受到影响，审计记录仍会保留。", "作废目录草稿", true)) return;
+    try {
+      await api(`/api/v1/admin/catalog-drafts/${encodeURIComponent(selectedDraft.id)}/cancel`, { method: "POST", body: "{}" });
+      selectedCatalogDraftId = "";
+      sessionStorage.removeItem("qz_admin_catalog_draft");
+      notify("目录草稿已作废");
+      await catalogPage();
+    } catch (error) { notify(String(error), true); }
   });
   document.querySelectorAll<HTMLButtonElement>("[data-catalog-review]").forEach((button) => button.addEventListener("click", async () => {
     if (!selectedDraft) return;
